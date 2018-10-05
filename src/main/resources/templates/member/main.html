@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <!-- Custom styles for this tmemberlate -->
+    <link href="/css/dashboard.css" rel="stylesheet"/>
+    <link href="/css/bootstrap-table.css" rel="stylesheet">
+</head>
+<body>
+<form id="modifyPanelHolder">
+    <div>
+        <div>
+            <div>
+                <div>
+                    <h4  id="hdr-form-customer2">會員資料2</h4>
+                </div>
+                <div>
+                    <form class="form-group">
+                        <input type="hidden" name="id_m" id="id_m" th:value="${memberDto!=null}?${memberDto.id}">
+                        <label>姓名</label>
+                        <!--/*@thymesVar id="name" type="com.oppo.dto.MemberDto"*/-->
+                        <input required="required" th:value="${memberDto!=null}?${memberDto.name}" type="text"
+                               name="name_m" id="name_m"
+                               class="form-control">
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link pull-left" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-default btn-success" data-dismiss="modal"
+                            th:onclick="'javascript:sendModifyMember()'">Save
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

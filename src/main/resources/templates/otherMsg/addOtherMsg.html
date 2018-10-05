@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<!-- saved from url=(0053)https://getbootstrap.com/docs/4.1/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+
+    <title>其他訊息管理</title>
+    <script th:src="@{/ckeditor/ckeditor.js}"></script>
+    <script th:src="@{/ckfinder/ckfinder.js}"></script>
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <!-- Custom styles for this template -->
+    <link href="/css/dashboard.css" rel="stylesheet"/>
+    <link href="/css/bootstrap-table.css" rel="stylesheet">
+    <!--date-->
+    <link rel="stylesheet" href="/css/bootstrap-datetimepicker.min.css" media="screen"/>
+    <link rel="stylesheet" href="/css/bootstrap-datetimepicker.css" media="screen"/>
+    <!--自訂-->
+    <link href="/css/bootstrap-jie.css" rel="stylesheet">
+</head>
+
+<body>
+<div th:replace="common/bar::top_bar"></div>
+<div class="container-fluid">
+    <div class="row">
+        <!--引入sidebar-->
+        <div th:replace="common/bar::side_bar(activeUrl='otherMsg')"></div>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 " style="align-content: center">
+
+            <form class="form-horizontal" th:action="@{/otherMsg}" method="post">
+
+                <!--  建一个 input name "_method" 值请求的方式 springMVC的規範-->
+                <input type="hidden" name="_method" value="put" th:if="${msg!=null}">
+
+                <input type="hidden" name="id" th:value="${msg.id}" th:if="${msg!=null}">
+                <!-- LastName -->
+
+                <div class="form-group">
+                    <label for="title">訊息標題：</label>
+                    <!--/*@thymesVar id="msg" type="com.oppo.dto.OtherMsgDto"*/-->
+                    <input type="text" required="required" class="form-control" id="title" name="title"
+                           placeholder="訊息標題"
+                           th:value="${msg!=null}?${msg.title}">
+                </div>
+                <!-- Email -->
+                <div class="form-group">
+                    <textarea cols="20" class="ckeditor" id="editor1" name="editor" rows="5">
+                        [[${msg!=null}?${msg.editor}]]
+	                </textarea>
+                </div>
+                <!--gender-->
+                <div class="form-group">
+                    <label>相關附件：</label>
+                    <input type="text" class="form-control" value="XXX">
+                </div>
+                <!-- department -->
+                <!--/*@thymesVar id="msg" type="com.oppo.dto.OtherMsgDto"*/-->
+                <div class="form-group">
+                    <label>上版日期：</label>
+
+                    <input type="text" required="required" readonly="true" class="form-control" id='onShelfDate'
+                           name="onShelfDate"
+                           th:value="${msg!=null}?${#dates.format(msg.onShelfDate,'yyyy-MM-dd')}">
+                </div>
+                <div class="form-group">
+                    <label>下版日期：</label>
+                    <input type="text" required="required" readonly="true" class="form-control" id="offShelfDate"
+                           name="offShelfDate"
+                           th:value="${msg!=null}?${#dates.format(msg.offShelfDate,'yyyy-MM-dd')}">
+                </div>
+                <div class="editor-label">
+                    <label>新增訊息：</label>
+
+                    <p style="display:inline; font-size:110%">
+                        [[${msg!=null}?${msg.createdBy}+' '+OO:'數金資訊二科 OOO']]
+                    </p>
+                </div>
+                </br>
+                <div class="editor-label">
+                    <label>修改訊息：</label>
+
+                    <p style="display:inline; font-size:110%">
+                        [[${msg!=null}?${msg.createdBy}+' '+OO:'數金資訊二科 OOO']]
+                    </p>
+                </div>
+
+
+                <div>
+                    <input type="hidden" name="loginUser" id="loginUser" th:value="${session.loginUser}">
+                    <button type="submit" class="btn btn-success" th:text="${msg!=null}?'修改':'新增'">save</button>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/js/jquery-3.3.1.slim.min.js"
+        crossorigin="anonymous"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/js/bootstrap-datetimepicker.js"></script>
+<script src="/js/bootstrap-datetimepicker.zh-TW.js"></script>
+
+<!-- Icons -->
+<script src="/js/feather.min.js"></script>
+<script>
+    feather.replace()
+</script>
+<script>
+
+    $("input[name$='ShelfDate']").datetimepicker({
+        startView: 2,
+        minView: 2,
+        autoclose: true,
+        todayBtn: true,
+        todayHighlight: true,
+        format: 'yyyy-mm-dd',
+        language: 'zh-TW'
+    });
+</script>
+
+</body>
+</html>

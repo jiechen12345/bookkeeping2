@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>hello</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!--<script src="http://cdn.ckeditor.com/4.6.2/standard-all/ckeditor.js"></script>-->
+    <script th:src="@{/ckeditor/ckeditor.js}"></script>
+    <script th:src="@{/ckfinder/ckfinder.js}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <!-- Custom styles for this tmemberlate -->
+    <link href="/css/dashboard.css" rel="stylesheet"/>
+    <link href="/css/bootstrap-table.css" rel="stylesheet">
+    <style type="text/css">/* Chart.js */
+    @-webkit-keyframes chartjs-render-animation {
+        from {
+            opacity: 0.99
+        }
+        to {
+            opacity: 1
+        }
+    }
+
+    @keyframes chartjs-render-animation {
+        from {
+            opacity: 0.99
+        }
+        to {
+            opacity: 1
+        }
+    }
+
+    .chartjs-render-monitor {
+        -webkit-animation: chartjs-render-animation 0.001s;
+        animation: chartjs-render-animation 0.001s;
+    }</style>
+</head>
+<body th:inline="text">
+
+
+<div class="modal-dialog">
+    <div class="modal-content">
+
+        <div class="container">
+            <div><p>其他訊息管理</p>
+            </div>
+
+            <form id="form" th:name="form" th:action="@{/otherMsg}" method="post">
+
+                <label>標題</label>
+                <!--/*@thymesVar id="name" type="com.oppo.dto.MemberDto"*/-->
+                <input th:value="${memberDto!=null}?${memberDto.name}" type="text" name="title" id="title"
+                       class="form-control">
+                <label>內容</label>
+                <textarea cols="80" class="ckeditor" id="editor1" name="editor" rows="10">
+	</textarea>
+                <input type="submit" name="save"/>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script src="/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>

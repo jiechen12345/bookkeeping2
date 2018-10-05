@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>流水帳</title>
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/css/bootstrap-datetimepicker.min.css" media="screen"/>
+    <link rel="stylesheet" href="/css/bootstrap-datetimepicker.css" media="screen"/>
+    <!-- Custom styles for this tmemberlate -->
+    <link href="/css/dashboard.css" rel="stylesheet"/>
+    <link href="/css/bootstrap-table.css" rel="stylesheet">
+</head>
+<body th:inline="text">
+<script src="/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        //----測試用
+        $('.form-control').attr('disabled', true);
+        //----
+        var customerId = $("#customerId option:selected").val();
+        findProjectByCustomerIdAjax(customerId)
+        $("#customerId").change(function(){
+            var customerId = $("#customerId option:selected").val();
+            findProjectByCustomerIdAjax(customerId)
+        });
+    });
+    function findProjectByCustomerIdAjax(customerId) {
+        $.ajax({
+            contentType: 'application/json; charset=UTF-8',
+            type: "post",
+            data:  JSON.stringify(customerId),
+            url: "/books/findProjectByCustomerId",
+            success: function (data) {
+                var str = "";
+                $.each(data, function(index,value){
+                    str += "<option value='"+value.id+"'>" + value.projectName + "</option>";
+                });
+                $("#projectId").empty();
+                $("#projectId").append(str);
+            },
+            error: function (jqXHR, exception) {
+                var msg = '';
+                if (jqXHR.status === 0) {
+                    msg = 'Not connect.\n Verify Network.';
+                } else if (jqXHR.status == 404) {
+                    msg = 'Requested page not found. [404]';
+                } else if (jqXHR.status == 500) {
+                    msg = 'Internal Server Error [500].';
+                } else if (exception === 'parsererror') {
+                    msg = 'Requested JSON parse failed.';
+                } else if (exception === 'timeout') {
+                    msg = 'Time out error.';
+                } else if (exception === 'abort') {
+                    msg = 'Ajax request aborted.';
+                } else {
+                    msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                }
+                alert(msg);
+            },
+        });
+    }
+
+</script>
+<!--引入topbar-->
+<div th:replace="common/bar::top_bar"></div>
+<div class="container-fluid">
+    <div class="row">
+        <!--引入sidebar-->
+        <div th:replace="common/bar::side_bar(activeUrl='books')"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <div class="chartjs-size-monitor"
+                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                <div class="chartjs-size-monitor-expand"
+                     style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                </div>
+                <div class="chartjs-size-monitor-shrink"
+                     style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                </div>
+            </div>
+            <!-- form **************************************************************-->
+            <div>
+                <form id='myForm' class="needs-validation" novalidate>
+                    <div class="form-row">
+                        <div class="col-md-2 mb-1">
+                            <label for="id">編號</label>
+                                <input maxlength="12" type="text" class="form-control" name="id" id="id"  readonly>
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="incomeOrExpend">帳務類別</label>
+                            <select class="form-control" id="incomeOrExpend" name="incomeOrExpend">
+                                <option value="1">收入</option>
+                                <option value="0">支出</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-1">
+                            <label for="projectId">客戶單位</label>
+                            <select class="form-control" name="customerId" id="customerId">
+                                <option th:each="customer:${customers}" th:value="${customer.id}"
+                                        th:text="${customer.custNm}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <label for="projectId">專案名稱</label>
+                            <select class="form-control" name="projectId" id="projectId">
+
+                            </select>
+                        </div>
+
+                        <div class="col-md-2 mb-1">
+                            <label for="invoice">廠商發票</label>
+                            <select class="form-control" name="invoice" id="invoice" onchange="invCl();">
+                                <option value="1">Y</option>
+                                <option value="0">N</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="projectId">發票月份</label>
+                            <input type="text"  class="form-control" id='invYM' name="invYM" placeholder="2018-01" required>
+                            <div class="invalid-feedback">
+                                請輸入發票月份.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 mb-1">
+                            <label for="invNo">發票號碼</label>
+                            <div class="input-group">
+                                <input maxlength="10" type="text" class="form-control" name="invNo" id="invNo" placeholder="NY12345678" required>
+                                <div class="invalid-feedback">
+                                    請輸入發票號碼.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-2 mb-1">
+                            <label for="paid">付款與否</label>
+                            <select class="form-control" name="paid" id="paid"onchange="paidCl();">
+                                <option value="1">Y</option>
+                                <option value="0">N</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="paidDat">付款日</label>
+                            <input id='paidDat' name="paidDat" type="text"  class="form-control" placeholder="2018-01-01" required>
+                            <div class="invalid-feedback">
+                                請輸入付款日.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 mb-1">
+                            <label for="amt">金額</label>
+                            <input name="amt" id="amt" maxlength="14" type="text" class="form-control"
+                                   placeholder="1,000" onkeyup="value=value.replace(/[^\d]/g,'') " required>
+                            <div class="invalid-feedback">
+                                請輸入金額.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <label for="description">說明</label>
+                            <input id="description" name="description" type="text" class="form-control" placeholder="說明"
+                                   required>
+                            <div class="invalid-feedback">
+                                請輸入說明.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-4 mb-1" style="width: 40%">
+                            <label for="description">備註</label>
+                            <textarea id="remarks" name="remarks" class="form-control" cols="50" rows="3"></textarea>
+                        </div>
+                        <div class="form-inline">
+                            <div class="button-bar">
+                                <button class="btn btn-success" id="create" name="create"
+                                        onclick="$('#status').val('create');" type="submit">新增
+                                </button>
+                                <button class="btn btn-primary" id="update" name="update"
+                                        onclick="$('#status').val('update');" type="submit">修改
+                                </button>
+                                <button class="btn btn-danger" id="delete" name="delete"
+                                        onclick="$('#status').val('delete');" type="submit">刪除
+                                </button>
+                                <button class="btn btn-info" onclick="openAddModal();" type="button" id="query"
+                                        name="query" data-toggle="modal">查詢
+                                </button>
+                                <input type="text" id="status">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-----------LIST--------------------------------->
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <!--<tr class="table table-striped table-sm">-->
+                    <tr class="table table-striped table-sm" align="center">
+                        <th>ID</th>
+                        <th>廠商發票</th>
+                        <th>廠商發票月份</th>
+                        <th>發票號碼</th>
+                        <th>付款與否</th>
+                        <th>付款日期</th>
+                        <th>客戶名稱</th>
+                        <th>專案名稱</th>
+                    </tr>
+                    </thead>
+                    <tbody id="list-itens">
+                    <tr th:each="book:${books}">
+                        <td th:text="${book.getId()}">1</td>
+                        <td th:text="${book.getInvoice()}">1</td>
+                        <td th:text="${book.getInvYM()}">1</td>
+                        <td th:text="${book.getInvNo()}">1</td>
+                        <td th:text="${book.paid}">1</td>
+                        <td th:text="${book.paidDat}">1</td>
+                        <td th:text="${book.customerNm}">1</td>
+                        <td th:text="${book.projectName}">1</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 查詢-->
+            <div id="addPanelHolder">
+                <div id="addPanel" class="modal fade" role="dialog" th:fragment="addModalContens">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="hdr-form-customer">查詢條件</h4>
+                                <button type="button" class="close" data-dismiss="modal">×</button>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-group">
+                                    <label>流水號</label>
+                                    <input type="text" name="name" id="name" class="form-control">
+                                    <label>專案名稱</label>
+                                    <select class="form-control" name="depId" id="depId">
+                                        <option th:each="dept:${depts}" th:value="${dept.id}"
+                                                th:text="${dept.depName}"></option>
+                                    </select>
+
+                                    <div class="clearfix"></div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-link pull-left" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-default btn-success" data-dismiss="modal"
+                                        th:onclick="'javascript:sendAddMember()'">查詢
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+</div>
+
+
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<!-- Icons -->
+<script src="./Dashboard_files/feather.min.js" th:src="@{/js/feather.min.js}"></script>
+<script src="/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/js/bootstrap-datetimepicker.js"></script>
+<script src="/js/bootstrap-datetimepicker.zh-TW.js"></script>
+<script>
+    feather.replace()
+</script>
+
+<script>
+    $('#myForm').submit(function () {
+        return false;
+    });
+
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
+        'use strict';
+        window.addEventListener('load', function () {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    } else {
+                        enter();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+
+    function enter() {
+       var status= $('#status').val();
+       alert(status);
+    }
+    function abc() {
+
+        $('#create').attr('disabled', true);
+        $('#invNo').attr('required', false);
+    }
+
+    //-查詢視窗
+    function openAddModal() {
+        alert(1);
+        $('#addPanelHolder').html();
+        $('#addPanel').modal('show');
+        /*
+        $.ajax({
+                type: 'GET',
+                url: "/toAddMember",
+                success: function (data) {
+                    $('#addPanelHolder').html(data);
+                    $('#addPanel').modal('show');
+                },
+            }
+        )
+        */
+    }
+
+    //元件控制
+    function invCl() {
+        var invStatus=$('#invoice').val();
+        if(invStatus==1){
+            $('#invNo').attr('disabled', false);
+            $('#invYM').attr('disabled', false);
+            $('#invYM').attr('placeholder', '2018-01');
+            $('#invNo').attr('placeholder', 'NY12345678');
+        }else if(invStatus==0){
+            $('#invNo').attr('disabled', true);
+            $('#invYM').attr('disabled', true);
+            $('#invYM').attr('placeholder', '');
+            $('#invNo').attr('placeholder', '');
+
+        }
+    }
+    function paidCl() {
+        var paid=$('#paid').val();
+        if(paid==1){
+            $('#paidDat').attr('disabled', false);
+            $('#paidDat').attr('placeholder', '2018-01-01');
+        } else if(paid==0){
+            $('#paidDat').attr('disabled', true);
+            $('#paidDat').attr('placeholder', '');
+        }
+    }
+    $("input[name$='invYM']").datetimepicker({
+        startView: 3,
+        minView: 3,
+        autoclose: true,
+        todayBtn: true,
+        todayHighlight: true,
+        format: 'yyyy-mm',
+        language: 'zh-TW'
+    });
+    $("input[name$='paidDat']").datetimepicker({
+        startView: 2,
+        minView: 2,
+        autoclose: true,
+        todayBtn: true,
+        todayHighlight: true,
+        format: 'yyyy-mm-dd',
+        language: 'zh-TW'
+    });
+
+
+</script>
+</body>
+</html>

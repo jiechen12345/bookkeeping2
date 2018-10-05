@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)https://getbootstrap.com/docs/4.1/examples/sign-in/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+    <title>Signin</title>
+
+    <!-- Bootstrap core CSS -->
+
+
+    <!-- Custom styles for this template -->
+    <link href="/css/signin.css" th:href="@{/css/signin.css}" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+</head>
+
+<body class="text-center">
+<form class="form-signin" action="websiteMgt.html" th:action="@{/api/login}" method="post">
+    <img class="mb-4 mx-auto" src="/img/oppoLogo.jpg" th:src="@{/img/oppoLogo.jpg}" alt="" width="302" height="90">
+    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+    <p style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
+    <label for="inputAccount" class="sr-only">account</label>
+    <input type="text" name="account" id="inputAccount" class="form-control" placeholder="account" required=""
+           autofocus="">
+    <label for="inputPassword" class="sr-only">password</label>
+    <input type="password" name="password" id="inputPassword" class="form-control" placeholder="password" required="">
+    <div class="checkbox mb-3">
+        <label>
+            <input type="checkbox" value="remember-me"> Remember me
+        </label>
+    </div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    <p class="mt-5 mb-3 text-muted">© 2017-2018</p>
+</form>
+
+
+</body>
+</html>
