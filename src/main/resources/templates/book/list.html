@@ -18,27 +18,30 @@
 <body th:inline="text">
 <script src="/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function () {
         //----測試用
         $('.form-control').attr('disabled', true);
+        $("#incomeOrExpend").attr('disabled', false);
+        $("#amt").attr('disabled', false);
         //----
         var customerId = $("#customerId option:selected").val();
         findProjectByCustomerIdAjax(customerId)
-        $("#customerId").change(function(){
+        $("#customerId").change(function () {
             var customerId = $("#customerId option:selected").val();
             findProjectByCustomerIdAjax(customerId)
         });
     });
+
     function findProjectByCustomerIdAjax(customerId) {
         $.ajax({
             contentType: 'application/json; charset=UTF-8',
             type: "post",
-            data:  JSON.stringify(customerId),
+            data: JSON.stringify(customerId),
             url: "/books/findProjectByCustomerId",
             success: function (data) {
                 var str = "";
-                $.each(data, function(index,value){
-                    str += "<option value='"+value.id+"'>" + value.projectName + "</option>";
+                $.each(data, function (index, value) {
+                    str += "<option value='" + value.id + "'>" + value.projectName + "</option>";
                 });
                 $("#projectId").empty();
                 $("#projectId").append(str);
@@ -90,7 +93,7 @@
                     <div class="form-row">
                         <div class="col-md-2 mb-1">
                             <label for="id">編號</label>
-                                <input maxlength="12" type="text" class="form-control" name="id" id="id"  readonly>
+                            <input maxlength="12" type="text" class="form-control" name="id" id="id" readonly>
                         </div>
                         <div class="col-md-2 mb-1">
                             <label for="incomeOrExpend">帳務類別</label>
@@ -122,7 +125,8 @@
                         </div>
                         <div class="col-md-2 mb-1">
                             <label for="projectId">發票月份</label>
-                            <input type="text"  class="form-control" id='invYM' name="invYM" placeholder="2018-01" required>
+                            <input type="text" class="form-control" id='invYM' name="invYM" placeholder="2018-01"
+                                   required>
                             <div class="invalid-feedback">
                                 請輸入發票月份.
                             </div>
@@ -131,7 +135,8 @@
                         <div class="col-md-3 mb-1">
                             <label for="invNo">發票號碼</label>
                             <div class="input-group">
-                                <input maxlength="10" type="text" class="form-control" name="invNo" id="invNo" placeholder="NY12345678" required>
+                                <input maxlength="10" type="text" class="form-control" name="invNo" id="invNo"
+                                       placeholder="NY12345678" required>
                                 <div class="invalid-feedback">
                                     請輸入發票號碼.
                                 </div>
@@ -141,14 +146,15 @@
                     <div class="form-row">
                         <div class="col-md-2 mb-1">
                             <label for="paid">付款與否</label>
-                            <select class="form-control" name="paid" id="paid"onchange="paidCl();">
+                            <select class="form-control" name="paid" id="paid" onchange="paidCl();">
                                 <option value="1">Y</option>
                                 <option value="0">N</option>
                             </select>
                         </div>
                         <div class="col-md-2 mb-1">
                             <label for="paidDat">付款日</label>
-                            <input id='paidDat' name="paidDat" type="text"  class="form-control" placeholder="2018-01-01" required>
+                            <input id='paidDat' name="paidDat" type="text" class="form-control" placeholder="2018-01-01"
+                                   required>
                             <div class="invalid-feedback">
                                 請輸入付款日.
                             </div>
@@ -304,9 +310,50 @@
     })();
 
     function enter() {
-       var status= $('#status').val();
-       alert(status);
+        var status = $('#status').val();
+        switch (status) {
+            case 'create':
+                var $form = $("#myForm");
+                var formData = getFormData($form);
+                //var formData2 = $('#myForm').serialize(); //for get submit
+                $.ajax({
+                    contentType: 'application/json; charset=UTF-8',
+                    type: "post",
+                    //data: JSON.stringify({'id': id,'amt': amt,'incomeOrExpend':incomeOrExpend}) ,
+                    data: JSON.stringify(formData),
+                    url: "/books/create",
+                    success: function (data) {
+                        alert('OK');
+                    },
+                    error: function (jqXHR, exception) {
+                        var msg = '';
+                        if (jqXHR.status === 0) {
+                            msg = 'Not connect.\n Verify Network.';
+                        } else if (jqXHR.status == 404) {
+                            msg = 'Requested page not found. [404]';
+                        } else if (jqXHR.status == 500) {
+                            msg = 'Internal Server Error [500].';
+                        } else if (exception === 'parsererror') {
+                            msg = 'Requested JSON parse failed.';
+                        } else if (exception === 'timeout') {
+                            msg = 'Time out error.';
+                        } else if (exception === 'abort') {
+                            msg = 'Ajax request aborted.';
+                        } else {
+                            msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                        }
+                        alert(msg);
+                    },
+                });
+                break;
+            case 'update':
+                alert(2);
+                break;
+
+        }
+        alert(status);
     }
+
     function abc() {
 
         $('#create').attr('disabled', true);
@@ -331,15 +378,27 @@
         */
     }
 
+    //取的form所有值
+    function getFormData($form) {
+        var unindexed_array = $form.serializeArray();
+        var indexed_array = {};
+
+        $.map(unindexed_array, function (n, i) {
+            indexed_array[n['name']] = n['value'];
+        });
+
+        return indexed_array;
+    }
+
     //元件控制
     function invCl() {
-        var invStatus=$('#invoice').val();
-        if(invStatus==1){
+        var invStatus = $('#invoice').val();
+        if (invStatus == 1) {
             $('#invNo').attr('disabled', false);
             $('#invYM').attr('disabled', false);
             $('#invYM').attr('placeholder', '2018-01');
             $('#invNo').attr('placeholder', 'NY12345678');
-        }else if(invStatus==0){
+        } else if (invStatus == 0) {
             $('#invNo').attr('disabled', true);
             $('#invYM').attr('disabled', true);
             $('#invYM').attr('placeholder', '');
@@ -347,16 +406,18 @@
 
         }
     }
+
     function paidCl() {
-        var paid=$('#paid').val();
-        if(paid==1){
+        var paid = $('#paid').val();
+        if (paid == 1) {
             $('#paidDat').attr('disabled', false);
             $('#paidDat').attr('placeholder', '2018-01-01');
-        } else if(paid==0){
+        } else if (paid == 0) {
             $('#paidDat').attr('disabled', true);
             $('#paidDat').attr('placeholder', '');
         }
     }
+
     $("input[name$='invYM']").datetimepicker({
         startView: 3,
         minView: 3,

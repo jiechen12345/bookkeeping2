@@ -14,7 +14,7 @@ public interface BookService {
 //    BookDto findOne(Integer id);
 
     BookPage getAllForm(Integer page, Integer pageSize);
-//    void create(BookReq memberReq);
+    void create(BookReq memberReq);
 //
 //    void update(BookReq memberReq);
 //

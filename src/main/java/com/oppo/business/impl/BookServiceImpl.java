@@ -7,11 +7,14 @@ import com.oppo.dao.BookDao;
 import com.oppo.dao.ProjectDao;
 import com.oppo.dto.BookDto;
 import com.oppo.dto.BookPage;
+import com.oppo.request.BookReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,6 +72,14 @@ public class BookServiceImpl implements BookService {
         return result;
     }
 
+    @Override
+    public void create(BookReq memberReq) {
+        //流水號
+        String id=getSerialNumber();
+        System.out.println("id=  "+id);
+
+    }
+
     private BookDto getBookDto(Book book) {
         BookDto bookDto = new BookDto();
         bookDto.setId(book.getId());
@@ -90,5 +101,19 @@ public class BookServiceImpl implements BookService {
         }
 
         return bookDto;
+    }
+    //流水號
+    private String getSerialNumber(){
+        String num="";
+        String now = LocalDate.now().toString().replace("-","");
+        Book book=bookDao.findFirstByOrderByIdDesc();
+        if(now.equals(book.getId().substring(0,8))) { //如果當天已有
+            Long maxId = Long.parseLong(book.getId());
+            maxId = maxId+1;
+            num = maxId.toString();
+        }else{
+            num=now+"0001";
+        }
+        return num;
     }
 }
