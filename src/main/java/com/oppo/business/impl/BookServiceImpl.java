@@ -3,6 +3,7 @@ package com.oppo.business.impl;
 import com.oppo.Entity.Book;
 import com.oppo.Entity.Book;
 import com.oppo.business.BookService;
+import com.oppo.common.Common;
 import com.oppo.dao.BookDao;
 import com.oppo.dao.ProjectDao;
 import com.oppo.dto.BookDto;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -73,10 +75,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void create(BookReq memberReq) {
-        //流水號
-        String id=getSerialNumber();
-        System.out.println("id=  "+id);
+    public void create(BookReq bookReq) {
+        bookReq.setId(getSerialNumber());
+        Book book=getSetupBook(bookReq);
+        String map = Optional.ofNullable("aadasdsa").map(String::toUpperCase).get();
+        System.out.println(map);
+        String s=null;
+       Integer i=null;
+        System.out.println(Common.get(s));
+        System.out.println(Common.get(i));
 
     }
 
@@ -101,6 +108,28 @@ public class BookServiceImpl implements BookService {
         }
 
         return bookDto;
+    }
+    private Book getSetupBook(BookReq bookReq) {
+        Book book = new Book();
+        book.setId(bookReq.getId());
+//        bookDto.setIncomeOrExpend(book.getIncomeOrExpend());
+//        bookDto.setInvoice(book.getInvoice());
+//        bookDto.setInvYM(book.getInvYM());
+//        bookDto.setInvNo(book.getInvNo());
+//        bookDto.setPaid(book.getPaid());
+//        bookDto.setPaidDat(book.getPaidDat());
+//        bookDto.setAmt(book.getAmt());
+//        bookDto.setDescription(book.getDescription());
+//        bookDto.setRemarks(book.getRemarks());
+
+//        if (book.getProject() != null) {
+//            bookDto.setProjectId(book.getProject().getId());
+//            bookDto.setProjectName(book.getProject().getProjectName());
+//        } else {
+//            bookDto.setProjectName("");
+//        }
+
+        return book;
     }
     //流水號
     private String getSerialNumber(){

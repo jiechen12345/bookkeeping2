@@ -31,7 +31,8 @@ public class BookAjaxApi {
     private CustomerDao customerDao;
     @Autowired
     private BookService bookService;
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+
+    @RequestMapping(method = RequestMethod.POST)
     public void creat(@RequestBody BookReq bookReq) {
         System.out.println(bookReq.toString());
         bookService.create(bookReq);
