@@ -20,9 +20,10 @@
 <script type="text/javascript">
     $(document).ready(function () {
         //----測試用
-        $('.form-control').attr('disabled', true);
-        $("#incomeOrExpend").attr('disabled', false);
-        $("#amt").attr('disabled', false);
+        // $('.form-control').attr('disabled', true);
+        // $("#incomeOrExpend").attr('disabled', false);
+        // $("#amt").attr('disabled', false);
+        // $("#paidDat").attr('disabled', false);
         //----
         var customerId = $("#customerId option:selected").val();
         findProjectByCustomerIdAjax(customerId)
@@ -324,6 +325,8 @@
                     url: "/books",
                     success: function (data) {
                         alert('OK');
+                        //todo 未來要改成回到當頁
+                        location.reload();
                     },
                     error: function (jqXHR, exception) {
                         var msg = '';

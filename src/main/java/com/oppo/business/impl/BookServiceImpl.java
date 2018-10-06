@@ -2,9 +2,12 @@ package com.oppo.business.impl;
 
 import com.oppo.Entity.Book;
 import com.oppo.Entity.Book;
+import com.oppo.Entity.Customer;
+import com.oppo.Entity.Project;
 import com.oppo.business.BookService;
 import com.oppo.common.Common;
 import com.oppo.dao.BookDao;
+import com.oppo.dao.CustomerDao;
 import com.oppo.dao.ProjectDao;
 import com.oppo.dto.BookDto;
 import com.oppo.dto.BookPage;
@@ -31,6 +34,8 @@ public class BookServiceImpl implements BookService {
     private BookDao bookDao;
     @Autowired
     private ProjectDao projectDao;
+    @Autowired
+    private CustomerDao customerDao;
 
     @Override
     public List<BookDto> findAll() {
@@ -69,7 +74,7 @@ public class BookServiceImpl implements BookService {
                 )
                 .collect(toList()));
         result.setCurrentPage(page);
-        result.setTotalPages(p.getTotalPages()>0?p.getTotalPages():1);
+        result.setTotalPages(p.getTotalPages() > 0 ? p.getTotalPages() : 1);
         result.setCount(p.getTotalElements());
         return result;
     }
@@ -77,14 +82,8 @@ public class BookServiceImpl implements BookService {
     @Override
     public void create(BookReq bookReq) {
         bookReq.setId(getSerialNumber());
-        Book book=getSetupBook(bookReq);
-        String map = Optional.ofNullable("aadasdsa").map(String::toUpperCase).get();
-        System.out.println(map);
-        String s=null;
-       Integer i=null;
-        System.out.println(Common.get(s));
-        System.out.println(Common.get(i));
-
+        Book book = getSetupBook(bookReq);
+        bookDao.save(book);
     }
 
     private BookDto getBookDto(Book book) {
@@ -109,39 +108,38 @@ public class BookServiceImpl implements BookService {
 
         return bookDto;
     }
+
     private Book getSetupBook(BookReq bookReq) {
         Book book = new Book();
         book.setId(bookReq.getId());
-//        bookDto.setIncomeOrExpend(book.getIncomeOrExpend());
-//        bookDto.setInvoice(book.getInvoice());
-//        bookDto.setInvYM(book.getInvYM());
-//        bookDto.setInvNo(book.getInvNo());
-//        bookDto.setPaid(book.getPaid());
-//        bookDto.setPaidDat(book.getPaidDat());
-//        bookDto.setAmt(book.getAmt());
-//        bookDto.setDescription(book.getDescription());
-//        bookDto.setRemarks(book.getRemarks());
+        book.setIncomeOrExpend(bookReq.getIncomeOrExpend());
+        book.setInvoice((bookReq.getInvoice()==1)?true:false);
+        book.setInvYM(Common.get(bookReq.getInvYM()));
+        book.setInvNo(Common.get(bookReq.getInvNo()));
+        book.setPaid((bookReq.getPaid()==1)?true:false);
+        book.setPaidDat(bookReq.getPaidDat());
+        book.setAmt(Common.get(bookReq.getAmt()));
+        book.setDescription(Common.get(bookReq.getDescription()));
+        book.setRemarks(Common.get(bookReq.getRemarks()));
 
-//        if (book.getProject() != null) {
-//            bookDto.setProjectId(book.getProject().getId());
-//            bookDto.setProjectName(book.getProject().getProjectName());
-//        } else {
-//            bookDto.setProjectName("");
-//        }
-
+        if (bookReq.getProjectId() != null) {
+            Project project = projectDao.findById(Integer.parseInt(bookReq.getProjectId())).get();
+            book.setProject(project);
+        }
         return book;
     }
+
     //流水號
-    private String getSerialNumber(){
-        String num="";
-        String now = LocalDate.now().toString().replace("-","");
-        Book book=bookDao.findFirstByOrderByIdDesc();
-        if(now.equals(book.getId().substring(0,8))) { //如果當天已有
+    private String getSerialNumber() {
+        String num = "";
+        String now = LocalDate.now().toString().replace("-", "");
+        Book book = bookDao.findFirstByOrderByIdDesc();
+        if (now.equals(book.getId().substring(0, 8))) { //如果當天已有
             Long maxId = Long.parseLong(book.getId());
-            maxId = maxId+1;
+            maxId = maxId + 1;
             num = maxId.toString();
-        }else{
-            num=now+"0001";
+        } else {
+            num = now + "0001";
         }
         return num;
     }

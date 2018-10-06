@@ -11,19 +11,23 @@ public class BookReq {
     //收支 收1支0
     private String incomeOrExpend;
     //是否廠商發票
-    private Boolean invoice = false;
+    private Integer invoice = 0;
     //發票月份
     private String invYM;
     //發票號碼
     private String invNo;
     //付款與否
-    private Boolean paid = false;
+    private Integer paid = 0;
     //付款日期
     private Date paidDat;
     //金額
     private Integer amt;
     //專案名稱
     private String projectName;
+    //專案名稱
+    private String projectId;
+    //客戶名稱
+    private Integer customerId ;
     //說明
     private String description;
     //備註
@@ -37,11 +41,11 @@ public class BookReq {
         this.id = id;
     }
 
-    public Boolean getInvoice() {
+    public Integer getInvoice() {
         return invoice;
     }
 
-    public void setInvoice(Boolean invoice) {
+    public void setInvoice(Integer invoice) {
         this.invoice = invoice;
     }
 
@@ -61,11 +65,11 @@ public class BookReq {
         this.invNo = invNo;
     }
 
-    public Boolean getPaid() {
+    public Integer getPaid() {
         return paid;
     }
 
-    public void setPaid(Boolean paid) {
+    public void setPaid(Integer paid) {
         this.paid = paid;
     }
 
@@ -117,6 +121,22 @@ public class BookReq {
         this.remarks = remarks;
     }
 
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public Integer getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
+    }
+
     @Override
     public String toString() {
         return "BookReq{" +
@@ -129,6 +149,8 @@ public class BookReq {
                 ", paidDat=" + paidDat +
                 ", amt=" + amt +
                 ", projectName='" + projectName + '\'' +
+                ", projectId='" + projectId + '\'' +
+                ", customerId=" + customerId +
                 ", description='" + description + '\'' +
                 ", remarks='" + remarks + '\'' +
                 '}';

@@ -18,7 +18,7 @@ public class Book {
     //是否廠商發票
     private Boolean invoice = false;
     //發票月份
-    @Column(length = 6)
+    @Column(length = 7)
     private String invYM;
     //發票號碼
     @Column(length = 10)
