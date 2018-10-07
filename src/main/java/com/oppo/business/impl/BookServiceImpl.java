@@ -48,7 +48,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookPage getAllForm(Integer page, Integer PageSize) {
         Page<Book> p = bookDao.findAll((root, query, cb) -> {
-            query.orderBy(cb.asc(root.get("id")));
+            query.orderBy(cb.desc(root.get("id")));
             return cb.and();
         }, PageRequest.of(page - 1, PageSize));
 

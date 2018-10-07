@@ -29,6 +29,7 @@
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
             <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
             <table>
+                <!--
                 <tr>
                     <td><h3>收入</h3>
                         <div id="main" style="width: 450px;height:400px;"></div>
@@ -36,6 +37,19 @@
                     <td><h3>支出</h3>
                         <div id="main2" style="width: 450px;height:400px;"></div>
                     </td>
+                </tr>
+                -->
+                <tr style="width: 100%">>
+                    <td style="width: 60%">
+                        <div id="pieChart" style="min-width: 500px; width:50%"></div>
+                    </td>
+                    <td style="width: 50%">
+                        <div id="pieChart2" style="min-width: 500px; width:50%"></div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <div id="lineChart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
                 </tr>
             </table>
 
@@ -53,6 +67,9 @@
 <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
 <script src="/js/popper.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
 
 <!-- Icons -->
 <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
@@ -63,10 +80,11 @@
 
 <script type="text/javascript">
     // 基于准备好的dom，初始化echarts实例
-    var myChart = echarts.init(document.getElementById('main'));
-    var myChart2 = echarts.init(document.getElementById('main2'));
+    /*
+    var PieChart = echarts.init(document.getElementById('main'));
+    var PieChart2 = echarts.init(document.getElementById('main2'));
 
-    option = {
+    income = {
         tooltip: {
             trigger: 'item',
             formatter: "{a} <br/>{b}: {c}萬 ({d}%)"
@@ -111,7 +129,7 @@
         ]
     };
 
-    option2 = {
+    expend = {
         tooltip: {
             trigger: 'item',
             formatter: "{a} <br/>{b}: {c}萬 ({d}%)"
@@ -156,8 +174,261 @@
         ]
     };
     // 使用刚指定的配置项和数据显示图表。
-    myChart.setOption(option);
-    myChart2.setOption(option2);
+    PieChart.setOption(income);
+    PieChart2.setOption(expend);
+*/
+    var colors = Highcharts.getOptions().colors,
+        categories = [
+            "中國信託",
+            "台灣人壽",
+            "百威旅遊",
+            "土銀",
+        ],
+        data = [
+            {
+                "y": 90,
+                "color": colors[2],
+                "drilldown": {
+                    "name": "中國信託",
+                    "categories": [
+                        "行動理專",
+                        "多媒體派版",
+                        "文薈館",
+                    ],
+                    "data": [
+                        40,
+                        20,
+                        30,
+                    ]
+                }
+            },
+            {
+                "y": 70,
+                "color": colors[1],
+                "drilldown": {
+                    "name": "台灣人壽",
+                    "categories": [
+                        "獎學金",
+                        "福委會"
+                    ],
+                    "data": [
+                        50,
+                        20,
+                    ]
+                }
+            },
+            {
+                "y": 50,
+                "color": colors[0],
+                "drilldown": {
+                    "name": "百威旅遊",
+                    "categories": [
+                        "改版"
+                    ],
+                    "data": [
+                        50
+                    ]
+                }
+            },
+            {
+                "y": 60,
+                "color": colors[3],
+                "drilldown": {
+                    "name": "土銀",
+                    "categories": [
+                        "改版",
+                    ],
+                    "data": [
+                        60
+                    ]
+                }
+            },
+        ],
+        browserData = [],
+        versionsData = [],
+        i,
+        j,
+        dataLen = data.length,
+        drillDataLen,
+        brightness;
+
+
+    // Build the data arrays
+    for (i = 0; i < dataLen; i += 1) {
+
+        // add browser data
+        browserData.push({
+            name: categories[i],
+            y: data[i].y,
+            color: data[i].color
+        });
+
+        // add version data
+        drillDataLen = data[i].drilldown.data.length;
+        for (j = 0; j < drillDataLen; j += 1) {
+            brightness = 0.2 - (j / drillDataLen) / 5;
+            versionsData.push({
+                name: data[i].drilldown.categories[j],
+                y: data[i].drilldown.data[j],
+                color: Highcharts.Color(data[i].color).brighten(brightness).get()
+            });
+        }
+    }
+
+    // Create the chart
+    Highcharts.chart('pieChart', {
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: '收入圓餅圖'
+        },
+
+        plotOptions: {
+            pie: {
+                shadow: false,
+                center: ['50%', '50%']
+            }
+        },
+        tooltip: {
+            valueSuffix: ' 萬'//千
+        },
+        series: [{
+            name: '客戶單位',
+            data: browserData,
+            size: '60%',
+            dataLabels: {
+                formatter: function () {
+                    return this.y > 5 ? this.point.name : null;
+                },
+                color: 'dark gray',
+                distance: -50
+            }
+        }, {
+            name: '專案名稱',
+            data: versionsData,
+            size: '80%',
+            innerSize: '60%',
+            dataLabels: {
+                formatter: function () {
+                    // display only if larger than 1
+                    return this.y > 1 ? '<b>' + this.point.name + ':</b> ' +
+                        this.y + ' 萬' : null;
+                }
+            },
+            id: 'projectName'
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 400
+                },
+                chartOptions: {
+                    series: [{
+                        id: 'projectName',
+                        dataLabels: {
+                            enabled: true
+                        }
+                    }]
+                }
+            }]
+        }
+    });
+
+    Highcharts.chart('pieChart2', {
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: '支出圓餅圖'
+        },
+
+        plotOptions: {
+            pie: {
+                shadow: false,
+                center: ['50%', '50%']
+            }
+        },
+        tooltip: {
+            valueSuffix: ' 萬'//千
+        },
+        series: [{
+            name: '客戶單位',
+            data: browserData,
+            size: '60%',
+            dataLabels: {
+                formatter: function () {
+                    return this.y > 5 ? this.point.name : null;
+                },
+                color: 'dark gray',
+                distance: -50
+            }
+        }, {
+            name: '專案名稱',
+            data: versionsData,
+            size: '80%',
+            innerSize: '60%',
+            dataLabels: {
+                formatter: function () {
+                    // display only if larger than 1
+                    return this.y > 1 ? '<b>' + this.point.name + ':</b> ' +
+                        this.y + ' 萬' : null;
+                }
+            },
+            id: 'projectName'
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 400
+                },
+                chartOptions: {
+                    series: [{
+                        id: 'projectName',
+                        dataLabels: {
+                            enabled: true
+                        }
+                    }]
+                }
+            }]
+        }
+    });
+
+    Highcharts.chart('lineChart', {
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: '收支趨勢圖'
+        },
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+        yAxis: {
+            title: {
+                text: '金額 (千)'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: true
+            }
+        },
+        series: [{
+            name: '收入',
+            data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+        }, {
+            name: '支出',
+            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+        }
+            , {
+                name: '利潤',
+                data: [1.9, 1.2, 2.7, -2.5, 2.9, 1.2, 2.0, 1.6, 10.2, 3.3, 2.6, 4.8]
+            }]
+    });
 </script>
 </body>
 </html>
