@@ -26,11 +26,19 @@ public class Book {
     //付款與否
     private Boolean paid = false;
     //付款日期
-    @Column(length = 6)
     private Date paidDat;
     //金額
     private Integer amt;
-
+    //建立日期
+    private Date createDat;
+    //更新日期
+    private Date updateDat;
+    //建立成員
+    @ManyToOne(targetEntity = Member.class)
+    private Member createMember;
+    //更新成員
+    @ManyToOne(targetEntity = Member.class)
+    private Member updateMember;
     //專案名稱
     @ManyToOne(targetEntity = Project.class)
     private Project project;
@@ -127,6 +135,38 @@ public class Book {
         this.incomeOrExpend = incomeOrExpend;
     }
 
+    public Date getCreateDat() {
+        return createDat;
+    }
+
+    public void setCreateDat(Date createDat) {
+        this.createDat = createDat;
+    }
+
+    public Date getUpdateDat() {
+        return updateDat;
+    }
+
+    public void setUpdateDat(Date updateDat) {
+        this.updateDat = updateDat;
+    }
+
+    public Member getCreateMember() {
+        return createMember;
+    }
+
+    public void setCreateMember(Member createMember) {
+        this.createMember = createMember;
+    }
+
+    public Member getUpdateMember() {
+        return updateMember;
+    }
+
+    public void setUpdateMember(Member updateMember) {
+        this.updateMember = updateMember;
+    }
+
     @Override
     public String toString() {
         return "Book{" +
@@ -138,6 +178,10 @@ public class Book {
                 ", paid=" + paid +
                 ", paidDat=" + paidDat +
                 ", amt=" + amt +
+                ", createDat=" + createDat +
+                ", updateDat=" + updateDat +
+                ", createMember=" + createMember +
+                ", updateMember=" + updateMember +
                 ", project=" + project +
                 ", description='" + description + '\'' +
                 ", remarks='" + remarks + '\'' +
