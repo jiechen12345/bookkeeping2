@@ -113,10 +113,10 @@ public class BookServiceImpl implements BookService {
         Book book = new Book();
         book.setId(bookReq.getId());
         book.setIncomeOrExpend(bookReq.getIncomeOrExpend());
-        book.setInvoice((bookReq.getInvoice()==1)?true:false);
+        book.setInvoice((bookReq.getInvoice() == 1) ? true : false);
         book.setInvYM(Common.get(bookReq.getInvYM()));
         book.setInvNo(Common.get(bookReq.getInvNo()));
-        book.setPaid((bookReq.getPaid()==1)?true:false);
+        book.setPaid((bookReq.getPaid() == 1) ? true : false);
         book.setPaidDat(bookReq.getPaidDat());
         book.setAmt(Common.get(bookReq.getAmt()));
         book.setDescription(Common.get(bookReq.getDescription()));
@@ -134,7 +134,7 @@ public class BookServiceImpl implements BookService {
         String num = "";
         String now = LocalDate.now().toString().replace("-", "");
         Book book = bookDao.findFirstByOrderByIdDesc();
-        if (now.equals(book.getId().substring(0, 8))) { //如果當天已有
+        if (book != null && book.getId().length() > 8 && now.equals(book.getId().substring(0, 8))) { //如果當天已有
             Long maxId = Long.parseLong(book.getId());
             maxId = maxId + 1;
             num = maxId.toString();
