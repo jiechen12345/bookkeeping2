@@ -89,7 +89,7 @@
                     </thead>
                     <tbody id="list-itens">
 
-                    <tr th:each="member:${members}" th:onclick="'javascript:openModifyModal(\''+${member.id}+'\')'">
+                    <tr th:each="member:${members}" th:onclick="'javascript:queryOne(\''+${member.id}+'\')'">
                         <td style="width:15%" align="center">
                             <!--thymeleaf 傳参到js onclick事件中-->
                             <div class="btn btn-sm btn-primary" data-toggle="modal"
@@ -159,7 +159,7 @@
         )
     }
     var $name_m = $('#name_m');
-    function openModifyModal(id) {
+    function queryOne(id) {
         alert("id 是 " + id);
         //window.location.href = "/toModifyMember2/"+ id
         $.ajax({
