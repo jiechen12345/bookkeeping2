@@ -1,5 +1,6 @@
 package com.oppo.core;
 
+import com.oppo.interceptor.LoginHendlerInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -98,17 +99,17 @@ public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
-//        registry.addInterceptor(new LoginHendlerInterceptor()).addPathPatterns("/**")
-//               .excludePathPatterns("/index.html", "/", "/api/login")
-//               .excludePathPatterns("/css/**")
-//               .excludePathPatterns("/js/**")
-//               .excludePathPatterns("/font/**")
-//               .excludePathPatterns("/img/**")
-//               .excludePathPatterns("/**/*.map");
-////               .excludePathPatterns("/**/*.map")
-////               .excludePathPatterns("/**/*.js")
-////               .excludePathPatterns("/**/*.png")
-
+        registry.addInterceptor(new LoginHendlerInterceptor()).addPathPatterns("/**")
+                .excludePathPatterns("/index.html", "/", "/api/login")
+                .excludePathPatterns("/css/**")
+                .excludePathPatterns("/js/**")
+                .excludePathPatterns("/font/**")
+                .excludePathPatterns("/img/**")
+                .excludePathPatterns("/**/*.map")
+                .excludePathPatterns("/**/*.map")
+                .excludePathPatterns("/**/*.js")
+                .excludePathPatterns("/**/*.png")
+                .excludePathPatterns("/**/*.css");
 
     }
 

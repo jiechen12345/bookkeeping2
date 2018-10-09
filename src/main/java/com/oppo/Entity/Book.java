@@ -33,15 +33,21 @@ public class Book {
     private Date createDat;
     //更新日期
     private Date updateDat;
+
     //建立成員
-    @ManyToOne(targetEntity = Member.class)
+    @JoinColumn(name="createMember_ID_FK")
+    @ManyToOne(cascade=CascadeType.ALL ,targetEntity = Member.class)
     private Member createMember;
+
     //更新成員
-    @ManyToOne(targetEntity = Member.class)
+    @JoinColumn(name="updateMember_ID_FK")
+    @ManyToOne(cascade=CascadeType.ALL ,targetEntity = Member.class)
     private Member updateMember;
+
     //專案名稱
     @ManyToOne(targetEntity = Project.class)
     private Project project;
+
     //說明
     private String description;
     //備註

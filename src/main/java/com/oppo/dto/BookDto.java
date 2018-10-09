@@ -1,5 +1,7 @@
 package com.oppo.dto;
 
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.util.Date;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Date;
 public class BookDto {
     public BookDto(){}
 
-    public BookDto(String id, String incomeOrExpend, Boolean invoice, String invYM, String invNo, Boolean paid, Date paidDat, Integer amt, Integer customerId, String customerNm, Integer projectId, String projectName, String description, String remarks) {
+    public BookDto(String id, String incomeOrExpend, Boolean invoice, String invYM, String invNo, Boolean paid, Date paidDat, Integer amt, Integer customerId, String customerNm, Integer projectId, String projectName, Date createDat, Date updateDat, Integer creatememberId, String createMemberName, Integer updateMemberId, String updateMemberName, String description, String remarks) {
         this.id = id;
         this.incomeOrExpend = incomeOrExpend;
         this.invoice = invoice;
@@ -21,6 +23,12 @@ public class BookDto {
         this.customerNm = customerNm;
         this.projectId = projectId;
         this.projectName = projectName;
+        this.createDat = createDat;
+        this.updateDat = updateDat;
+        this.creatememberId = creatememberId;
+        this.createMemberName = createMemberName;
+        this.updateMemberId = updateMemberId;
+        this.updateMemberName = updateMemberName;
         this.description = description;
         this.remarks = remarks;
     }
@@ -48,6 +56,18 @@ public class BookDto {
     private Integer projectId;
     //專案名稱
     private String projectName;
+    //建立日期
+    private Date createDat;
+    //更新日期
+    private Date updateDat;
+    //建立成員
+    private Integer creatememberId;
+    //建立成員
+    private String createMemberName;
+    //更新成員
+    private Integer updateMemberId;
+    //更新成員
+    private String updateMemberName;
     //說明
     private String description;
     //備註
@@ -165,6 +185,54 @@ public class BookDto {
         this.customerNm = customerNm;
     }
 
+    public Date getCreateDat() {
+        return createDat;
+    }
+
+    public void setCreateDat(Date createDat) {
+        this.createDat = createDat;
+    }
+
+    public Date getUpdateDat() {
+        return updateDat;
+    }
+
+    public void setUpdateDat(Date updateDat) {
+        this.updateDat = updateDat;
+    }
+
+    public Integer getCreatememberId() {
+        return creatememberId;
+    }
+
+    public void setCreatememberId(Integer creatememberId) {
+        this.creatememberId = creatememberId;
+    }
+
+    public String getCreateMemberName() {
+        return createMemberName;
+    }
+
+    public void setCreateMemberName(String createMemberName) {
+        this.createMemberName = createMemberName;
+    }
+
+    public Integer getUpdateMemberId() {
+        return updateMemberId;
+    }
+
+    public void setUpdateMemberId(Integer updateMemberId) {
+        this.updateMemberId = updateMemberId;
+    }
+
+    public String getUpdateMemberName() {
+        return updateMemberName;
+    }
+
+    public void setUpdateMemberName(String updateMemberName) {
+        this.updateMemberName = updateMemberName;
+    }
+
     @Override
     public String toString() {
         return "BookDto{" +
@@ -177,9 +245,15 @@ public class BookDto {
                 ", paidDat=" + paidDat +
                 ", amt=" + amt +
                 ", customerId=" + customerId +
-                ", customerNm=" + customerNm +
+                ", customerNm='" + customerNm + '\'' +
                 ", projectId=" + projectId +
                 ", projectName='" + projectName + '\'' +
+                ", createDat=" + createDat +
+                ", updateDat=" + updateDat +
+                ", creatememberId=" + creatememberId +
+                ", createMemberName='" + createMemberName + '\'' +
+                ", updateMemberId=" + updateMemberId +
+                ", updateMemberName='" + updateMemberName + '\'' +
                 ", description='" + description + '\'' +
                 ", remarks='" + remarks + '\'' +
                 '}';

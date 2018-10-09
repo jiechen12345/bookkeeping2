@@ -1,13 +1,12 @@
 package com.oppo.business.impl;
 
+import com.oppo.Entity.*;
 import com.oppo.Entity.Book;
-import com.oppo.Entity.Book;
-import com.oppo.Entity.Customer;
-import com.oppo.Entity.Project;
 import com.oppo.business.BookService;
 import com.oppo.common.Common;
 import com.oppo.dao.BookDao;
 import com.oppo.dao.CustomerDao;
+import com.oppo.dao.MemberDao;
 import com.oppo.dao.ProjectDao;
 import com.oppo.dto.BookDto;
 import com.oppo.dto.BookPage;
@@ -36,7 +35,8 @@ public class BookServiceImpl implements BookService {
     private ProjectDao projectDao;
     @Autowired
     private CustomerDao customerDao;
-
+    @Autowired
+    private MemberDao memberDao;
     @Override
     public List<BookDto> findAll() {
         List<BookDto> bookDtoList = bookDao.findAll(PageRequest.of(0, 5)).stream()
@@ -68,6 +68,12 @@ public class BookServiceImpl implements BookService {
                                 it.getProject().getCustomer().getCustNm(),
                                 it.getProject().getId(),
                                 it.getProject().getProjectName(),
+                                it.getCreateDat(),
+                                it.getUpdateDat(),
+                        (it.getCreateMember()!=null)?it.getCreateMember().getId():0,
+                        (it.getCreateMember()!=null)?it.getCreateMember().getName():"",
+                        (it.getUpdateMember()!=null)?it.getUpdateMember().getId():0,
+                        (it.getUpdateMember()!=null)?it.getUpdateMember().getName():"",
                                 it.getDescription(),
                                 it.getRemarks()
                         )
@@ -121,7 +127,12 @@ public class BookServiceImpl implements BookService {
         book.setAmt(Common.get(bookReq.getAmt()));
         book.setDescription(Common.get(bookReq.getDescription()));
         book.setRemarks(Common.get(bookReq.getRemarks()));
+        book.setCreateDat(bookReq.getCreateDat());
 
+        if (bookReq.getCreatememberId() != null) {
+            Member member = memberDao.findById(bookReq.getCreatememberId()).get();
+            book.setCreateMember(member);
+        }
         if (bookReq.getProjectId() != null) {
             Project project = projectDao.findById(Integer.parseInt(bookReq.getProjectId())).get();
             book.setProject(project);

@@ -28,6 +28,18 @@ public class BookReq {
     private String projectId;
     //客戶名稱
     private Integer customerId ;
+    //建立日期
+    private Date createDat;
+    //更新日期
+    private Date updateDat;
+    //建立成員
+    private Integer creatememberId;
+    //建立成員
+    private String createMemberName;
+    //更新成員
+    private Integer updateMemberId;
+    //更新成員
+    private String updateMemberName;
     //說明
     private String description;
     //備註
@@ -137,6 +149,54 @@ public class BookReq {
         this.customerId = customerId;
     }
 
+    public Date getCreateDat() {
+        return createDat;
+    }
+
+    public void setCreateDat(Date createDat) {
+        this.createDat = createDat;
+    }
+
+    public Date getUpdateDat() {
+        return updateDat;
+    }
+
+    public void setUpdateDat(Date updateDat) {
+        this.updateDat = updateDat;
+    }
+
+    public Integer getCreatememberId() {
+        return creatememberId;
+    }
+
+    public void setCreatememberId(Integer creatememberId) {
+        this.creatememberId = creatememberId;
+    }
+
+    public String getCreateMemberName() {
+        return createMemberName;
+    }
+
+    public void setCreateMemberName(String createMemberName) {
+        this.createMemberName = createMemberName;
+    }
+
+    public Integer getUpdateMemberId() {
+        return updateMemberId;
+    }
+
+    public void setUpdateMemberId(Integer updateMemberId) {
+        this.updateMemberId = updateMemberId;
+    }
+
+    public String getUpdateMemberName() {
+        return updateMemberName;
+    }
+
+    public void setUpdateMemberName(String updateMemberName) {
+        this.updateMemberName = updateMemberName;
+    }
+
     @Override
     public String toString() {
         return "BookReq{" +
@@ -151,6 +211,12 @@ public class BookReq {
                 ", projectName='" + projectName + '\'' +
                 ", projectId='" + projectId + '\'' +
                 ", customerId=" + customerId +
+                ", createDat=" + createDat +
+                ", updateDat=" + updateDat +
+                ", creatememberId=" + creatememberId +
+                ", createMemberName='" + createMemberName + '\'' +
+                ", updateMemberId=" + updateMemberId +
+                ", updateMemberName='" + updateMemberName + '\'' +
                 ", description='" + description + '\'' +
                 ", remarks='" + remarks + '\'' +
                 '}';

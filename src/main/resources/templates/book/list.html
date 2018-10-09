@@ -25,6 +25,9 @@
         // $("#amt").attr('disabled', false);
         // $("#paidDat").attr('disabled', false);
         //----
+        var Today = new Date();
+        $("#createDat").val( (Today.getFullYear()) + "-" + (Today.getMonth() + 1) + '-' + ((Today.getDate().toString().length == 1) ? '0' + Today.getDate() : Today.getDate()));
+        $("#createMemberName").val($("#loginUserName").val());
         var customerId = $("#customerId option:selected").val();
         findProjectByCustomerIdAjax(customerId)
         $("#customerId").change(function () {
@@ -92,10 +95,12 @@
             <div>
                 <form id='myForm' class="needs-validation" novalidate>
                     <div class="form-row">
+                        <!--
                         <div class="col-md-2 mb-1">
                             <label for="id">編號</label>
                             <input maxlength="12" type="text" class="form-control" name="id" id="id" readonly>
                         </div>
+                        -->
                         <div class="col-md-2 mb-1">
                             <label for="incomeOrExpend">帳務類別</label>
                             <select class="form-control" id="incomeOrExpend" name="incomeOrExpend">
@@ -110,13 +115,20 @@
                                         th:text="${customer.custNm}"></option>
                             </select>
                         </div>
-                        <div class="col-md-4 mb-1">
+                        <div class="col-md-3 mb-1">
                             <label for="projectId">專案名稱</label>
                             <select class="form-control" name="projectId" id="projectId">
 
                             </select>
                         </div>
-
+                        <div class="col-md-3 mb-1">
+                            <label for="amt">金額</label>
+                            <input name="amt" id="amt" maxlength="14" type="text" class="form-control"
+                                   placeholder="1,000" onkeyup="value=value.replace(/[^\d]/g,'') " required>
+                            <div class="invalid-feedback">
+                                請輸入金額.
+                            </div>
+                        </div>
                         <div class="col-md-2 mb-1">
                             <label for="invoice">廠商發票</label>
                             <select class="form-control" name="invoice" id="invoice" onchange="invCl();">
@@ -133,7 +145,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3 mb-1">
+                        <div class="col-md-2 mb-1">
                             <label for="invNo">發票號碼</label>
                             <div class="input-group">
                                 <input maxlength="10" type="text" class="form-control" name="invNo" id="invNo"
@@ -141,6 +153,14 @@
                                 <div class="invalid-feedback">
                                     請輸入發票號碼.
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <label for="description">說明</label>
+                            <input id="description" name="description" type="text" class="form-control" placeholder="說明"
+                                   required>
+                            <div class="invalid-feedback">
+                                請輸入說明.
                             </div>
                         </div>
                     </div>
@@ -160,23 +180,28 @@
                                 請輸入付款日.
                             </div>
                         </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="paidDat">建立人員</label>
+                            <input type="text" readonly class="form-control" id="createMemberName"
+                                   name="createMemberName">
+                        </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="paidDat">建立時間</label>
+                            <input type="text" readonly class="form-control" id="createDat" name="createDat">
 
-                        <div class="col-md-3 mb-1">
-                            <label for="amt">金額</label>
-                            <input name="amt" id="amt" maxlength="14" type="text" class="form-control"
-                                   placeholder="1,000" onkeyup="value=value.replace(/[^\d]/g,'') " required>
-                            <div class="invalid-feedback">
-                                請輸入金額.
-                            </div>
                         </div>
-                        <div class="col-md-4 mb-1">
-                            <label for="description">說明</label>
-                            <input id="description" name="description" type="text" class="form-control" placeholder="說明"
-                                   required>
-                            <div class="invalid-feedback">
-                                請輸入說明.
-                            </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="paidDat">異動人員</label>
+                            <input type="text" readonly class="form-control" id="updateMemberName"
+                                   name="updateMemberName">
+
                         </div>
+                        <div class="col-md-2 mb-1">
+                            <label for="paidDat">異動時間</label>
+                            <input type="text" readonly class="form-control" id="updateDat" name="updateDat">
+                        </div>
+
+
                     </div>
                     <div class="form-row">
                         <div class="col-md-4 mb-1" style="width: 40%">
@@ -198,6 +223,7 @@
                                         name="query" data-toggle="modal">查詢
                                 </button>
                                 <input type="text" id="status">
+                                <input type="hidden" id="creatememberId" name="creatememberId" th:value="${session.loginUser.getId()}">
                             </div>
                         </div>
                     </div>

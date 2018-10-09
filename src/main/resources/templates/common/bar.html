@@ -7,7 +7,8 @@
 <body th:inline="text">
 <!--topbar-->
 <nav class="navbar navbar-dark fixed-top bg-info flex-md-nowrap p-0 shadow" th:fragment="top_bar">
-    <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="http://localhost:8080/main.html">[[${session.loginUser}]]</a>
+    <a class="navbar-brand col-sm-2 col-md-2 mr-0" href="http://localhost:8080/main.html">[[${session.loginUser.getName()}]]</a>
+    <input type="hidden" id="loginUserName" name="loginUserName" th:value="${session.loginUser.getName()}">
     <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
             <a class="nav-link" style="color: #23272b"  href="/main.html">Sign out</a>

@@ -1,6 +1,7 @@
 package com.oppo.Entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 /**
@@ -26,7 +27,11 @@ public class Member {
     private String name;
     @ManyToOne(targetEntity = Departemt.class)
     private Departemt departemt;
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="createMember")
+    private List<Book> createBooks;
 
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="updateMember")
+    private List<Book> updateBooks;
     public String getAccount() {
         return account;
     }
@@ -67,6 +72,22 @@ public class Member {
         this.departemt = departemt;
     }
 
+    public List<Book> getCreateBooks() {
+        return createBooks;
+    }
+
+    public void setCreateBooks(List<Book> createBooks) {
+        this.createBooks = createBooks;
+    }
+
+    public List<Book> getUpdateBooks() {
+        return updateBooks;
+    }
+
+    public void setUpdateBooks(List<Book> updateBooks) {
+        this.updateBooks = updateBooks;
+    }
+
     @Override
     public String toString() {
         return "Member{" +
@@ -75,7 +96,8 @@ public class Member {
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", departemt=" + departemt +
+                ", createBooks=" + createBooks +
+                ", updateBooks=" + updateBooks +
                 '}';
     }
-
 }
