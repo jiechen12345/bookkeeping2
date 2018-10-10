@@ -12,5 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface BookDao extends JpaRepository<Book, String>, JpaSpecificationExecutor<Book> {
     Book findFirstByOrderByIdAsc();
     Book findFirstByOrderByIdDesc();
-
+    Book findBookByIdEquals(String id);
 }

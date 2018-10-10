@@ -2,10 +2,13 @@ package com.oppo.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.oppo.Entity.Book;
 import com.oppo.Entity.Project;
 import com.oppo.business.BookService;
+import com.oppo.dao.BookDao;
 import com.oppo.dao.CustomerDao;
 import com.oppo.dao.ProjectDao;
+import com.oppo.dto.BookDto;
 import com.oppo.dto.ProjectDto;
 import com.oppo.request.BookReq;
 import jdk.nashorn.internal.parser.JSONParser;
@@ -28,9 +31,8 @@ public class BookAjaxApi {
     @Autowired
     private ProjectDao projectDao;
     @Autowired
-    private CustomerDao customerDao;
-    @Autowired
     private BookService bookService;
+
 
     @RequestMapping(method = RequestMethod.POST)
     public void creat(@RequestBody BookReq bookReq) {
@@ -50,6 +52,11 @@ public class BookAjaxApi {
 //        JSONArray jsArr = JSONArray.fromObject(projects);
 //        return jsArr;
     }
+    @RequestMapping(value = "/queryOne", method = RequestMethod.POST)
+    public BookDto queryOne(@RequestBody String bookId) {
+        BookDto bookDto=bookService.queryOne(bookId);
+        return bookDto;
+    }
     private ProjectDto getProjectDto(Project project) {
         ProjectDto projectDto = new ProjectDto();
         projectDto.setId(project.getId());
@@ -57,5 +64,6 @@ public class BookAjaxApi {
         projectDto.setCustomerId(project.getCustomer().getId());
         return projectDto;
     }
+
 
 }

@@ -10,9 +10,7 @@ import java.util.List;
  */
 public interface BookService {
     List<BookDto> findAll();
-
-//    BookDto findOne(Integer id);
-
+    BookDto queryOne(String id);
     BookPage getAllForm(Integer page, Integer pageSize);
     void create(BookReq memberReq);
 //

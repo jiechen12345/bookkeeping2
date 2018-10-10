@@ -358,23 +358,7 @@
                         location.reload();
                     },
                     error: function (jqXHR, exception) {
-                        var msg = '';
-                        if (jqXHR.status === 0) {
-                            msg = 'Not connect.\n Verify Network.';
-                        } else if (jqXHR.status == 404) {
-                            msg = 'Requested page not found. [404]';
-                        } else if (jqXHR.status == 500) {
-                            msg = 'Internal Server Error [500].';
-                        } else if (exception === 'parsererror') {
-                            msg = 'Requested JSON parse failed.';
-                        } else if (exception === 'timeout') {
-                            msg = 'Time out error.';
-                        } else if (exception === 'abort') {
-                            msg = 'Ajax request aborted.';
-                        } else {
-                            msg = 'Uncaught Error.\n' + jqXHR.responseText;
-                        }
-                        alert(msg);
+                        ajaxError(jqXHR, exception);
                     },
                 });
                 break;
@@ -385,26 +369,31 @@
         }
         alert(status);
     }
+
     function queryOne(id) {
         alert("id 是 " + id);
         //window.location.href = "/toModifyMember2/"+ id
         $.ajax({
                 contentType: 'application/json; charset=UTF-8',
                 type: 'POST',
-                data: JSON.stringify(id) ,
+                data: (id),
                 async: false,
                 dataType: 'json',
-                url: "/test/search",
+                url: "/books/queryOne",
+                success: function (data) {
+                    alert('OK');
+                    //todo 未來要改成回到當頁
+                    location.reload();
+                },
+                error: function (jqXHR, exception) {
+                    ajaxError(jqXHR, exception);
+                },
             }
-        ).done(function (resp) {
-            alert(JSON.stringify(resp))
-            $name_m.val(resp.name);
+        )
 
-        }).fail(function (xhr) {
-            alert(xhr.responseText);
-        })
 
     }
+
     function abc() {
 
         $('#create').attr('disabled', true);
@@ -458,6 +447,7 @@
         }
     }
 
+    //元件控制
     function paidCl() {
         var paid = $('#paid').val();
         if (paid == 1) {
@@ -488,6 +478,25 @@
         language: 'zh-TW'
     });
 
+    function ajaxError(jqXHR, exception) {
+        var msg = '';
+        if (jqXHR.status === 0) {
+            msg = 'Not connect.\n Verify Network.';
+        } else if (jqXHR.status == 404) {
+            msg = 'Requested page not found. [404]';
+        } else if (jqXHR.status == 500) {
+            msg = 'Internal Server Error [500].';
+        } else if (exception === 'parsererror') {
+            msg = 'Requested JSON parse failed.';
+        } else if (exception === 'timeout') {
+            msg = 'Time out error.';
+        } else if (exception === 'abort') {
+            msg = 'Ajax request aborted.';
+        } else {
+            msg = 'Uncaught Error.\n' + jqXHR.responseText;
+        }
+        alert(msg);
+    }
 
 </script>
 </body>

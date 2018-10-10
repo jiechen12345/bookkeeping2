@@ -37,6 +37,7 @@ public class BookServiceImpl implements BookService {
     private CustomerDao customerDao;
     @Autowired
     private MemberDao memberDao;
+
     @Override
     public List<BookDto> findAll() {
         List<BookDto> bookDtoList = bookDao.findAll(PageRequest.of(0, 5)).stream()
@@ -70,10 +71,10 @@ public class BookServiceImpl implements BookService {
                                 it.getProject().getProjectName(),
                                 it.getCreateDat(),
                                 it.getUpdateDat(),
-                        (it.getCreateMember()!=null)?it.getCreateMember().getId():0,
-                        (it.getCreateMember()!=null)?it.getCreateMember().getName():"",
-                        (it.getUpdateMember()!=null)?it.getUpdateMember().getId():0,
-                        (it.getUpdateMember()!=null)?it.getUpdateMember().getName():"",
+                                (it.getCreateMember() != null) ? it.getCreateMember().getId() : 0,
+                                (it.getCreateMember() != null) ? it.getCreateMember().getName() : "",
+                                (it.getUpdateMember() != null) ? it.getUpdateMember().getId() : 0,
+                                (it.getUpdateMember() != null) ? it.getUpdateMember().getName() : "",
                                 it.getDescription(),
                                 it.getRemarks()
                         )
@@ -92,6 +93,13 @@ public class BookServiceImpl implements BookService {
         bookDao.save(book);
     }
 
+    @Override
+    public BookDto queryOne(String bookId) {
+        Book book = bookDao.findById(bookId).get();
+        BookDto bookDto = getBookDto(book);
+        return bookDto;
+    }
+
     private BookDto getBookDto(Book book) {
         BookDto bookDto = new BookDto();
         bookDto.setId(book.getId());
@@ -104,7 +112,16 @@ public class BookServiceImpl implements BookService {
         bookDto.setAmt(book.getAmt());
         bookDto.setDescription(book.getDescription());
         bookDto.setRemarks(book.getRemarks());
-
+        bookDto.setCreateDat(book.getCreateDat());
+        bookDto.setUpdateDat(book.getUpdateDat());
+        if (book.getCreateMember() != null) {
+            bookDto.setCreatememberId(book.getCreateMember().getId());
+            bookDto.setCreateMemberName(book.getCreateMember().getName());
+        }
+        if (book.getUpdateMember() != null) {
+            bookDto.setUpdateMemberId(book.getUpdateMember().getId());
+            bookDto.setUpdateMemberName(book.getUpdateMember().getName());
+        }
         if (book.getProject() != null) {
             bookDto.setProjectId(book.getProject().getId());
             bookDto.setProjectName(book.getProject().getProjectName());
@@ -128,10 +145,15 @@ public class BookServiceImpl implements BookService {
         book.setDescription(Common.get(bookReq.getDescription()));
         book.setRemarks(Common.get(bookReq.getRemarks()));
         book.setCreateDat(bookReq.getCreateDat());
+        book.setUpdateDat(bookReq.getUpdateDat());
 
         if (bookReq.getCreatememberId() != null) {
             Member member = memberDao.findById(bookReq.getCreatememberId()).get();
             book.setCreateMember(member);
+        }
+        if (bookReq.getUpdateMemberId() != null) {
+            Member member = memberDao.findById(bookReq.getUpdateMemberId()).get();
+            book.setUpdateMember(member);
         }
         if (bookReq.getProjectId() != null) {
             Project project = projectDao.findById(Integer.parseInt(bookReq.getProjectId())).get();
