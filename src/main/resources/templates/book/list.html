@@ -381,7 +381,8 @@
                 dataType: 'json',
                 url: "/books/queryOne",
                 success: function (data) {
-                    alert('OK');
+                    alert(JSON.stringify(data))
+                    alert(data.id);
                     //todo 未來要改成回到當頁
                     location.reload();
                 },
