@@ -20,7 +20,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         //----測試用
-        $('.form-control').attr('disabled', true);
+        // $('.form-control').attr('disabled', true);
         // $("#incomeOrExpend").attr('disabled', false);
         // $("#amt").attr('disabled', false);
         // $("#paidDat").attr('disabled', false);
@@ -129,7 +129,7 @@
                         </div>
                         <div class="col-md-2 mb-1">
                             <label for="invoice">廠商發票</label>
-                            <select class="form-control" name="invoice" id="invoice" onchange="invCl();">
+                            <select class="form-control" name="invoice" id="invoice" onchange="componentCl();">
                                 <option value="1">Y</option>
                                 <option value="0">N</option>
                             </select>
@@ -165,7 +165,7 @@
                     <div class="form-row">
                         <div class="col-md-2 mb-1">
                             <label for="paid">付款與否</label>
-                            <select class="form-control" name="paid" id="paid" onchange="paidCl();">
+                            <select class="form-control" name="paid" id="paid" onchange="componentCl();">
                                 <option value="1">Y</option>
                                 <option value="0">N</option>
                             </select>
@@ -179,23 +179,25 @@
                             </div>
                         </div>
                         <div class="col-md-2 mb-1">
-                            <label for="paidDat">建立人員</label>
+                            <label for="createMemberName">建立人員</label>
                             <input type="text" readonly class="form-control" id="createMemberName"
                                    name="createMemberName">
+                            <input type="hidden" id="createMemberId" name="createMemberId"
+                                   th:value="${session.loginUser.getId()}">
                         </div>
                         <div class="col-md-2 mb-1">
-                            <label for="paidDat">建立時間</label>
+                            <label for="createDat">建立時間</label>
                             <input type="text" readonly class="form-control" id="createDat" name="createDat">
 
                         </div>
                         <div class="col-md-2 mb-1">
-                            <label for="paidDat">異動人員</label>
+                            <label for="updateMemberName">異動人員</label>
                             <input type="text" readonly class="form-control" id="updateMemberName"
                                    name="updateMemberName">
-
+                            <input type="hidden" id="updateMemberId" name="updateMemberId">
                         </div>
                         <div class="col-md-2 mb-1">
-                            <label for="paidDat">異動時間</label>
+                            <label for="updateDat">異動時間</label>
                             <input type="text" readonly class="form-control" id="updateDat" name="updateDat">
                         </div>
 
@@ -211,22 +213,34 @@
                                 <button class="btn btn-info" onclick="openAddModal();" type="button" id="query"
                                         name="query" data-toggle="modal">查詢
                                 </button>
+                                <!--<button class="btn btn-success" id="create" name="create"-->
+                                <!--onclick="$('#status').val('create');$('.form-control').attr('disabled', false);"-->
+                                <!--type="button">新增-->
+                                <!--</button>-->
                                 <button class="btn btn-success" id="create" name="create"
-                                        onclick="$('#status').val('create');$('.form-control').attr('disabled', false);"
-                                        type="button">新增
+                                        onclick="$('#status').val('create');"
+                                        type="submit">新增
                                 </button>
                                 <button class="btn btn-danger" id="delete" name="delete"
                                         onclick="$('#status').val('delete');" type="submit">刪除
                                 </button>
+                                <!--<button class="btn btn-primary" id="update" name="update"-->
+                                <!--onclick="$('#status').val('update');$('.form-control').attr('disabled', false);"-->
+                                <!--type="button">修改-->
+                                <!--</button>-->
                                 <button class="btn btn-primary" id="update" name="update"
-                                        onclick="$('#status').val('update');$('.form-control').attr('disabled', false);"
-                                        type="button">修改
+                                        onclick="$('#status').val('update');"
+                                        type="submit">修改
                                 </button>
-                                <button class="btn btn-secondary" id="confirm" name="confirm" type="submit">確定
+                                <!--<button class="btn btn-secondary" id="confirm" name="confirm" type="submit">確定-->
+                                <!--</button>-->
+                                </button>
+                                <button class="btn btn-secondary" onclick="location.reload();" id="reset" name="reset"
+                                        type="button">清空
                                 </button>
                                 <input type="text" id="status">
-                                <input type="hidden" id="creatememberId" name="creatememberId"
-                                       th:value="${session.loginUser.getId()}">
+
+
                             </div>
                         </div>
                     </div>
@@ -351,6 +365,7 @@
                     type: "post",
                     //data: JSON.stringify({'id': id,'amt': amt,'incomeOrExpend':incomeOrExpend}) ,
                     data: JSON.stringify(formData),
+                    async: false,
                     url: "/books",
                     success: function (data) {
                         alert('OK');
@@ -362,8 +377,26 @@
                     },
                 });
                 break;
+
             case 'update':
-                alert(2);
+                var $form = $("#myForm");
+                var formData = getFormData($form);
+                $.ajax({
+                    contentType: 'application/json; charset=UTF-8',
+                    type: "PUT",
+                    //data: JSON.stringify({'id': id,'amt': amt,'incomeOrExpend':incomeOrExpend}) ,
+                    data: JSON.stringify(formData),
+                    async: false,
+                    url: "/books",
+                    success: function (data) {
+                        alert('OK');
+                        //todo 未來要改成回到當頁
+                        location.reload();
+                    },
+                    error: function (jqXHR, exception) {
+                        ajaxError(jqXHR, exception);
+                    },
+                });
                 break;
 
         }
@@ -381,10 +414,27 @@
                 dataType: 'json',
                 url: "/books/queryOne",
                 success: function (data) {
-                    alert(JSON.stringify(data))
-                    alert(data.id);
-                    //todo 未來要改成回到當頁
-                    location.reload();
+                    $('#id').val(data.id);
+                    $('#incomeOrExpend').val(data.incomeOrExpend);
+                    $('#invoice').val((data.invoice)?'1':'0');
+                    $('#invYM').val(data.invYM);
+                    $('#invNo').val(data.invNo);
+                    $('#paid').val((data.paid)?'1':'0');
+                    $('#paidDat').val((data.paidDat!=null)?data.paidDat.substring(0,10):'');
+                    $('#amt').val(data.amt);
+                    $('#customerId').val(data.customerId);
+                    findProjectByCustomerIdAjax($('#customerId').val());//重讀二階下拉
+                    $('#projectId').val(data.projectId);
+                    $('#createDat').val((data.createDat!=null)?data.createDat.substring(0,10):'');
+                    $('#updateDat').val((data.updateDat!=null)?data.updateDat.substring(0,10):'');
+                    $('#description').val(data.description);
+                    $('#remarks').val(data.remarks);
+                    $('#createMemberId').val(data.createMemberId);
+                    $('#createMemberName').val(data.createMemberName);
+                    $('#updateMemberId').val(data.updateMemberId);
+                    $('#updateMemberName').val(data.updateMemberName);
+                    componentCl();//把該關閉的元件關掉
+
                 },
                 error: function (jqXHR, exception) {
                     ajaxError(jqXHR, exception);
@@ -432,7 +482,7 @@
     }
 
     //元件控制
-    function invCl() {
+    function componentCl() {
         var invStatus = $('#invoice').val();
         if (invStatus == 1) {
             $('#invNo').attr('disabled', false);
@@ -446,10 +496,6 @@
             $('#invNo').attr('placeholder', '');
 
         }
-    }
-
-    //元件控制
-    function paidCl() {
         var paid = $('#paid').val();
         if (paid == 1) {
             $('#paidDat').attr('disabled', false);

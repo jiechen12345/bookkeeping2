@@ -33,7 +33,7 @@ public class BookReq {
     //更新日期
     private Date updateDat;
     //建立成員
-    private Integer creatememberId;
+    private Integer createMemberId;
     //建立成員
     private String createMemberName;
     //更新成員
@@ -165,12 +165,12 @@ public class BookReq {
         this.updateDat = updateDat;
     }
 
-    public Integer getCreatememberId() {
-        return creatememberId;
+    public Integer getCreateMemberId() {
+        return createMemberId;
     }
 
-    public void setCreatememberId(Integer creatememberId) {
-        this.creatememberId = creatememberId;
+    public void setCreatemMmberId(Integer createMemberId) {
+        this.createMemberId = createMemberId;
     }
 
     public String getCreateMemberName() {
@@ -213,7 +213,7 @@ public class BookReq {
                 ", customerId=" + customerId +
                 ", createDat=" + createDat +
                 ", updateDat=" + updateDat +
-                ", creatememberId=" + creatememberId +
+                ", createMemberId=" + createMemberId +
                 ", createMemberName='" + createMemberName + '\'' +
                 ", updateMemberId=" + updateMemberId +
                 ", updateMemberName='" + updateMemberName + '\'' +

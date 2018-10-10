@@ -10,7 +10,7 @@ import java.util.Date;
 public class BookDto {
     public BookDto(){}
 
-    public BookDto(String id, String incomeOrExpend, Boolean invoice, String invYM, String invNo, Boolean paid, Date paidDat, Integer amt, Integer customerId, String customerNm, Integer projectId, String projectName, Date createDat, Date updateDat, Integer creatememberId, String createMemberName, Integer updateMemberId, String updateMemberName, String description, String remarks) {
+    public BookDto(String id, String incomeOrExpend, Boolean invoice, String invYM, String invNo, Boolean paid, Date paidDat, Integer amt, Integer customerId, String customerNm, Integer projectId, String projectName, Date createDat, Date updateDat, Integer createMemberId, String createMemberName, Integer updateMemberId, String updateMemberName, String description, String remarks) {
         this.id = id;
         this.incomeOrExpend = incomeOrExpend;
         this.invoice = invoice;
@@ -25,7 +25,7 @@ public class BookDto {
         this.projectName = projectName;
         this.createDat = createDat;
         this.updateDat = updateDat;
-        this.creatememberId = creatememberId;
+        this.createMemberId = createMemberId;
         this.createMemberName = createMemberName;
         this.updateMemberId = updateMemberId;
         this.updateMemberName = updateMemberName;
@@ -61,7 +61,7 @@ public class BookDto {
     //更新日期
     private Date updateDat;
     //建立成員
-    private Integer creatememberId;
+    private Integer createMemberId;
     //建立成員
     private String createMemberName;
     //更新成員
@@ -201,12 +201,12 @@ public class BookDto {
         this.updateDat = updateDat;
     }
 
-    public Integer getCreatememberId() {
-        return creatememberId;
+    public Integer getCreateMemberId() {
+        return createMemberId;
     }
 
-    public void setCreatememberId(Integer creatememberId) {
-        this.creatememberId = creatememberId;
+    public void setCreateMemberId(Integer createMemberId) {
+        this.createMemberId = createMemberId;
     }
 
     public String getCreateMemberName() {
@@ -250,7 +250,7 @@ public class BookDto {
                 ", projectName='" + projectName + '\'' +
                 ", createDat=" + createDat +
                 ", updateDat=" + updateDat +
-                ", creatememberId=" + creatememberId +
+                ", createMemberId=" + createMemberId +
                 ", createMemberName='" + createMemberName + '\'' +
                 ", updateMemberId=" + updateMemberId +
                 ", updateMemberName='" + updateMemberName + '\'' +
