@@ -44,6 +44,8 @@ public class BookReq {
     private String description;
     //備註
     private String remarks;
+    //CRUD
+    private String status;
 
     public String getId() {
         return id;
@@ -197,10 +199,23 @@ public class BookReq {
         this.updateMemberName = updateMemberName;
     }
 
+    public void setCreateMemberId(Integer createMemberId) {
+        this.createMemberId = createMemberId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "BookReq{" +
-                "id='" + id + '\'' +
+                "status='" + status + '\'' +
+                "*id='" + id + '\'' +
                 ", incomeOrExpend='" + incomeOrExpend + '\'' +
                 ", invoice=" + invoice +
                 ", invYM='" + invYM + '\'' +

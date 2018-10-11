@@ -89,8 +89,23 @@ public class BookServiceImpl implements BookService {
     @Override
     public void create(BookReq bookReq) {
         bookReq.setId(getSerialNumber());
-        Book book = getSetupBook(bookReq);
+        Book book = new Book();
+        book = getSetupBook(book, bookReq);
         bookDao.save(book);
+    }
+
+    @Override
+    public void update(BookReq bookReq) {
+        Book book = bookDao.findById(bookReq.getId()).get();
+        book = getSetupBook(book, bookReq);
+        //Book book = getSetupBook(bookReq, );
+        bookDao.save(book);
+    }
+
+    @Override
+    public void delete(String id) {
+        Book book = bookDao.findById(id).get();
+        bookDao.delete(book);
     }
 
     @Override
@@ -133,9 +148,24 @@ public class BookServiceImpl implements BookService {
         return bookDto;
     }
 
-    private Book getSetupBook(BookReq bookReq) {
-        Book book = new Book();
-        book.setId(bookReq.getId());
+    private Book getSetupBook(Book book, BookReq bookReq) {
+        //Book book = new Book();
+        System.out.println(bookReq.toString());
+        if ("create".equals(bookReq.getStatus())) {
+            book.setId(bookReq.getId());
+            book.setCreateDat(bookReq.getCreateDat());
+            if (bookReq.getCreateMemberId() != null) {
+                Member member = memberDao.findById(bookReq.getCreateMemberId()).get();
+                book.setCreateMember(member);
+            }
+        }
+        if ("update".equals(bookReq.getStatus())) {
+            if (bookReq.getUpdateMemberId() != null) {
+                Member member = memberDao.findById(bookReq.getUpdateMemberId()).get();
+                book.setUpdateMember(member);
+            }
+            book.setUpdateDat(bookReq.getUpdateDat());
+        }
         book.setIncomeOrExpend(bookReq.getIncomeOrExpend());
         book.setInvoice((bookReq.getInvoice() == 1) ? true : false);
         book.setInvYM(Common.get(bookReq.getInvYM()));
@@ -145,17 +175,7 @@ public class BookServiceImpl implements BookService {
         book.setAmt(Common.get(bookReq.getAmt()));
         book.setDescription(Common.get(bookReq.getDescription()));
         book.setRemarks(Common.get(bookReq.getRemarks()));
-        book.setCreateDat(bookReq.getCreateDat());
-        book.setUpdateDat(bookReq.getUpdateDat());
 
-        if (bookReq.getCreateMemberId() != null) {
-            Member member = memberDao.findById(bookReq.getCreateMemberId()).get();
-            book.setCreateMember(member);
-        }
-        if (bookReq.getUpdateMemberId() != null) {
-            Member member = memberDao.findById(bookReq.getUpdateMemberId()).get();
-            book.setUpdateMember(member);
-        }
         if (bookReq.getProjectId() != null) {
             Project project = projectDao.findById(Integer.parseInt(bookReq.getProjectId())).get();
             book.setProject(project);

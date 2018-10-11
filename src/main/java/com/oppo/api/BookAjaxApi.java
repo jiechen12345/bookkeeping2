@@ -38,8 +38,19 @@ public class BookAjaxApi {
     public void creat(@RequestBody BookReq bookReq) {
         System.out.println(bookReq.toString());
         bookService.create(bookReq);
-//        JSONArray jsArr = JSONArray.fromObject(projects);
-//        return jsArr;
+
+    }
+
+    @RequestMapping(method = RequestMethod.PUT)
+    public void update(@RequestBody BookReq bookReq) {
+        System.out.println(bookReq.toString());
+        bookService.update(bookReq);
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE)
+    public void delete(@RequestBody String bookId) {
+        System.out.println("要刪除的= "+bookId);
+        bookService.delete(bookId);
     }
 
     @RequestMapping(value = "/findProjectByCustomerId", method = RequestMethod.POST)
@@ -52,11 +63,13 @@ public class BookAjaxApi {
 //        JSONArray jsArr = JSONArray.fromObject(projects);
 //        return jsArr;
     }
+
     @RequestMapping(value = "/queryOne", method = RequestMethod.POST)
     public BookDto queryOne(@RequestBody String bookId) {
-        BookDto bookDto=bookService.queryOne(bookId);
+        BookDto bookDto = bookService.queryOne(bookId);
         return bookDto;
     }
+
     private ProjectDto getProjectDto(Project project) {
         ProjectDto projectDto = new ProjectDto();
         projectDto.setId(project.getId());

@@ -3,6 +3,7 @@ package com.oppo.business;
 import com.oppo.dto.BookDto;
 import com.oppo.dto.BookPage;
 import com.oppo.request.BookReq;
+
 import java.util.List;
 
 /**
@@ -10,11 +11,14 @@ import java.util.List;
  */
 public interface BookService {
     List<BookDto> findAll();
+
     BookDto queryOne(String id);
+
     BookPage getAllForm(Integer page, Integer pageSize);
-    void create(BookReq memberReq);
-//
-//    void update(BookReq memberReq);
-//
-//    void delete(Integer id);
+
+    void create(BookReq bookReq);
+
+    void update(BookReq bookReq);
+
+    void delete(String id);
 }

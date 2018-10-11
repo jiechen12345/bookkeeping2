@@ -14,9 +14,66 @@
     <!-- Custom styles for this tmemberlate -->
     <link href="/css/dashboard.css" rel="stylesheet"/>
     <link href="/css/bootstrap-table.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .pop-toast {
+            position: fixed;
+            max-width: 20%;
+            line-height: 40px;
+            height: 40px;
+            text-align: center;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            background: orange;
+            border: 1px solid #ccc;
+            background: forestgreen;
+            -webkit-box-shadow: 0 2px 8px #ccc;
+            -moz-box-shadow: 0 2px 8px #ccc;
+            box-shadow: 0 2px 8px #ccc;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            z-index: 1000000;
+        }
+
+        .pop-toast .toast-tip {
+            font-size: 16px;
+            color: white;
+            height: 50%;
+        }
+
+    </style>
+
 </head>
 <body th:inline="text">
 <script src="/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+<script>
+
+    /**
+     * toast 小提示框
+     * @param tipTxt 提示内容
+     */
+    function popToast(tipTxt) {
+        var $popToast = $(".pop-toast");
+        $popToast.remove();
+        var popToastHtml = '<div class="pop-toast">\n' +
+            '            <p class="toast-tip">' + tipTxt + '</p>\n' +
+            '        </div>';
+        $popToast = $(popToastHtml);
+        $("body").append($popToast);
+        setTimeout(function () {
+            $popToast.fadeOut();
+        }, 1500);
+    }
+</script>
+
 <script type="text/javascript">
     $(document).ready(function () {
         //----測試用
@@ -25,6 +82,7 @@
         // $("#amt").attr('disabled', false);
         // $("#paidDat").attr('disabled', false);
         //----
+        componentCl();
         var Today = new Date();
         $("#createDat").val((Today.getFullYear()) + "-" + (Today.getMonth() + 1) + '-' + ((Today.getDate().toString().length == 1) ? '0' + Today.getDate() : Today.getDate()));
         $("#createMemberName").val($("#loginUserName").val());
@@ -51,23 +109,7 @@
                 $("#projectId").append(str);
             },
             error: function (jqXHR, exception) {
-                var msg = '';
-                if (jqXHR.status === 0) {
-                    msg = 'Not connect.\n Verify Network.';
-                } else if (jqXHR.status == 404) {
-                    msg = 'Requested page not found. [404]';
-                } else if (jqXHR.status == 500) {
-                    msg = 'Internal Server Error [500].';
-                } else if (exception === 'parsererror') {
-                    msg = 'Requested JSON parse failed.';
-                } else if (exception === 'timeout') {
-                    msg = 'Time out error.';
-                } else if (exception === 'abort') {
-                    msg = 'Ajax request aborted.';
-                } else {
-                    msg = 'Uncaught Error.\n' + jqXHR.responseText;
-                }
-                alert(msg);
+                ajaxError(jqXHR, exception);
             },
         });
     }
@@ -115,7 +157,7 @@
                         </div>
                         <div class="col-md-3 mb-1">
                             <label for="projectId">專案名稱</label>
-                            <select class="form-control" name="projectId" id="projectId">
+                            <select class="form-control selector" name="projectId" id="projectId">
 
                             </select>
                         </div>
@@ -131,11 +173,11 @@
                             <label for="invoice">廠商發票</label>
                             <select class="form-control" name="invoice" id="invoice" onchange="componentCl();">
                                 <option value="1">Y</option>
-                                <option value="0">N</option>
+                                <option value="0" selected>N</option>
                             </select>
                         </div>
                         <div class="col-md-2 mb-1">
-                            <label for="projectId">發票月份</label>
+                            <label for="invYM">發票月份</label>
                             <input type="text" class="form-control" id='invYM' name="invYM" placeholder="2018-01"
                                    required>
                             <div class="invalid-feedback">
@@ -167,7 +209,7 @@
                             <label for="paid">付款與否</label>
                             <select class="form-control" name="paid" id="paid" onchange="componentCl();">
                                 <option value="1">Y</option>
-                                <option value="0">N</option>
+                                <option value="0" selected>N</option>
                             </select>
                         </div>
                         <div class="col-md-2 mb-1">
@@ -222,7 +264,8 @@
                                         type="submit">新增
                                 </button>
                                 <button class="btn btn-danger" id="delete" name="delete"
-                                        onclick="$('#status').val('delete');" type="submit">刪除
+                                        onclick="$('#status').val('delete');enter();" type="button">
+                                    刪除
                                 </button>
                                 <!--<button class="btn btn-primary" id="update" name="update"-->
                                 <!--onclick="$('#status').val('update');$('.form-control').attr('disabled', false);"-->
@@ -238,7 +281,7 @@
                                 <button class="btn btn-secondary" onclick="location.reload();" id="reset" name="reset"
                                         type="button">清空
                                 </button>
-                                <input type="text" id="status">
+                                <input type="text" id="status" name="status">
 
 
                             </div>
@@ -247,7 +290,7 @@
                 </form>
             </div>
             <!-----------LIST--------------------------------->
-            <div class="table-responsive">
+            <div id="list" name="list" class="table-responsive">
                 <table class="table table-bordered table-striped">
                     <thead>
                     <!--<tr class="table table-striped table-sm">-->
@@ -354,6 +397,11 @@
     })();
 
     function enter() {
+        var session = "\''+[[${session.loginUser.getName()}]]+'\'";
+        if (session == null || session == '') {
+            alert('session 失效');
+            window.location.replace(location);
+        }
         var status = $('#status').val();
         switch (status) {
             case 'create':
@@ -368,9 +416,11 @@
                     async: false,
                     url: "/books",
                     success: function (data) {
-                        alert('OK');
+                        //alert('OK');
                         //todo 未來要改成回到當頁
-                        location.reload();
+
+                        popToast("新 增 完 成 ！");
+                        setTimeout("location.reload()", 1000);
                     },
                     error: function (jqXHR, exception) {
                         ajaxError(jqXHR, exception);
@@ -379,32 +429,68 @@
                 break;
 
             case 'update':
+                var sessionId = "\'[[${session.loginUser.getId()}]]\'".replaceAll("'","");
+                $("#updateMemberId").val(sessionId);
+                var Today = new Date();
+                $("#updateDat").val((Today.getFullYear()) + "-" + (Today.getMonth() + 1) + '-' + ((Today.getDate().toString().length == 1) ? '0' + Today.getDate() : Today.getDate()));
                 var $form = $("#myForm");
                 var formData = getFormData($form);
                 $.ajax({
                     contentType: 'application/json; charset=UTF-8',
                     type: "PUT",
-                    //data: JSON.stringify({'id': id,'amt': amt,'incomeOrExpend':incomeOrExpend}) ,
                     data: JSON.stringify(formData),
                     async: false,
                     url: "/books",
                     success: function (data) {
-                        alert('OK');
-                        //todo 未來要改成回到當頁
-                        location.reload();
+                        queryOne(formData.id);
+                        popToast("修 改 完 成 ！");
+                        //todo 未來要刷新回到當頁並且帶入queryone
+                        //setTimeout("location.reload()", 1000);
+                        //location.reload();
+
                     },
                     error: function (jqXHR, exception) {
                         ajaxError(jqXHR, exception);
-                    },
+                    }
                 });
                 break;
-
+            case 'delete' :
+                if ($("#id").val() != '') {
+                    var del = confirm("確定刪除嗎？");
+                    if (!del) {
+                        return false;
+                    } else {
+                        var id = $('#id').val();
+                        $.ajax({
+                            contentType: 'application/json; charset=UTF-8',
+                            type: "DELETE",
+                            data: id,
+                            async: false,
+                            url: "/books",
+                            success: function (data) {
+                                popToast("刪 除 完 成 ！");
+                                setTimeout("location.reload()", 800);
+                            },
+                            error: function (jqXHR, exception) {
+                                ajaxError(jqXHR, exception);
+                            }
+                        });
+                    }
+                } else {
+                    alert('請先選擇您要刪除的資料！');
+                }
+                break;
         }
-        alert(status);
+        //alert(status);
     }
 
     function queryOne(id) {
-        alert("id 是 " + id);
+        var session = "\''+[[${session.loginUser.getName()}]]+'\'";
+        if (session == null || session == '') {
+            alert('session 失效');
+            window.location.replace(location);
+        }
+        //alert("id 是 " + id);
         //window.location.href = "/toModifyMember2/"+ id
         $.ajax({
                 contentType: 'application/json; charset=UTF-8',
@@ -414,46 +500,45 @@
                 dataType: 'json',
                 url: "/books/queryOne",
                 success: function (data) {
-                    $('#id').val(data.id);
-                    $('#incomeOrExpend').val(data.incomeOrExpend);
-                    $('#invoice').val((data.invoice)?'1':'0');
-                    $('#invYM').val(data.invYM);
-                    $('#invNo').val(data.invNo);
-                    $('#paid').val((data.paid)?'1':'0');
-                    $('#paidDat').val((data.paidDat!=null)?data.paidDat.substring(0,10):'');
-                    $('#amt').val(data.amt);
+                    //alert(JSON.stringify(data));
                     $('#customerId').val(data.customerId);
                     findProjectByCustomerIdAjax($('#customerId').val());//重讀二階下拉
-                    $('#projectId').val(data.projectId);
-                    $('#createDat').val((data.createDat!=null)?data.createDat.substring(0,10):'');
-                    $('#updateDat').val((data.updateDat!=null)?data.updateDat.substring(0,10):'');
+                    $('#id').val(data.id);
+                    $('#incomeOrExpend').val(data.incomeOrExpend);
+                    $('#invoice').val((data.invoice) ? '1' : '0');
+                    $('#invYM').val(data.invYM);
+                    $('#invNo').val(data.invNo);
+                    $('#paid').val((data.paid) ? '1' : '0');
+                    $('#paidDat').val((data.paidDat != null) ? data.paidDat.substring(0, 10) : '');
+                    $('#amt').val(data.amt);
+                    //$('#projectId').val(data.projectId);
+                    $('#createDat').val((data.createDat != null) ? data.createDat.substring(0, 10) : '');
+                    $('#updateDat').val((data.updateDat != null) ? data.updateDat.substring(0, 10) : '');
                     $('#description').val(data.description);
                     $('#remarks').val(data.remarks);
                     $('#createMemberId').val(data.createMemberId);
                     $('#createMemberName').val(data.createMemberName);
                     $('#updateMemberId').val(data.updateMemberId);
                     $('#updateMemberName').val(data.updateMemberName);
-                    componentCl();//把該關閉的元件關掉
 
+                    componentCl();//把該關閉的元件關掉
+                    //要停滯時間給兩階段下拉讀取完再setProjectId
+                    setTimeout("changeProject(" + data.projectId + ")", 10);
+                    //$('#updateMemberName').val(data.projectId);
                 },
                 error: function (jqXHR, exception) {
                     ajaxError(jqXHR, exception);
-                },
+                }
             }
         )
-
-
     }
 
-    function abc() {
-
-        $('#create').attr('disabled', true);
-        $('#invNo').attr('required', false);
+    function changeProject(projectId) {
+        $('#projectId').val(projectId);
     }
 
     //-查詢視窗
     function openAddModal() {
-        alert(1);
         $('#addPanelHolder').html();
         $('#addPanel').modal('show');
         /*
@@ -481,6 +566,9 @@
         return indexed_array;
     }
 
+    String.prototype.replaceAll  = function(s1,s2){
+        return this.replace(new RegExp(s1,"gm"),s2);
+    }
     //元件控制
     function componentCl() {
         var invStatus = $('#invoice').val();
@@ -542,6 +630,8 @@
         } else {
             msg = 'Uncaught Error.\n' + jqXHR.responseText;
         }
+        alert('seession= ')
+        alert("\''+[[${session.loginUser.getName()}]]+'\'");
         alert(msg);
     }
 
