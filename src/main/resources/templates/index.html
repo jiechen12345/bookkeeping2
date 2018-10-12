@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="../static/css/bootstrap.min.css">
 </head>
 
-<body class="text-center" background="../static/img/back.jpg">
+<body class="text-center" background="../static/img/back.jpg" th:background="@{/img/back.jpg}">
 <form class="form-signin" action="websiteMgt.html" th:action="@{/api/login}" method="post">
     <img class="mb-4 mx-auto" src="/img/LOGOLong.jpg" th:src="@{/img/LOGOLong.jpg}" alt="" width="305" height="64">
     <!--<h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>-->

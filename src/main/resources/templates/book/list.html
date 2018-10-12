@@ -9,51 +9,19 @@
     <title>流水帳</title>
     <!-- Bootstrap core CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/css/bootstrap-jie.css" rel="stylesheet"/>
+    <link href="/css/bootstrap-table.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/bootstrap-datetimepicker.min.css" media="screen"/>
     <link rel="stylesheet" href="/css/bootstrap-datetimepicker.css" media="screen"/>
     <!-- Custom styles for this tmemberlate -->
     <link href="/css/dashboard.css" rel="stylesheet"/>
-    <link href="/css/bootstrap-table.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-        }
 
-        .pop-toast {
-            position: fixed;
-            max-width: 20%;
-            line-height: 40px;
-            height: 40px;
-            text-align: center;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            margin: auto;
-            background: orange;
-            border: 1px solid #ccc;
-            background: forestgreen;
-            -webkit-box-shadow: 0 2px 8px #ccc;
-            -moz-box-shadow: 0 2px 8px #ccc;
-            box-shadow: 0 2px 8px #ccc;
-            -webkit-border-radius: 4px;
-            -moz-border-radius: 4px;
-            border-radius: 4px;
-            z-index: 1000000;
-        }
 
-        .pop-toast .toast-tip {
-            font-size: 16px;
-            color: white;
-            height: 50%;
-        }
-
-    </style>
 
 </head>
 <body th:inline="text">
 <script src="/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+<script src="/js/moment.js" crossorigin="anonymous"></script>
 <script>
 
     /**
@@ -83,8 +51,9 @@
         // $("#paidDat").attr('disabled', false);
         //----
         componentCl();
-        var Today = new Date();
-        $("#createDat").val((Today.getFullYear()) + "-" + (Today.getMonth() + 1) + '-' + ((Today.getDate().toString().length == 1) ? '0' + Today.getDate() : Today.getDate()));
+        $('.collapse').collapse();
+        //$("#createDat").val((Today.getFullYear()) + "-" + (Today.getMonth() + 1) + '-' + ((Today.getDate().toString().length == 1) ? '0' + Today.getDate() : Today.getDate()));
+        $("#createDat").val(moment().format('YYYY-MM-DD'));
         $("#createMemberName").val($("#loginUserName").val());
         var customerId = $("#customerId option:selected").val();
         findProjectByCustomerIdAjax(customerId)
@@ -246,7 +215,7 @@
 
                     </div>
                     <div class="form-row">
-                        <div class="col-md-4 mb-1" style="width: 40%">
+                        <div class="col-md-6 mb-1" style="width: 40%">
                             <label for="description">備註</label>
                             <textarea id="remarks" name="remarks" class="form-control" cols="50" rows="3"></textarea>
                         </div>
@@ -281,13 +250,33 @@
                                 <button class="btn btn-secondary" onclick="location.reload();" id="reset" name="reset"
                                         type="button">清空
                                 </button>
-                                <input type="text" id="status" name="status">
+                                <input type="hidden" id="status" name="status">
 
 
                             </div>
                         </div>
                     </div>
                 </form>
+            </div>
+
+
+            <!-----------query--------------------------------->
+            <div id="accordion">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                Collapsible Group Item #1
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="card-body">
+                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-----------LIST--------------------------------->
             <div id="list" name="list" class="table-responsive">
@@ -296,25 +285,32 @@
                     <!--<tr class="table table-striped table-sm">-->
                     <tr class="table table-striped table-sm" align="center">
                         <th>ID</th>
+                        <th>收支</th>
                         <th>廠商發票</th>
                         <th>廠商發票月份</th>
                         <th>發票號碼</th>
                         <th>付款與否</th>
                         <th>付款日期</th>
-                        <th>客戶名稱</th>
+                        <th>金額</th>
                         <th>專案名稱</th>
+                        <th>說明</th>
+                        <th>備註</th>
                     </tr>
                     </thead>
+
                     <tbody id="list-itens">
                     <tr th:each="book:${books}" th:onclick="'javascript:queryOne(\''+${book.id}+'\')'">
-                        <td th:text="${book.getId()}">1</td>
-                        <td th:text="${book.getInvoice()}">1</td>
-                        <td th:text="${book.getInvYM()}">1</td>
-                        <td th:text="${book.getInvNo()}">1</td>
-                        <td th:text="${book.paid}">1</td>
-                        <td th:text="${book.paidDat}">1</td>
-                        <td th:text="${book.customerNm}">1</td>
+                        <td align="center" th:text="${book.getId()}">1</td>
+                        <td align="center" th:text="*{book.getIncomeOrExpend()=='1'}?'收入':'支出'">1</td>
+                        <td align="center" th:text="*{book.getInvoice()}?'Y':'N'">1</td>
+                        <td align="center" th:text="${book.getInvYM()}">1</td>
+                        <td align="center" th:text="${book.getInvNo()}">1</td>
+                        <td align="center" th:text="*{book.paid}?'Y':'N'">1</td>
+                        <td align="center" th:text="${#dates.format(book.paidDat, 'yyyy-MM-dd')}">1</td>
+                        <td align="right" th:text="${book.amt}">1</td>
                         <td th:text="${book.projectName}">1</td>
+                        <td th:text="${book.description}">1</td>
+                        <td th:text="${book.remarks}">1</td>
                     </tr>
                     </tbody>
                 </table>
@@ -421,7 +417,7 @@
                         //todo 未來要改成回到當頁
 
                         popToast("新 增 完 成 ！");
-                        setTimeout("location.reload()", 1000);
+                        setTimeout("location.reload()", 900);
                     },
                     error: function (jqXHR, exception) {
                         ajaxError(jqXHR, exception);
@@ -443,10 +439,10 @@
                     async: false,
                     url: "/books",
                     success: function (data) {
-                        queryOne(formData.id);
+                        //queryOne(formData.id);
                         popToast("修 改 完 成 ！");
                         //todo 未來要刷新回到當頁並且帶入queryone
-                        //setTimeout("location.reload()", 1000);
+                        setTimeout("location.reload()", 700);
                         //location.reload();
 
                     },
@@ -470,7 +466,7 @@
                             url: "/books",
                             success: function (data) {
                                 popToast("刪 除 完 成 ！");
-                                setTimeout("location.reload()", 800);
+                                setTimeout("location.reload()", 700);
                             },
                             error: function (jqXHR, exception) {
                                 ajaxError(jqXHR, exception);
@@ -554,7 +550,7 @@
         )
         */
     }
-
+FormData
     //取的form所有值
     function getFormData($form) {
         var unindexed_array = $form.serializeArray();

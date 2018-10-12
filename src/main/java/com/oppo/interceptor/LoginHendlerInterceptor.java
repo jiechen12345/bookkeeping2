@@ -18,6 +18,7 @@ public class LoginHendlerInterceptor implements HandlerInterceptor {
         if (user == null) {
             request.setAttribute("msg", "沒有權限請先登入");
             request.getRequestDispatcher("/index.html").forward(request, response);
+            //response.sendRedirect("/");
             return false;
         } else {
             return true;
