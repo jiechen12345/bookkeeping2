@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 public class Member {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     /**
      * 帳號
@@ -27,11 +27,12 @@ public class Member {
     private String name;
     @ManyToOne(targetEntity = Departemt.class)
     private Departemt departemt;
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="createMember")
+    @OneToMany(mappedBy = "createMember")
     private List<Book> createBooks;
 
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="updateMember")
+    @OneToMany(mappedBy = "updateMember")
     private List<Book> updateBooks;
+
     public String getAccount() {
         return account;
     }

@@ -36,12 +36,12 @@ public class Book {
 
     //建立成員
     @JoinColumn(name="createMember_ID_FK")
-    @ManyToOne(cascade=CascadeType.ALL ,targetEntity = Member.class)
+    @ManyToOne(targetEntity = Member.class)
     private Member createMember;
 
     //更新成員
     @JoinColumn(name="updateMember_ID_FK")
-    @ManyToOne(cascade=CascadeType.ALL ,targetEntity = Member.class)
+    @ManyToOne(targetEntity = Member.class)
     private Member updateMember;
 
     //專案名稱

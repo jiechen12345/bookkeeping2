@@ -14,7 +14,7 @@ public class Project {
     private Integer id;
 
     private String ProjectName;
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne(cascade=CascadeType.MERGE)
     @JoinColumn(name="CUSTOMER_ID_FK")
     private Customer customer;
 

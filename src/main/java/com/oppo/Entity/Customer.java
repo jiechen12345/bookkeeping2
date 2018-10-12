@@ -12,7 +12,7 @@ public class Customer {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
     private String custNm;
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="customer")
+    @OneToMany(cascade=CascadeType.MERGE, mappedBy="customer")
     private List<Project> projects;
 
     public Integer getId() {
