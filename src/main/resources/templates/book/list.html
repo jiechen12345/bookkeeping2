@@ -319,7 +319,8 @@
                     </tbody>
                 </table>
             </div>
-
+            <!--pagination-->
+            <div th:replace="common/pagination::pagination"></div>
             <!-- 查詢-->
             <div id="addPanelHolder">
                 <div id="addPanel" class="modal fade" role="dialog" th:fragment="addModalContens">
@@ -429,7 +430,7 @@
                 break;
 
             case 'update':
-                var sessionId = "\'[[${session.loginUser.getId()}]]\'".replaceAll("'","");
+                var sessionId = "\'[[${session.loginUser.getId()}]]\'".replaceAll("'", "");
                 $("#updateMemberId").val(sessionId);
                 var Today = new Date();
                 $("#updateDat").val((Today.getFullYear()) + "-" + (Today.getMonth() + 1) + '-' + ((Today.getDate().toString().length == 1) ? '0' + Today.getDate() : Today.getDate()));
@@ -566,9 +567,10 @@
         return indexed_array;
     }
 
-    String.prototype.replaceAll  = function(s1,s2){
-        return this.replace(new RegExp(s1,"gm"),s2);
+    String.prototype.replaceAll = function (s1, s2) {
+        return this.replace(new RegExp(s1, "gm"), s2);
     }
+
     //元件控制
     function componentCl() {
         var invStatus = $('#invoice').val();
@@ -592,6 +594,20 @@
             $('#paidDat').attr('disabled', true);
             $('#paidDat').attr('placeholder', '');
         }
+    }
+
+    function changePageSize() {
+        //var page = [[${indexPage}]]
+        var page = '1' // 修改每頁幾筆自動回第一頁
+        var pageSize = $('#pageSize').val();
+        window.location.href = "/books?pageSize=" + pageSize + "&page=" + page;
+    }
+
+    function changePage(page) {
+        var pageSize = $('#pageSize').val();
+        alert(pageSize);
+        alert(page);
+        window.location.href = "/books?pageSize=" + pageSize + "&page=" + page;
     }
 
     $("input[name$='invYM']").datetimepicker({

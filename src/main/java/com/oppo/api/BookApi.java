@@ -31,7 +31,7 @@ public class BookApi {
     private CustomerDao customerDao;
     @Autowired
     private BookService bookService;
-
+    Integer[] pageSizeOption = {5, 10, 15, 20};
     //查詢分頁會員列表及修改pageSize
     @GetMapping("/books")
     public String changePageSize(@RequestParam(required = false, defaultValue = "1") Integer page,
@@ -45,6 +45,7 @@ public class BookApi {
         model.addAttribute("totalPages", bookPage.getTotalPages());
         model.addAttribute("pageSize", pageSize);
         model.addAttribute("count", bookPage.getCount());
+        model.addAttribute("pageSizeOption", pageSizeOption);
         return "book/list";
     }
 }

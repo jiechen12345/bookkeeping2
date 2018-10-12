@@ -29,7 +29,7 @@ public class MemberApi {
     private DepartmentDao departmentDao;
     @Autowired
     private MemberService memberService;
-    Integer [] pageSizeOption= {5, 10, 15, 20};
+    Integer[] pageSizeOption = {5, 10, 15, 20};
 
 //    List<Integer> pageSizeOption=new ArrayList<Integer>()
 
@@ -49,20 +49,20 @@ public class MemberApi {
         }
     */
     //查詢分頁會員列表(暫無條件)
-    @GetMapping("/members/{page}")
-    public String getAllForms(@PathVariable(required = false) Integer page, Model model) {
-        int pageSize = 5;
-        MemberPage memberPage = memberService.getAllForm(page, pageSize);
-        //List<MemberDto> memberDtoList = memberService.findAll();
-        model.addAttribute("members", memberPage.getContents());
-        model.addAttribute("indexPage", memberPage.getCurrentPage());
-        model.addAttribute("totalPages", memberPage.getTotalPages());
-        model.addAttribute("pageSize", pageSize);
-        model.addAttribute("count", memberPage.getCount());
-        model.addAttribute("pageSizeOption", pageSizeOption);
-        return "member/list";
-
-    }
+//    @GetMapping("/members/{page}")
+//    public String getAllForms(@PathVariable(required = false) Integer page, Model model) {
+//        int pageSize = 5;
+//        MemberPage memberPage = memberService.getAllForm(page, pageSize);
+//        //List<MemberDto> memberDtoList = memberService.findAll();
+//        model.addAttribute("members", memberPage.getContents());
+//        model.addAttribute("indexPage", memberPage.getCurrentPage());
+//        model.addAttribute("totalPages", memberPage.getTotalPages());
+//        model.addAttribute("pageSize", pageSize);
+//        model.addAttribute("count", memberPage.getCount());
+//        model.addAttribute("pageSizeOption", pageSizeOption);
+//        return "member/list";
+//
+//    }
 
     //查詢分頁會員列表及修改pageSize
     @GetMapping("/members")
