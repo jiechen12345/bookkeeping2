@@ -91,9 +91,12 @@
             </div>
 
             <div style="display:inline">
-                一頁 <input class="col-md-1 col-md-offset-1" minlength="2" maxlength="2" size="2" style="width: 6%"
-                          type="text" id="pageSize" name="pageSize" th:value="${pageSize}"
-                          th:onchange="'javascript:changePageSize()'">筆
+                一頁 <select class="col-md-1 mb-1" type="text" id="pageSize" name="pageSize" th:value="${pageSize}"
+                           th:onchange="'javascript:changePageSize()'" >
+                <option th:selected="${sizeOpt==pageSize}" th:each="sizeOpt:${pageSizeOption}"
+                        th:value="${sizeOpt}" th:text="${sizeOpt}"></option>
+            </select>
+                筆
             </div>
             <p style="display:inline">/共[[${count}]]筆</p>
 
