@@ -17,7 +17,6 @@
     <link href="/css/dashboard.css" rel="stylesheet"/>
 
 
-
 </head>
 <body th:inline="text">
 <script src="/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
@@ -55,15 +54,28 @@
         //$("#createDat").val((Today.getFullYear()) + "-" + (Today.getMonth() + 1) + '-' + ((Today.getDate().toString().length == 1) ? '0' + Today.getDate() : Today.getDate()));
         $("#createDat").val(moment().format('YYYY-MM-DD'));
         $("#createMemberName").val($("#loginUserName").val());
+
         var customerId = $("#customerId option:selected").val();
-        findProjectByCustomerIdAjax(customerId)
+        findProjectByCustomerIdAjax(customerId, 'form');
+        var q_customerId = $("#q_customerId option:selected").val();
+        if (q_customerId != 0) {
+            findProjectByCustomerIdAjax(q_customerId, 'query');
+        }
         $("#customerId").change(function () {
             var customerId = $("#customerId option:selected").val();
-            findProjectByCustomerIdAjax(customerId)
+            findProjectByCustomerIdAjax(customerId, 'form');
+        });
+        $("#q_customerId").change(function () {
+            var q_customerId = $("#q_customerId option:selected").val();
+            if (q_customerId != 0) {
+                findProjectByCustomerIdAjax(q_customerId, 'query');
+            } else {
+                $("#q_projectId").empty();
+            }
         });
     });
 
-    function findProjectByCustomerIdAjax(customerId) {
+    function findProjectByCustomerIdAjax(customerId, rowType) {
         $.ajax({
             contentType: 'application/json; charset=UTF-8',
             type: "post",
@@ -74,8 +86,13 @@
                 $.each(data, function (index, value) {
                     str += "<option value='" + value.id + "'>" + value.projectName + "</option>";
                 });
-                $("#projectId").empty();
-                $("#projectId").append(str);
+                if (rowType == 'form') {
+                    $("#projectId").empty();
+                    $("#projectId").append(str);
+                } else if (rowType == 'query') {
+                    $("#q_projectId").empty();
+                    $("#q_projectId").append(str);
+                }
             },
             error: function (jqXHR, exception) {
                 ajaxError(jqXHR, exception);
@@ -103,7 +120,7 @@
                 </div>
             </div>
             <!-- form **************************************************************-->
-            <div>
+            <div container-fluid>
                 <form id='myForm' class="needs-validation" novalidate>
                     <div class="form-row">
                         <div class="col-md-2 mb-1">
@@ -211,8 +228,6 @@
                             <label for="updateDat">異動時間</label>
                             <input type="text" readonly class="form-control" id="updateDat" name="updateDat">
                         </div>
-
-
                     </div>
                     <div class="form-row">
                         <div class="col-md-6 mb-1" style="width: 40%">
@@ -263,21 +278,66 @@
             <!-----------query--------------------------------->
             <div id="accordion">
                 <div class="card">
-                    <div class="card-header" id="headingOne">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                Collapsible Group Item #1
-                            </button>
-                        </h5>
-                    </div>
+                    <button class="btn btn-outline-info" data-toggle="collapse" data-target="#collapseOne"
+                            aria-expanded="false" aria-controls="collapseOne">
+                        <div class="card-header" id="headingOne">
+                            <h6>
+                                查 詢
+                            </h6>
+                        </div>
+                    </button>
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                         data-parent="#accordion">
+                        <div class="card-body container-fluid">
+                            <div class="form-row">
+                                <div class="col-md-2 mb-1">
+                                    <label for="q_id">編號</label>
+                                    <input maxlength="12" type="text" class="form-control" name="q_id" id="q_id">
 
-                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                        <div class="card-body">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                </div>
+                                <div class="col-md-2 mb-1">
+                                    <label for="q_id2">* </label>
+                                    <input maxlength="12" type="text" class="form-control" name="q_id2" id="q_id2">
+
+                                </div>
+                                <div class="col-md-2 mb-1">
+                                    <label for="q_incomeOrExpend">帳務類別</label>
+                                    <select class="form-control" id="q_incomeOrExpend" name="q_incomeOrExpend">
+                                        <option value="1">收入</option>
+                                        <option value="0">支出</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mb-1">
+                                    <label for="q_customerId">客戶單位</label>
+                                    <select class="form-control" name="q_customerId" id="q_customerId">
+                                        <option th:each="customer:${customers}" th:value="${customer.id}"
+                                                th:text="${customer.custNm}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-1">
+                                    <label for="q_projectId">專案名稱</label>
+                                    <select class="form-control selector" name="q_projectId" id="q_projectId">
+
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mb-1">
+                                    <label for="q_amt">金額</label>
+                                    <input name="q_amt" id="q_amt" maxlength="14" type="text" class="form-control"
+                                           placeholder="1000" onkeyup="value=value.replace(/[^\d]/g,'') " required>
+                                    <div class="invalid-feedback">
+                                        請輸入金額.
+                                    </div>
+                                </div>
+                            </div>
+                            <button th:align="right" type="button" class="btn btn-default btn-success"
+                                    data-dismiss="modal"
+                                    th:onclick="'javascript:sendAddMember()'">查詢
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+
             <!-----------LIST--------------------------------->
             <div id="list" name="list" class="table-responsive">
                 <table class="table table-bordered table-striped">
@@ -303,11 +363,11 @@
                         <td align="center" th:text="${book.getId()}">1</td>
                         <td align="center" th:text="*{book.getIncomeOrExpend()=='1'}?'收入':'支出'">1</td>
                         <td align="center" th:text="*{book.getInvoice()}?'Y':'N'">1</td>
-                        <td align="center" th:text="${book.getInvYM()}">1</td>
+                        <td align="center" width="9%" th:text="${book.getInvYM()}">1</td>
                         <td align="center" th:text="${book.getInvNo()}">1</td>
                         <td align="center" th:text="*{book.paid}?'Y':'N'">1</td>
-                        <td align="center" th:text="${#dates.format(book.paidDat, 'yyyy-MM-dd')}">1</td>
-                        <td align="right" th:text="${book.amt}">1</td>
+                        <td align="center" width="11%" th:text="${#dates.format(book.paidDat, 'yyyy-MM-dd')}">1</td>
+                        <td align="right" th:text="${#numbers.formatCurrency(book.amt).replace('.00','')}">1</td>
                         <td th:text="${book.projectName}">1</td>
                         <td th:text="${book.description}">1</td>
                         <td th:text="${book.remarks}">1</td>
@@ -550,7 +610,9 @@
         )
         */
     }
-FormData
+
+    FormData
+
     //取的form所有值
     function getFormData($form) {
         var unindexed_array = $form.serializeArray();
@@ -646,6 +708,14 @@ FormData
         alert("\''+[[${session.loginUser.getName()}]]+'\'");
         alert(msg);
     }
+
+    // function addCommas(val) {
+    //     if (val.length >= 5) {
+    //         val = val.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    //     }
+    //     return val;
+    // }
+
 
 </script>
 </body>

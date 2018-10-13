@@ -39,6 +39,11 @@ public class BookApi {
         BookPage bookPage = bookService.getAllForm(page,pageSize);
         //List<MemberDto> memberDtoList = memberService.findAll();
         List<Customer> customers = customerDao.findAll();
+        //q_cust 有空查詢的可能
+        Customer customer=new Customer();
+        customer.setId(0);
+        customer.setCustNm("請選擇");
+
         model.addAttribute("books", bookPage.getContents());
         model.addAttribute("customers", customers);
         model.addAttribute("indexPage", bookPage.getCurrentPage());
@@ -46,6 +51,8 @@ public class BookApi {
         model.addAttribute("pageSize", pageSize);
         model.addAttribute("count", bookPage.getCount());
         model.addAttribute("pageSizeOption", pageSizeOption);
+        customers.add(0, customer);
+        model.addAttribute("q_customers", customers);
         return "book/list";
     }
 }
