@@ -35,7 +35,9 @@ public class BookApi {
     //查詢分頁會員列表及修改pageSize
     @GetMapping("/books")
     public String changePageSize(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                 @RequestParam(required = false, defaultValue = "5")Integer pageSize ,Model model) {
+                                 @RequestParam(required = false, defaultValue = "5")Integer pageSize,
+                                 @RequestParam(required = false)String q_id,Model model) {
+        System.out.println(q_id);
         BookPage bookPage = bookService.getAllForm(page,pageSize);
         //List<MemberDto> memberDtoList = memberService.findAll();
         List<Customer> customers = customerDao.findAll();

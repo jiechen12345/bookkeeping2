@@ -164,7 +164,8 @@
                         </div>
                         <div class="col-md-2 mb-1">
                             <label for="invYM">發票月份</label>
-                            <input type="text" class="form-control" id='invYM' name="invYM" placeholder="2018-01"
+                            <input type="text" class="form-control datetimepickerYM" id='invYM' name="invYM"
+                                   placeholder="2018-01"
                                    required>
                             <div class="invalid-feedback">
                                 請輸入發票月份.
@@ -200,7 +201,8 @@
                         </div>
                         <div class="col-md-2 mb-1">
                             <label for="paidDat">付款日</label>
-                            <input id='paidDat' name="paidDat" type="text" class="form-control" placeholder="2018-01-01"
+                            <input id='paidDat' name="paidDat" type="text" class="form-control datetimepickerDat"
+                                   placeholder="2018-01-01"
                                    required>
                             <div class="invalid-feedback">
                                 請輸入付款日.
@@ -289,24 +291,55 @@
                     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                          data-parent="#accordion">
                         <div class="card-body container-fluid">
+
                             <div class="form-row">
                                 <div class="col-md-2 mb-1">
-                                    <label for="q_id">編號</label>
-                                    <input maxlength="12" type="text" class="form-control" name="q_id" id="q_id">
-
+                                    <form th:action="@{/books}" method="get">
+                                        <label for="q_id">編號</label>
+                                        <input maxlength="12" type="text" class="form-control" name="q_id" id="q_id"
+                                               placeholder="大於">
+                                        <input maxlength="12" type="text" class="form-control" name="q_id2" id="q_id2"
+                                               placeholder="小於">
                                 </div>
                                 <div class="col-md-2 mb-1">
-                                    <label for="q_id2">* </label>
-                                    <input maxlength="12" type="text" class="form-control" name="q_id2" id="q_id2">
-
+                                    <label for="q_amt">金額</label>
+                                    <input name="q_amt" id="q_amt" maxlength="14" type="text" class="form-control "
+                                           onkeyup="value=value.replace(/[^\d]/g,'') " placeholder="大於">
+                                    <input name="q_amt2" id="q_amt2" maxlength="14" type="text"
+                                           class="form-control "
+                                           onkeyup="value=value.replace(/[^\d]/g,'') " placeholder="小於">
                                 </div>
+                                <div class="col-md-2 mb-1">
+                                    <label for="invYM">發票月份</label>
+                                    <input type="text" class="form-control datetimepickerYM" id='q_invYM'
+                                           name="q_invYM">
+                                    <input type="text" class="form-control datetimepickerYM" id='q_invYM2'
+                                           name="q_invYM2">
+                                </div>
+                                <div class="col-md-2 mb-1">
+                                    <label for="paidDat">付款日</label>
+                                    <input id='q_paidDat' name="q_paidDat" type="text"
+                                           class="form-control datetimepickerDat">
+                                    <input id='q_paidDat2' name="q_paidDat2" type="text"
+                                           class="form-control datetimepickerDat">
+                                </div>
+
                                 <div class="col-md-2 mb-1">
                                     <label for="q_incomeOrExpend">帳務類別</label>
                                     <select class="form-control" id="q_incomeOrExpend" name="q_incomeOrExpend">
+                                        <option value="">請選擇</option>
                                         <option value="1">收入</option>
                                         <option value="0">支出</option>
                                     </select>
                                 </div>
+                                <div class="col-md-2 mb-1">
+                                    <label for="invNo">發票號碼</label>
+                                    <div class="input-group">
+                                        <input maxlength="10" type="text" class="form-control" name="q_invNo"
+                                               id="q_invNo">
+                                    </div>
+                                </div>
+
                                 <div class="col-md-2 mb-1">
                                     <label for="q_customerId">客戶單位</label>
                                     <select class="form-control" name="q_customerId" id="q_customerId">
@@ -321,22 +354,37 @@
                                     </select>
                                 </div>
                                 <div class="col-md-2 mb-1">
-                                    <label for="q_amt">金額</label>
-                                    <input name="q_amt" id="q_amt" maxlength="14" type="text" class="form-control"
-                                           placeholder="1000" onkeyup="value=value.replace(/[^\d]/g,'') " required>
-                                    <div class="invalid-feedback">
-                                        請輸入金額.
-                                    </div>
+                                    <label for="q_invoice">廠商發票</label>
+                                    <select class="form-control" name="q_invoice" id="q_invoice">
+                                        <option value="">請選擇</option>
+                                        <option value="1">Y</option>
+                                        <option value="0">N</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mb-1">
+                                    <label for="q_paid">付款與否</label>
+                                    <select class="form-control" name="q_paid" id="q_paid">
+                                        <option value="">請選擇</option>
+                                        <option value="1">Y</option>
+                                        <option value="0">N</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-1">
+                                    <label for="q_description">說明</label>
+                                    <input id="q_description" name="q_description" type="text" class="form-control">
                                 </div>
                             </div>
-                            <button th:align="right" type="button" class="btn btn-default btn-success"
-                                    data-dismiss="modal"
-                                    th:onclick="'javascript:sendAddMember()'">查詢
-                            </button>
+                            <div th:align="right">
+                                <button type="submit" class="btn btn-default btn-success">查詢
+                                </button>
+                            </div>
+                            </form>
                         </div>
+
                     </div>
                 </div>
             </div>
+
 
             <!-----------LIST--------------------------------->
             <div id="list" name="list" class="table-responsive">
@@ -378,38 +426,41 @@
             <!--pagination-->
             <div th:replace="common/pagination::pagination"></div>
             <!-- 查詢-->
-            <div id="addPanelHolder">
-                <div id="addPanel" class="modal fade" role="dialog" th:fragment="addModalContens">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title" id="hdr-form-customer">查詢條件</h4>
-                                <button type="button" class="close" data-dismiss="modal">×</button>
-                            </div>
-                            <div class="modal-body">
-                                <form class="form-group">
-                                    <label>流水號</label>
-                                    <input type="text" name="name" id="name" class="form-control">
-                                    <label>專案名稱</label>
-                                    <select class="form-control" name="depId" id="depId">
-                                        <option th:each="dept:${depts}" th:value="${dept.id}"
-                                                th:text="${dept.depName}"></option>
-                                    </select>
+            <form>
+                <div id="addPanelHolder">
+                    <div id="addPanel" class="modal fade" role="dialog" th:fragment="addModalContens">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="hdr-form-customer">查詢條件</h4>
+                                    <button type="button" class="close" data-dismiss="modal">×</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-group">
+                                        <label>流水號</label>
+                                        <input type="text" name="name" id="name" class="form-control">
+                                        <label>專案名稱</label>
+                                        <select class="form-control" name="depId" id="depId">
+                                            <option th:each="dept:${depts}" th:value="${dept.id}"
+                                                    th:text="${dept.depName}"></option>
+                                        </select>
 
-                                    <div class="clearfix"></div>
-                                </form>
+                                        <div class="clearfix"></div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-link pull-left" data-dismiss="modal">取消
+                                    </button>
+                                    <button type="button" class="btn btn-default btn-success" data-dismiss="modal"
+                                            th:onclick="'javascript:sendAddMember()'">查詢
+                                    </button>
+                                </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-link pull-left" data-dismiss="modal">取消</button>
-                                <button type="button" class="btn btn-default btn-success" data-dismiss="modal"
-                                        th:onclick="'javascript:sendAddMember()'">查詢
-                                </button>
-                            </div>
+
                         </div>
-
                     </div>
                 </div>
-            </div>
+            </form>
         </main>
 
     </div>
@@ -668,7 +719,7 @@
         window.location.href = "/books?pageSize=" + pageSize + "&page=" + page;
     }
 
-    $("input[name$='invYM']").datetimepicker({
+    $(".datetimepickerYM").datetimepicker({
         startView: 3,
         minView: 3,
         autoclose: true,
@@ -677,7 +728,7 @@
         format: 'yyyy-mm',
         language: 'zh-TW'
     });
-    $("input[name$='paidDat']").datetimepicker({
+    $(".datetimepickerDat").datetimepicker({
         startView: 2,
         minView: 2,
         autoclose: true,
