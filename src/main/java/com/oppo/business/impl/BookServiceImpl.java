@@ -177,7 +177,7 @@ public class BookServiceImpl implements BookService {
         book.setRemarks(Common.get(bookReq.getRemarks()));
 
         if (bookReq.getProjectId() != null) {
-            Project project = projectDao.findById(Integer.parseInt(bookReq.getProjectId())).get();
+            Project project = projectDao.findById((bookReq.getProjectId())).get();
             book.setProject(project);
         }
         return book;

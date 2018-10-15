@@ -7,17 +7,19 @@ import com.oppo.business.BookService;
 import com.oppo.dao.CustomerDao;
 import com.oppo.dao.ProjectDao;
 import com.oppo.dto.BookPage;
+import com.oppo.dto.ProjectDto;
+import com.oppo.request.BookReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by JieChen on 2018/10/2.
@@ -32,17 +34,32 @@ public class BookApi {
     @Autowired
     private BookService bookService;
     Integer[] pageSizeOption = {5, 10, 15, 20};
+
     //查詢分頁會員列表及修改pageSize
     @GetMapping("/books")
-    public String changePageSize(@RequestParam(required = false, defaultValue = "1") Integer page,
-                                 @RequestParam(required = false, defaultValue = "5")Integer pageSize,
-                                 @RequestParam(required = false)String q_id,Model model) {
-        System.out.println(q_id);
-        BookPage bookPage = bookService.getAllForm(page,pageSize);
-        //List<MemberDto> memberDtoList = memberService.findAll();
+    public String queryAll(@RequestParam(required = false, defaultValue = "1") Integer page,
+                           @RequestParam(required = false, defaultValue = "5") Integer pageSize,
+                           @RequestParam(required = false) String q_id, @RequestParam(required = false) String q_id2,
+                           @RequestParam(required = false) Integer q_amt, @RequestParam(required = false) Integer q_amt2,
+                           @RequestParam(required = false) String q_invYM, @RequestParam(required = false) String q_invYM2,
+                           @RequestParam(required = false) String q_paidDat, @RequestParam(required = false) String q_paidDat2,
+                           @RequestParam(required = false) String q_incomeOrExpend, @RequestParam(required = false) String q_invNo,
+                           @RequestParam(required = false) Integer q_customerId, @RequestParam(required = false) Integer q_projectId,
+                           @RequestParam(required = false) Integer q_invoice, @RequestParam(required = false) Integer q_paid,
+                           @RequestParam(required = false) String q_description, Model model) {
+        BookReq bookReq = new BookReq(q_id, q_id2, q_amt, q_amt2, q_invYM, q_invYM2, q_paidDat, q_paidDat2, q_incomeOrExpend, q_invNo, q_customerId, q_projectId, q_invoice, q_paid, q_description);
+        LOGGER.info("query_bookReq= " + bookReq.queryAll());
+        List<ProjectDto> projectDtos = null;
+        System.out.println("*** " + bookReq.getQ_incomeOrExpend());
+
+        BookPage bookPage = bookService.getAllForm(page, pageSize);
+        //傳回query 參數
+        if (bookReq.getQ_customerId() != null && bookReq.getQ_customerId() != 0) {
+            projectDtos = this.findProjectByCustomerId(bookReq.getQ_customerId());
+        }
         List<Customer> customers = customerDao.findAll();
         //q_cust 有空查詢的可能
-        Customer customer=new Customer();
+        Customer customer = new Customer();
         customer.setId(0);
         customer.setCustNm("請選擇");
 
@@ -55,6 +72,26 @@ public class BookApi {
         model.addAttribute("pageSizeOption", pageSizeOption);
         customers.add(0, customer);
         model.addAttribute("q_customers", customers);
+        model.addAttribute("projectDtos", projectDtos);
+        model.addAttribute("bookReq", bookReq);
         return "book/list";
+    }
+
+    public List<ProjectDto> findProjectByCustomerId(Integer customerId) {
+        List<Project> projects = projectDao.findByCustomer_Id(customerId);
+        List<ProjectDto> projectDtos = projectDao.findByCustomer_Id(customerId).stream()
+                .map(this::getProjectDto)
+                .collect(Collectors.toList());
+        return projectDtos;
+//        JSONArray jsArr = JSONArray.fromObject(projects);
+//        return jsArr;
+    }
+
+    private ProjectDto getProjectDto(Project project) {
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.setId(project.getId());
+        projectDto.setProjectName(project.getProjectName());
+        projectDto.setCustomerId(project.getCustomer().getId());
+        return projectDto;
     }
 }
