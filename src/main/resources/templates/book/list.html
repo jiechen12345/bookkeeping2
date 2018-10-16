@@ -747,8 +747,9 @@
     function changePageSize() {
         var page = '1' // 修改每頁幾筆自動回第一頁
         var pageSize = $('#pageSize').val();
-        var queryform = $(".queryform");
-        alert(queryform);
+        var queryForm = $("#queryForm");
+        var unindexed_array = queryForm.serialize;
+        alert(unindexed_array);
         window.location.href = "/books?pageSize=" + pageSize + "&page=" + page;
     }
 
