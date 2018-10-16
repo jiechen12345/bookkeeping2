@@ -33,12 +33,36 @@ public class BookApi {
     private CustomerDao customerDao;
     @Autowired
     private BookService bookService;
-    Integer[] pageSizeOption = {5, 10, 15, 20};
+    Integer[] pageSizeOption = {2, 5, 10, 15, 20};
 
     //查詢分頁會員列表及修改pageSize
     @GetMapping("/books")
     public String queryAll(@RequestParam(required = false, defaultValue = "1") Integer page,
-                           @RequestParam(required = false, defaultValue = "5") Integer pageSize,
+                           @RequestParam(required = false, defaultValue = "2") Integer pageSize,
+                            Model model) {
+        BookPage bookPage = bookService.getAllForm(page, pageSize);
+        //傳回query 參數
+        List<Customer> customers = customerDao.findAll();
+        //q_cust 有空查詢的可能
+        Customer customer = new Customer();
+        customer.setId(0);
+        customer.setCustNm("請選擇");
+
+        model.addAttribute("books", bookPage.getContents());
+        model.addAttribute("customers", customers);
+        model.addAttribute("indexPage", bookPage.getCurrentPage());
+        model.addAttribute("totalPages", bookPage.getTotalPages());
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("count", bookPage.getCount());
+        model.addAttribute("pageSizeOption", pageSizeOption);
+        customers.add(0, customer);
+        model.addAttribute("q_customers", customers);
+        return "book/list";
+    }
+    //查詢分頁會員列表及修改pageSize
+    @GetMapping("/books/queryByCondition")
+    public String queryByCondition(@RequestParam(required = false, defaultValue = "1") Integer page,
+                           @RequestParam(required = false, defaultValue = "2") Integer pageSize,
                            @RequestParam(required = false) String q_id, @RequestParam(required = false) String q_id2,
                            @RequestParam(required = false) Integer q_amt, @RequestParam(required = false) Integer q_amt2,
                            @RequestParam(required = false) String q_invYM, @RequestParam(required = false) String q_invYM2,

@@ -268,8 +268,6 @@
                                         type="button">清空
                                 </button>
                                 <input type="hidden" id="status" name="status">
-
-
                             </div>
                         </div>
                     </div>
@@ -291,54 +289,60 @@
                     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                          data-parent="#accordion">
                         <div class="card-body container-fluid">
-                            <form id="queryForm" name="queryForm" th:action="@{/books}" method="get">
+                            <form id="queryForm" name="queryForm" th:action="@{/books/queryByCondition}" method="get">
                                 <div class="form-row">
                                     <div class="col-md-2 mb-1">
                                         <label for="q_id">編號</label>
-                                        <input maxlength="12" type="text" class="form-control" name="q_id" id="q_id"
-                                               th:value="${bookReq.getQ_id()}"
+                                        <input maxlength="12" type="text" class="form-control queryform" name="q_id"
+                                               id="q_id"
+                                               th:value="${bookReq!=null}?${bookReq.getQ_id()}"
                                                placeholder="大於">
-                                        <input maxlength="12" type="text" class="form-control" name="q_id2" id="q_id2"
-                                               th:value="${bookReq.getQ_id2()}"
+                                        <input maxlength="12" type="text" class="form-control queryform" name="q_id2"
+                                               id="q_id2"
+                                               th:value="${bookReq!=null}?${bookReq.getQ_id2()}"
                                                placeholder="小於">
                                     </div>
                                     <div class="col-md-2 mb-1">
                                         <label for="q_amt">金額</label>
-                                        <input name="q_amt" id="q_amt" maxlength="14" type="text" class="form-control "
-                                               th:value="${bookReq.getQ_amt()}"
+                                        <input name="q_amt" id="q_amt" maxlength="14" type="text"
+                                               class="form-control queryform"
+                                               th:value="${bookReq!=null}?${bookReq.getQ_amt()}"
                                                onkeyup="value=value.replace(/[^\d]/g,'') " placeholder="大於">
                                         <input name="q_amt2" id="q_amt2" maxlength="14" type="text"
-                                               th:value="${bookReq.getQ_amt2()}"
-                                               class="form-control "
+                                               th:value="${bookReq!=null}?${bookReq.getQ_amt2()}"
+                                               class="form-control queryform"
                                                onkeyup="value=value.replace(/[^\d]/g,'') " placeholder="小於">
                                     </div>
                                     <div class="col-md-2 mb-1">
                                         <label for="invYM">發票月份</label>
-                                        <input type="text" class="form-control datetimepickerYM" id='q_invYM'
-                                               th:value="${bookReq.getQ_invYM()}"
+                                        <input type="text" class="form-control datetimepickerYM queryform" id='q_invYM'
+                                               th:value="${bookReq!=null}?${bookReq.getQ_invYM()}"
                                                name="q_invYM">
-                                        <input type="text" class="form-control datetimepickerYM" id='q_invYM2'
-                                               th:value="${bookReq.getQ_invYM2()}"
+                                        <input type="text" class="form-control datetimepickerYM queryform" id='q_invYM2'
+                                               th:value="${bookReq!=null}?${bookReq.getQ_invYM2()}"
                                                name="q_invYM2">
                                     </div>
                                     <div class="col-md-2 mb-1">
                                         <label for="paidDat">付款日</label>
                                         <input id='q_paidDat' name="q_paidDat" type="text"
-                                               th:value="${bookReq.getQ_paidDat()}"
-                                               class="form-control datetimepickerDat">
+                                               th:value="${bookReq!=null}?${bookReq.getQ_paidDat()}"
+                                               class="form-control datetimepickerDat queryform">
                                         <input id='q_paidDat2' name="q_paidDat2" type="text"
-                                               th:value="${bookReq.getQ_paidDat2()}"
-                                               class="form-control datetimepickerDat">
+                                               th:value="${bookReq!=null}?${bookReq.getQ_paidDat2()}"
+                                               class="form-control datetimepickerDat queryform">
                                     </div>
 
                                     <div class="col-md-2 mb-1">
                                         <label for="q_incomeOrExpend">帳務類別</label>
-                                        <select class="form-control" id="q_incomeOrExpend" name="q_incomeOrExpend">
+                                        <select class="form-control queryform" id="q_incomeOrExpend"
+                                                name="q_incomeOrExpend">
                                             <option value="">請選擇</option>
-                                            <option value="1" th:selected="${bookReq.getQ_incomeOrExpend()=='1'}?true">
+                                            <option value="1"
+                                                    th:selected="${bookReq!=null && bookReq.getQ_incomeOrExpend()=='1'}?true">
                                                 收入
                                             </option>
-                                            <option value="0" th:selected="${bookReq.getQ_incomeOrExpend()=='0'}?true">
+                                            <option value="0"
+                                                    th:selected="${bookReq!=null && bookReq.getQ_incomeOrExpend()=='0'}?true">
                                                 支出
                                             </option>
                                         </select>
@@ -346,52 +350,65 @@
                                     <div class="col-md-2 mb-1">
                                         <label for="invNo">發票號碼</label>
                                         <div class="input-group">
-                                            <input maxlength="10" type="text" class="form-control" name="q_invNo"
-                                                   id="q_invNo" th:value="${bookReq.getQ_invNo()}">
+                                            <input maxlength="10" type="text" class="form-control queryform"
+                                                   name="q_invNo"
+                                                   id="q_invNo" th:value="${bookReq!=null}?${bookReq.getQ_invNo()}">
                                         </div>
                                     </div>
 
                                     <div class="col-md-2 mb-1">
                                         <label for="q_customerId">客戶單位</label>
-                                        <select class="form-control" name="q_customerId" id="q_customerId">
+                                        <select class="form-control queryform" name="q_customerId" id="q_customerId">
                                             <option th:each="q_customer:${q_customers}" th:value="${q_customer.id}"
                                                     th:text="${q_customer.custNm}"
-                                                    th:selected="${bookReq.getQ_customerId()!=null}?${q_customer.id==bookReq.getQ_customerId()}"></option>
+                                                    th:selected="${bookReq!=null && bookReq.getQ_customerId()!=null}?${q_customer.id==bookReq.getQ_customerId()}"></option>
                                         </select>
                                     </div>
                                     <div class="col-md-3 mb-1">
                                         <label for="q_projectId">專案名稱</label>
-                                        <select class="form-control selector" name="q_projectId" id="q_projectId">
+                                        <select class="form-control selector queryform" name="q_projectId"
+                                                id="q_projectId">
                                             <option th:each="project:${projectDtos}" th:value="${project.getId()}"
                                                     th:text="${project.getProjectName()}"
-                                                    th:selected="${projectDtos!=null}?${project.getId()==bookReq.getQ_projectId()}"></option>
+                                                    th:selected="${bookReq!=null && projectDtos!=null}?${project.getId()==bookReq.getQ_projectId()}"></option>
                                         </select>
                                     </div>
                                     <div class="col-md-2 mb-1">
                                         <label for="q_invoice">廠商發票</label>
-                                        <select class="form-control" name="q_invoice" id="q_invoice">
+                                        <select class="form-control queryform" name="q_invoice" id="q_invoice">
                                             <option value="">請選擇</option>
-                                            <option value="1" th:selected="${bookReq.getQ_invoice()==1}?true">Y</option>
-                                            <option value="0" th:selected="${bookReq.getQ_invoice()==0}?true">N</option>
+                                            <option value="1"
+                                                    th:selected="${bookReq!=null && bookReq.getQ_invoice()==1}?true">Y
+                                            </option>
+                                            <option value="0"
+                                                    th:selected="${bookReq!=null && bookReq.getQ_invoice()==0}?true">N
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="col-md-2 mb-1">
                                         <label for="q_paid">付款與否</label>
-                                        <select class="form-control" name="q_paid" id="q_paid">
+                                        <select class="form-control queryform" name="q_paid" id="q_paid">
                                             <option value="">請選擇</option>
-                                            <option value="1" th:selected="${bookReq.getQ_paid()==1}?true">Y</option>
-                                            <option value="0" th:selected="${bookReq.getQ_paid()==0}?true">N</option>
+                                            <option value="1"
+                                                    th:selected="${bookReq!=null && bookReq.getQ_paid()==1}?true">Y
+                                            </option>
+                                            <option value="0"
+                                                    th:selected="${bookReq!=null && bookReq.getQ_paid()==0}?true">N
+                                            </option>
                                         </select>
                                     </div>
                                     <div class="col-md-3 mb-1">
                                         <label for="q_description">說明</label>
-                                        <input id="q_description" th:value="${bookReq.getQ_description()}"
-                                               name="q_description" type="text" class="form-control">
+                                        <input id="q_description"
+                                               th:value="${bookReq!=null}?${bookReq.getQ_description()}"
+                                               name="q_description" type="text" class="form-control queryform">
                                     </div>
                                 </div>
                                 <div th:align="right">
                                     <button type="submit" class="btn btn-default btn-success">執行查詢</button>
                                 </div>
+                                當前<input type="text" id="current_page" th:value="${indexPage}" name="current_page">
+                                每頁<input type="text" id="hiddenPageSize" th:value="${pageSize}" name="hiddenPageSize">
                             </form>
                         </div>
 
@@ -401,8 +418,7 @@
 
 
             <!-----------LIST--------------------------------->
-            <div id=" list
-                                    " name="list" class="table-responsive">
+            <div id="list" name="list" class="table-responsive">
                 <table class="table table-bordered table-striped">
                     <thead>
                     <!--<tr class="table table-striped table-sm">-->
@@ -420,7 +436,6 @@
                         <th>備註</th>
                     </tr>
                     </thead>
-
                     <tbody id="list-itens">
                     <tr th:each="book:${books}"
                         th:onclick="'javascript:queryOne(\''+${book.id}+'\')'">
@@ -730,9 +745,10 @@
     }
 
     function changePageSize() {
-        //var page = [[${indexPage}]]
         var page = '1' // 修改每頁幾筆自動回第一頁
         var pageSize = $('#pageSize').val();
+        var queryform = $(".queryform");
+        alert(queryform);
         window.location.href = "/books?pageSize=" + pageSize + "&page=" + page;
     }
 
@@ -740,6 +756,7 @@
         var pageSize = $('#pageSize').val();
         alert(pageSize);
         alert(page);
+
         window.location.href = "/books?pageSize=" + pageSize + "&page=" + page;
     }
 
