@@ -34,49 +34,19 @@ public class BookApi {
     @Autowired
     private BookService bookService;
     Integer[] pageSizeOption = {2, 5, 10, 15, 20};
+    BookReq bookReq = new BookReq();
 
     //查詢分頁會員列表及修改pageSize
     @GetMapping("/books")
-    public String queryAll(@RequestParam(required = false, defaultValue = "1") Integer page,
-                           @RequestParam(required = false, defaultValue = "2") Integer pageSize,
-                            Model model) {
+    public String findAll(@RequestParam(required = false, defaultValue = "1") Integer page,
+                          @RequestParam(required = false, defaultValue = "2") Integer pageSize,
+                          Model model) {
+        //BookReq bookReq = new BookReq(q_id, q_id2, q_amt, q_amt2, q_invYM, q_invYM2, q_paidDat, q_paidDat2, q_incomeOrExpend, q_invNo, q_customerId, q_projectId, q_invoice, q_paid, q_description);
+        bookReq = new BookReq();
+        LOGGER.info("findAll.page= " + page);
+        LOGGER.info("findAll.pageSize= " + pageSize);
         BookPage bookPage = bookService.getAllForm(page, pageSize);
-        //傳回query 參數
-        List<Customer> customers = customerDao.findAll();
-        //q_cust 有空查詢的可能
-        Customer customer = new Customer();
-        customer.setId(0);
-        customer.setCustNm("請選擇");
-
-        model.addAttribute("books", bookPage.getContents());
-        model.addAttribute("customers", customers);
-        model.addAttribute("indexPage", bookPage.getCurrentPage());
-        model.addAttribute("totalPages", bookPage.getTotalPages());
-        model.addAttribute("pageSize", pageSize);
-        model.addAttribute("count", bookPage.getCount());
-        model.addAttribute("pageSizeOption", pageSizeOption);
-        customers.add(0, customer);
-        model.addAttribute("q_customers", customers);
-        return "book/list";
-    }
-    //查詢分頁會員列表及修改pageSize
-    @GetMapping("/books/queryByCondition")
-    public String queryByCondition(@RequestParam(required = false, defaultValue = "1") Integer page,
-                           @RequestParam(required = false, defaultValue = "2") Integer pageSize,
-                           @RequestParam(required = false) String q_id, @RequestParam(required = false) String q_id2,
-                           @RequestParam(required = false) Integer q_amt, @RequestParam(required = false) Integer q_amt2,
-                           @RequestParam(required = false) String q_invYM, @RequestParam(required = false) String q_invYM2,
-                           @RequestParam(required = false) String q_paidDat, @RequestParam(required = false) String q_paidDat2,
-                           @RequestParam(required = false) String q_incomeOrExpend, @RequestParam(required = false) String q_invNo,
-                           @RequestParam(required = false) Integer q_customerId, @RequestParam(required = false) Integer q_projectId,
-                           @RequestParam(required = false) Integer q_invoice, @RequestParam(required = false) Integer q_paid,
-                           @RequestParam(required = false) String q_description, Model model) {
-        BookReq bookReq = new BookReq(q_id, q_id2, q_amt, q_amt2, q_invYM, q_invYM2, q_paidDat, q_paidDat2, q_incomeOrExpend, q_invNo, q_customerId, q_projectId, q_invoice, q_paid, q_description);
-        LOGGER.info("query_bookReq= " + bookReq.queryAll());
-        List<ProjectDto> projectDtos = null;
-        System.out.println("*** " + bookReq.getQ_incomeOrExpend());
-
-        BookPage bookPage = bookService.getAllForm(page, pageSize);
+        List<ProjectDto> projectDtos = null; //for查詢用的ProjectDtoList
         //傳回query 參數
         if (bookReq.getQ_customerId() != null && bookReq.getQ_customerId() != 0) {
             projectDtos = this.findProjectByCustomerId(bookReq.getQ_customerId());
@@ -92,6 +62,90 @@ public class BookApi {
         model.addAttribute("indexPage", bookPage.getCurrentPage());
         model.addAttribute("totalPages", bookPage.getTotalPages());
         model.addAttribute("pageSize", pageSize);
+        model.addAttribute("count", bookPage.getCount());
+        model.addAttribute("pageSizeOption", pageSizeOption);
+        customers.add(0, customer);
+        model.addAttribute("q_customers", customers);
+        model.addAttribute("bookReq", bookReq);
+        return "book/list";
+    }
+
+    //查詢分頁會員列表及修改pageSize
+    @GetMapping("/booksChangePage")
+    public String changePage(@RequestParam(required = false, defaultValue = "1") Integer page,
+                             @RequestParam(required = false, defaultValue = "2") Integer pageSize,
+                             @RequestParam(required = false) String q_id, @RequestParam(required = false) String q_id2,
+                             @RequestParam(required = false) Integer q_amt, @RequestParam(required = false) Integer q_amt2,
+                             @RequestParam(required = false) String q_invYM, @RequestParam(required = false) String q_invYM2,
+                             @RequestParam(required = false) String q_paidDat, @RequestParam(required = false) String q_paidDat2,
+                             @RequestParam(required = false) String q_incomeOrExpend, @RequestParam(required = false) String q_invNo,
+                             @RequestParam(required = false) Integer q_customerId, @RequestParam(required = false) Integer q_projectId,
+                             @RequestParam(required = false) Integer q_invoice, @RequestParam(required = false) Integer q_paid,
+                             @RequestParam(required = false) String q_description, Model model) {
+        //BookReq bookReq = new BookReq(q_id, q_id2, q_amt, q_amt2, q_invYM, q_invYM2, q_paidDat, q_paidDat2, q_incomeOrExpend, q_invNo, q_customerId, q_projectId, q_invoice, q_paid, q_description);
+        LOGGER.info("query_bookReq= " + bookReq.queryAll());
+        LOGGER.info("page= " + page);
+        LOGGER.info("pageSize= " + pageSize);
+        BookPage bookPage = bookService.getAllForm(page, pageSize);
+        List<ProjectDto> projectDtos = null; //for查詢用的ProjectDtoList
+        //傳回query 參數
+        if (bookReq.getQ_customerId() != null && bookReq.getQ_customerId() != 0) {
+            projectDtos = this.findProjectByCustomerId(bookReq.getQ_customerId());
+        }
+        List<Customer> customers = customerDao.findAll();
+        //q_cust 有空查詢的可能
+        Customer customer = new Customer();
+        customer.setId(0);
+        customer.setCustNm("請選擇");
+
+        model.addAttribute("books", bookPage.getContents());
+        model.addAttribute("customers", customers);
+        model.addAttribute("indexPage", bookPage.getCurrentPage());
+        model.addAttribute("totalPages", bookPage.getTotalPages());
+        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("count", bookPage.getCount());
+        model.addAttribute("pageSizeOption", pageSizeOption);
+        customers.add(0, customer);
+        model.addAttribute("q_customers", customers);
+        model.addAttribute("projectDtos", projectDtos);
+        model.addAttribute("bookReq", bookReq);
+        return "book/list";
+    }
+
+    //查詢form
+    @GetMapping("/books/queryByCondition")
+    public String queryByCondition(
+            @RequestParam(required = false, defaultValue = "2") Integer hiddenPageSize,
+            @RequestParam(required = false) String q_id, @RequestParam(required = false) String q_id2,
+            @RequestParam(required = false) Integer q_amt, @RequestParam(required = false) Integer q_amt2,
+            @RequestParam(required = false) String q_invYM, @RequestParam(required = false) String q_invYM2,
+            @RequestParam(required = false) String q_paidDat, @RequestParam(required = false) String q_paidDat2,
+            @RequestParam(required = false) String q_incomeOrExpend, @RequestParam(required = false) String q_invNo,
+            @RequestParam(required = false) Integer q_customerId, @RequestParam(required = false) Integer q_projectId,
+            @RequestParam(required = false) Integer q_invoice, @RequestParam(required = false) Integer q_paid,
+            @RequestParam(required = false) String q_description, Model model) {
+        bookReq = new BookReq(q_id, q_id2, q_amt, q_amt2, q_invYM, q_invYM2, q_paidDat, q_paidDat2, q_incomeOrExpend, q_invNo, q_customerId, q_projectId, q_invoice, q_paid, q_description);
+        LOGGER.info("query_bookReq= " + bookReq.queryAll());
+
+        LOGGER.info("pageSize= " + hiddenPageSize);
+        List<ProjectDto> projectDtos = null; //for查詢用的ProjectDtoList
+
+        BookPage bookPage = bookService.getAllForm(1, hiddenPageSize);
+        //傳回query 參數
+        if (bookReq.getQ_customerId() != null && bookReq.getQ_customerId() != 0) {
+            projectDtos = this.findProjectByCustomerId(bookReq.getQ_customerId());
+        }
+        List<Customer> customers = customerDao.findAll();
+        //q_cust 有空查詢的可能
+        Customer customer = new Customer();
+        customer.setId(0);
+        customer.setCustNm("請選擇");
+
+        model.addAttribute("books", bookPage.getContents());
+        model.addAttribute("customers", customers);
+        model.addAttribute("indexPage", bookPage.getCurrentPage());
+        model.addAttribute("totalPages", bookPage.getTotalPages());
+        model.addAttribute("pageSize", hiddenPageSize);
         model.addAttribute("count", bookPage.getCount());
         model.addAttribute("pageSizeOption", pageSizeOption);
         customers.add(0, customer);

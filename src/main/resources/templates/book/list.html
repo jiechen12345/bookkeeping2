@@ -43,6 +43,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+
         //----測試用
         // $('.form-control').attr('disabled', true);
         // $("#incomeOrExpend").attr('disabled', false);
@@ -406,7 +407,11 @@
                                 </div>
                                 <div th:align="right">
                                     <button type="submit" class="btn btn-default btn-success">執行查詢</button>
+                                    <button class="btn btn-secondary" onclick="reInThisPage();" id="q_reset" name="q_reset"
+                                            type="button">清空
+                                    </button>
                                 </div>
+
                                 當前<input type="text" id="current_page" th:value="${indexPage}" name="current_page">
                                 每頁<input type="text" id="hiddenPageSize" th:value="${pageSize}" name="hiddenPageSize">
                             </form>
@@ -437,7 +442,7 @@
                     </tr>
                     </thead>
                     <tbody id="list-itens">
-                    <tr th:each="book:${books}"
+                    <tr id="listTr" th:each="book:${books}"
                         th:onclick="'javascript:queryOne(\''+${book.id}+'\')'">
                         <td align="center" th:text="${book.getId()}">1</td>
                         <td align="center" th:text="*{book.getIncomeOrExpend()=='1'}?'收入':'支出'">1
@@ -631,7 +636,7 @@
     }
 
     function queryOne(id) {
-        var session = "\''+[[${session.loginUser.getName()}]]+'\'";
+      var session = "\''+[[${session.loginUser.getName()}]]+'\'";
         if (session == null || session == '') {
             alert('session 失效');
             window.location.replace(location);
@@ -748,9 +753,8 @@
         var page = '1' // 修改每頁幾筆自動回第一頁
         var pageSize = $('#pageSize').val();
         var queryForm = $("#queryForm");
-        var unindexed_array = queryForm.serialize;
-        alert(unindexed_array);
-        window.location.href = "/books?pageSize=" + pageSize + "&page=" + page;
+
+        window.location.href = "/booksChangePage?pageSize=" + pageSize + "&page=" + page;
     }
 
     function changePage(page) {
@@ -758,7 +762,7 @@
         alert(pageSize);
         alert(page);
 
-        window.location.href = "/books?pageSize=" + pageSize + "&page=" + page;
+        window.location.href = "/booksChangePage?pageSize=" + pageSize + "&page=" + page;
     }
 
     $(".datetimepickerYM").datetimepicker({
@@ -781,7 +785,8 @@
     });
 
     function reInThisPage() {
-        window.location.href = "/books";
+        var pageSize = $('#pageSize').val();
+        window.location.href = "/books?pageSize=" + pageSize;
     }
 
     function ajaxError(jqXHR, exception) {
