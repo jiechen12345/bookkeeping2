@@ -33,13 +33,13 @@ public class BookApi {
     private CustomerDao customerDao;
     @Autowired
     private BookService bookService;
-    Integer[] pageSizeOption = {2, 5, 10, 15, 20};
+    Integer[] pageSizeOption = {5, 10, 15, 20};
     BookReq bookReq = new BookReq();
 
     //查詢分頁會員列表及修改pageSize
     @GetMapping("/books")
     public String findAll(@RequestParam(required = false, defaultValue = "1") Integer page,
-                          @RequestParam(required = false, defaultValue = "2") Integer pageSize,
+                          @RequestParam(required = false, defaultValue = "5") Integer pageSize,
                           Model model) {
         //BookReq bookReq = new BookReq(q_id, q_id2, q_amt, q_amt2, q_invYM, q_invYM2, q_paidDat, q_paidDat2, q_incomeOrExpend, q_invNo, q_customerId, q_projectId, q_invoice, q_paid, q_description);
         bookReq = new BookReq();
@@ -83,10 +83,10 @@ public class BookApi {
                              @RequestParam(required = false) Integer q_invoice, @RequestParam(required = false) Integer q_paid,
                              @RequestParam(required = false) String q_description, Model model) {
         //BookReq bookReq = new BookReq(q_id, q_id2, q_amt, q_amt2, q_invYM, q_invYM2, q_paidDat, q_paidDat2, q_incomeOrExpend, q_invNo, q_customerId, q_projectId, q_invoice, q_paid, q_description);
-        LOGGER.info("query_bookReq= " + bookReq.queryAll());
-        LOGGER.info("page= " + page);
-        LOGGER.info("pageSize= " + pageSize);
-        BookPage bookPage = bookService.getAllForm(page, pageSize);
+        LOGGER.info("changePage.query_bookReq= " + bookReq.queryAll());
+        LOGGER.info("changePage.page= " + page);
+        LOGGER.info("changePage.pageSize= " + pageSize);
+        BookPage bookPage = bookService.queryAll(page, pageSize,bookReq);
         List<ProjectDto> projectDtos = null; //for查詢用的ProjectDtoList
         //傳回query 參數
         if (bookReq.getQ_customerId() != null && bookReq.getQ_customerId() != 0) {
@@ -125,12 +125,11 @@ public class BookApi {
             @RequestParam(required = false) Integer q_invoice, @RequestParam(required = false) Integer q_paid,
             @RequestParam(required = false) String q_description, Model model) {
         bookReq = new BookReq(q_id, q_id2, q_amt, q_amt2, q_invYM, q_invYM2, q_paidDat, q_paidDat2, q_incomeOrExpend, q_invNo, q_customerId, q_projectId, q_invoice, q_paid, q_description);
-        LOGGER.info("query_bookReq= " + bookReq.queryAll());
-
-        LOGGER.info("pageSize= " + hiddenPageSize);
+        LOGGER.info("query.bookReq= " + bookReq.queryAll());
+        LOGGER.info("query.pageSize= " + hiddenPageSize);
         List<ProjectDto> projectDtos = null; //for查詢用的ProjectDtoList
 
-        BookPage bookPage = bookService.getAllForm(1, hiddenPageSize);
+        BookPage bookPage = bookService.queryAll(1, hiddenPageSize,bookReq);
         //傳回query 參數
         if (bookReq.getQ_customerId() != null && bookReq.getQ_customerId() != 0) {
             projectDtos = this.findProjectByCustomerId(bookReq.getQ_customerId());

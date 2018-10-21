@@ -15,9 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
+import org.joda.time.DateTime;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,6 +55,74 @@ public class BookServiceImpl implements BookService {
             query.orderBy(cb.desc(root.get("id")));
             return cb.and();
         }, PageRequest.of(page - 1, PageSize));
+
+        BookPage result = new BookPage();
+        result.setContents(p.getContent()
+                .stream()
+                .map(it -> new BookDto(
+                                it.getId(),
+                                it.getIncomeOrExpend(),
+                                it.getInvoice(),
+                                it.getInvYM(),
+                                it.getInvNo(),
+                                it.getPaid(),
+                                it.getPaidDat(),
+                                it.getAmt(),
+                                it.getProject().getCustomer().getId(),
+                                it.getProject().getCustomer().getCustNm(),
+                                it.getProject().getId(),
+                                it.getProject().getProjectName(),
+                                it.getCreateDat(),
+                                it.getUpdateDat(),
+                                (it.getCreateMember() != null) ? it.getCreateMember().getId() : 0,
+                                (it.getCreateMember() != null) ? it.getCreateMember().getName() : "",
+                                (it.getUpdateMember() != null) ? it.getUpdateMember().getId() : 0,
+                                (it.getUpdateMember() != null) ? it.getUpdateMember().getName() : "",
+                                it.getDescription(),
+                                it.getRemarks()
+                        )
+                )
+                .collect(toList()));
+        result.setCurrentPage(page);
+        result.setTotalPages(p.getTotalPages() > 0 ? p.getTotalPages() : 1);
+        result.setCount(p.getTotalElements());
+        return result;
+    }
+
+    @Override
+    public BookPage queryAll(Integer page, Integer pageSize, BookReq bookReq) {
+        Page<Book> p = bookDao.findAll((root, query, cb) -> {
+            query.orderBy(cb.desc(root.get("id")));
+            List<Predicate> predicates = new LinkedList<>();
+            Optional.ofNullable(bookReq.getQ_id()).filter(it -> !it.isEmpty()).ifPresent(q_id -> {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("id"), Long.parseLong(q_id)));
+            });
+            Optional.ofNullable(bookReq.getQ_id2()).filter(it -> !it.isEmpty()).ifPresent(q_id2 -> {
+                predicates.add(cb.lessThanOrEqualTo(root.get("id"), Long.parseLong(q_id2)));
+            });
+            Optional.ofNullable(bookReq.getQ_amt()).ifPresent(q_amt -> {
+                predicates.add(cb.ge(root.get("amt"), q_amt));
+            });
+            Optional.ofNullable(bookReq.getQ_amt2()).ifPresent(q_amt2 -> {
+                predicates.add(cb.le(root.get("amt"), q_amt2));
+            });
+            Optional.ofNullable(bookReq.getQ_invYM()).filter(it -> !it.isEmpty()).ifPresent(q_invYm -> {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("invYM"), (q_invYm)));
+            });
+            Optional.ofNullable(bookReq.getQ_invYM2()).filter(it -> !it.isEmpty()).ifPresent(q_invYm2 -> {
+                predicates.add(cb.lessThanOrEqualTo(root.get("invYM"), (q_invYm2)));
+            });
+            Optional.ofNullable(bookReq.getQ_paidDat()).filter(it -> !it.isEmpty()).ifPresent(q_paidDat -> {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("paidDat"), new DateTime(q_paidDat).withTimeAtStartOfDay().toDate()));
+            });
+            Optional.ofNullable(bookReq.getQ_paidDat2()).filter(it -> !it.isEmpty()).ifPresent(q_paidDat2 -> {
+                predicates.add(cb.lessThanOrEqualTo(root.get("paidDat"), new DateTime(q_paidDat2).withTimeAtStartOfDay().plusDays(1).minusMillis(1).toDate()));
+            });
+            Optional.ofNullable(bookReq.getQ_incomeOrExpend()).filter(it -> !it.isEmpty()).ifPresent(q_incomeOrExpend -> {
+                predicates.add(cb.equal(root.get("incomeOrExpend"), q_incomeOrExpend));
+            });
+            return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+        }, PageRequest.of(page - 1, pageSize));
 
         BookPage result = new BookPage();
         result.setContents(p.getContent()
