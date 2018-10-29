@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.joda.time.DateTime;
+
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import java.time.LocalDate;
@@ -120,6 +121,9 @@ public class BookServiceImpl implements BookService {
             });
             Optional.ofNullable(bookReq.getQ_incomeOrExpend()).filter(it -> !it.isEmpty()).ifPresent(q_incomeOrExpend -> {
                 predicates.add(cb.equal(root.get("incomeOrExpend"), q_incomeOrExpend));
+            });
+            Optional.ofNullable(bookReq.getQ_invNo()).filter(it -> !it.isEmpty()).ifPresent(q_invNo -> {
+                predicates.add(cb.equal(root.get("invNo"), q_invNo));
             });
             return cb.and(predicates.toArray(new Predicate[predicates.size()]));
         }, PageRequest.of(page - 1, pageSize));
