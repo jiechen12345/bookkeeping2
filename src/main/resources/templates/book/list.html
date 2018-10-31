@@ -263,6 +263,10 @@
                                         onclick="$('#status').val('update');"
                                         type="submit">修改
                                 </button>
+                                <button class="btn btn-warning" id="print" name="print"
+                                        onclick="printPDF();" type="button">
+                                    列印
+                                </button>
                                 <!--<button class="btn btn-secondary" id="confirm" name="confirm" type="submit">確定-->
                                 <!--</button>-->
                                 </button>
@@ -467,7 +471,7 @@
             </div>
             <!--pagination-->
             <div th:replace="common/pagination::pagination"></div>
-
+<div>[[${books}]]</div>
             <!-- 查詢
             <form>
                 <div id="addPanelHolder">
@@ -635,7 +639,24 @@
         }
         //alert(status);
     }
+function printPDF() {
+        alert(11);
+    $.ajax({
+        contentType: 'application/json; charset=UTF-8',
+        type: "POST",
+        async: false,
+        url: "books/print",
+        success: function (data) {
+            popToast("OK ！");
+            alert(data.toString());
+            setTimeout("location.reload()", 700);
 
+        },
+        error: function (jqXHR, exception) {
+            ajaxError(jqXHR, exception);
+        }
+    });
+}
     function queryOne(id) {
       var session = "\''+[[${session.loginUser.getName()}]]+'\'";
         if (session == null || session == '') {
@@ -706,8 +727,6 @@
         )
         */
     }
-
-    FormData
 
     //取的form所有值
     function getFormData($form) {
