@@ -11,6 +11,7 @@ import com.oppo.dao.ProjectDao;
 import com.oppo.dto.BookDto;
 import com.oppo.dto.BookPage;
 import com.oppo.request.BookReq;
+import com.sun.media.jfxmedia.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -94,7 +95,9 @@ public class BookServiceImpl implements BookService {
     public BookPage queryAll(Integer page, Integer pageSize, BookReq bookReq) {
         Page<Book> p = bookDao.findAll((root, query, cb) -> {
             query.orderBy(cb.desc(root.get("id")));
+
             List<Predicate> predicates = new LinkedList<>();
+
             Optional.ofNullable(bookReq.getQ_id()).filter(it -> !it.isEmpty()).ifPresent(q_id -> {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("id"), Long.parseLong(q_id)));
             });
@@ -123,8 +126,32 @@ public class BookServiceImpl implements BookService {
                 predicates.add(cb.equal(root.get("incomeOrExpend"), q_incomeOrExpend));
             });
             Optional.ofNullable(bookReq.getQ_invNo()).filter(it -> !it.isEmpty()).ifPresent(q_invNo -> {
-                predicates.add(cb.equal(root.get("invNo"), q_invNo));
+                predicates.add(cb.like(root.get("invNo"), "%" + q_invNo + "%"));
             });
+
+            Optional.ofNullable(bookReq.getQ_customerId()).filter(it -> it!=0).ifPresent(q_customerId -> {
+                predicates.add(cb.equal(root.get("project").get("customer").get("id"), q_customerId));
+            });
+
+            Optional.ofNullable(bookReq.getQ_projectId()).ifPresent(q_projectId -> {
+                predicates.add(cb.equal(root.get("project").get("id"), q_projectId));
+            });
+
+//            if (!"".equals(bookReq.getQ_invNo())){
+//                Predicate invNo = cb.like(root.get("invNo"), '%'+bookReq.getQ_invNo()+'%');
+//                predicates.add(invNo);
+//            }
+
+            Optional.ofNullable(bookReq.getQ_invoice()).ifPresent(q_invoice -> {
+                predicates.add(cb.equal(root.get("invoice"), q_invoice));
+            });
+            Optional.ofNullable(bookReq.getQ_paid()).ifPresent(q_paid -> {
+                predicates.add(cb.equal(root.get("paid"), q_paid));
+            });
+            Optional.ofNullable(bookReq.getQ_description()).ifPresent(q_description -> {
+                predicates.add(cb.like(root.get("description"), '%' + q_description + '%'));
+            });
+
             return cb.and(predicates.toArray(new Predicate[predicates.size()]));
         }, PageRequest.of(page - 1, pageSize));
 
@@ -166,7 +193,7 @@ public class BookServiceImpl implements BookService {
         bookReq.setId(getSerialNumber());
         Book book = new Book();
         book = getSetupBook(book, bookReq);
-        bookDao.save(book);
+        bookDao.saveAndFlush(book);
     }
 
     @Override
@@ -250,7 +277,6 @@ public class BookServiceImpl implements BookService {
         book.setAmt(Common.get(bookReq.getAmt()));
         book.setDescription(Common.get(bookReq.getDescription()));
         book.setRemarks(Common.get(bookReq.getRemarks()));
-
         if (bookReq.getProjectId() != null) {
             Project project = projectDao.findById((bookReq.getProjectId())).get();
             book.setProject(project);

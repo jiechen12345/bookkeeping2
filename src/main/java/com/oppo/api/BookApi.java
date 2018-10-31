@@ -73,7 +73,7 @@ public class BookApi {
     //查詢分頁會員列表及修改pageSize
     @GetMapping("/booksChangePage")
     public String changePage(@RequestParam(required = false, defaultValue = "1") Integer page,
-                             @RequestParam(required = false, defaultValue = "2") Integer pageSize,
+                             @RequestParam(required = false, defaultValue = "5") Integer pageSize,
                              @RequestParam(required = false) String q_id, @RequestParam(required = false) String q_id2,
                              @RequestParam(required = false) Integer q_amt, @RequestParam(required = false) Integer q_amt2,
                              @RequestParam(required = false) String q_invYM, @RequestParam(required = false) String q_invYM2,

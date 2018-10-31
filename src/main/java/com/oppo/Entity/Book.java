@@ -13,7 +13,7 @@ public class Book {
     @Column(length = 12)
     private String id;
     //收支 收1支0
-    @Column(length = 1,nullable = false)
+    @Column(length = 1)
     private String incomeOrExpend;
     //是否廠商發票
     private Boolean invoice = false;
