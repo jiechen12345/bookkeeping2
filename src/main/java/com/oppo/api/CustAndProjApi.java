@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
  * Created by JieChen on 2019/1/15.
  */
 @Controller
-public class custAndProjApi {
-    Logger LOGGER = LoggerFactory.getLogger(custAndProjApi.class);
+public class CustAndProjApi {
+    Logger LOGGER = LoggerFactory.getLogger(CustAndProjApi.class);
     @Autowired
     private ProjectDao projectDao;
     @Autowired
@@ -41,34 +41,34 @@ public class custAndProjApi {
     public String findAll(@RequestParam(required = false, defaultValue = "1") Integer page,
                           @RequestParam(required = false, defaultValue = "5") Integer pageSize,
                           Model model) {
-        //BookReq bookReq = new BookReq(q_id, q_id2, q_amt, q_amt2, q_invYM, q_invYM2, q_paidDat, q_paidDat2, q_incomeOrExpend, q_invNo, q_customerId, q_projectId, q_invoice, q_paid, q_description);
-        String nowYM = new SimpleDateFormat("yyyyMM").format(new Date());
-        bookReq = new BookReq();
-        LOGGER.info("findAll.page= " + page);
-        LOGGER.info("findAll.pageSize= " + pageSize);
-        BookPage bookPage = bookService.getAllForm(page, pageSize,nowYM);
-        List<ProjectDto> projectDtos = null; //for查詢用的ProjectDtoList
-        //傳回query 參數
-        if (bookReq.getQ_customerId() != null && bookReq.getQ_customerId() != 0) {
-            projectDtos = this.findProjectByCustomerId(bookReq.getQ_customerId());
-        }
-        List<Customer> customers = customerDao.findAll();
-        //q_cust 有空查詢的可能
-        Customer customer = new Customer();
-        customer.setId(0);
-        customer.setCustNm("請選擇");
-
-        model.addAttribute("books", bookPage.getContents());
-        model.addAttribute("customers", customers);
-        model.addAttribute("indexPage", bookPage.getCurrentPage());
-        model.addAttribute("totalPages", bookPage.getTotalPages());
-        model.addAttribute("pageSize", pageSize);
-        model.addAttribute("count", bookPage.getCount());
-        model.addAttribute("pageSizeOption", pageSizeOption);
-        customers.add(0, customer);
-        model.addAttribute("q_customers", customers);
-        model.addAttribute("bookReq", bookReq);
-        return "book/list";
+//        //BookReq bookReq = new BookReq(q_id, q_id2, q_amt, q_amt2, q_invYM, q_invYM2, q_paidDat, q_paidDat2, q_incomeOrExpend, q_invNo, q_customerId, q_projectId, q_invoice, q_paid, q_description);
+//        String nowYM = new SimpleDateFormat("yyyyMM").format(new Date());
+//        bookReq = new BookReq();
+//        LOGGER.info("findAll.page= " + page);
+//        LOGGER.info("findAll.pageSize= " + pageSize);
+//        BookPage bookPage = bookService.getAllForm(page, pageSize,nowYM);
+//        List<ProjectDto> projectDtos = null; //for查詢用的ProjectDtoList
+//        //傳回query 參數
+//        if (bookReq.getQ_customerId() != null && bookReq.getQ_customerId() != 0) {
+//            projectDtos = this.findProjectByCustomerId(bookReq.getQ_customerId());
+//        }
+//        List<Customer> customers = customerDao.findAll();
+//        //q_cust 有空查詢的可能
+//        Customer customer = new Customer();
+//        customer.setId(0);
+//        customer.setCustNm("請選擇");
+//
+//        model.addAttribute("books", bookPage.getContents());
+//        model.addAttribute("customers", customers);
+//        model.addAttribute("indexPage", bookPage.getCurrentPage());
+//        model.addAttribute("totalPages", bookPage.getTotalPages());
+//        model.addAttribute("pageSize", pageSize);
+//        model.addAttribute("count", bookPage.getCount());
+//        model.addAttribute("pageSizeOption", pageSizeOption);
+//        customers.add(0, customer);
+//        model.addAttribute("q_customers", customers);
+//        model.addAttribute("bookReq", bookReq);
+        return "custAndProj/list";
     }
 
     //查詢分頁會員列表及修改pageSize

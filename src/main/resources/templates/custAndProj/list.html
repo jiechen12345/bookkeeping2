@@ -1,108 +1,31 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
-
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
     <meta name="description" content=""/>
     <meta name="author" content=""/>
     <title>客戶/專案管理</title>
     <!-- Bootstrap core CSS -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="/css/bootstrap-jie.css" rel="stylesheet"/>
-    <link href="/css/bootstrap-table.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/bootstrap-datetimepicker.min.css" media="screen"/>
-    <link rel="stylesheet" href="/css/bootstrap-datetimepicker.css" media="screen"/>
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="../../static/css/bootstrap-jie.css" rel="stylesheet"/>
+    <link href="../../static/css/bootstrap-table.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/css/bootstrap-datetimepicker.min.css" media="screen"/>
+    <link rel="stylesheet" href="../../static/css/bootstrap-datetimepicker.css" media="screen"/>
     <!-- Custom styles for this tmemberlate -->
-    <link href="/css/dashboard.css" rel="stylesheet"/>
-
+    <link href="../../static/css/dashboard.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 </head>
 <body th:inline="text">
 <script src="/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
-<script src="/js/moment.js" crossorigin="anonymous"></script>
-<script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.6.0/moment.min.js"></script>
 
-    /**
-     * toast 小提示框
-     * @param tipTxt 提示内容
-     */
-    function popToast(tipTxt) {
-        var $popToast = $(".pop-toast");
-        $popToast.remove();
-        var popToastHtml = '<div class="pop-toast">\n' +
-            '            <p class="toast-tip">' + tipTxt + '</p>\n' +
-            '        </div>';
-        $popToast = $(popToastHtml);
-        $("body").append($popToast);
-        setTimeout(function () {
-            $popToast.fadeOut();
-        }, 1500);
-    }
-</script>
 
-<script type="text/javascript">
-    $(document).ready(function () {
 
-        //----測試用
-        // $('.form-control').attr('disabled', true);
-        // $("#incomeOrExpend").attr('disabled', false);
-        // $("#amt").attr('disabled', false);
-        // $("#paidDat").attr('disabled', false);
-        //----
-        componentCl();
-        $('.collapse').collapse();
-        //$("#createDat").val((Today.getFullYear()) + "-" + (Today.getMonth() + 1) + '-' + ((Today.getDate().toString().length == 1) ? '0' + Today.getDate() : Today.getDate()));
-        $("#createDat").val(moment().format('YYYY-MM-DD'));
-        $("#createMemberName").val($("#loginUserName").val());
-
-        var customerId = $("#customerId option:selected").val();
-        findProjectByCustomerIdAjax(customerId, 'form');
-        var q_customerId = $("#q_customerId option:selected").val();
-        if (q_customerId != 0) {
-            findProjectByCustomerIdAjax(q_customerId, 'query');
-        }
-        $("#customerId").change(function () {
-            var customerId = $("#customerId option:selected").val();
-            findProjectByCustomerIdAjax(customerId, 'form');
-        });
-        $("#q_customerId").change(function () {
-            var q_customerId = $("#q_customerId option:selected").val();
-            if (q_customerId != 0) {
-                findProjectByCustomerIdAjax(q_customerId, 'query');
-            } else {
-                $("#q_projectId").empty();
-            }
-        });
-    });
-
-    function findProjectByCustomerIdAjax(customerId, rowType) {
-        $.ajax({
-            contentType: 'application/json; charset=UTF-8',
-            type: "post",
-            data: JSON.stringify(customerId),
-            url: "/books/findProjectByCustomerId",
-            success: function (data) {
-                var str = "";
-                $.each(data, function (index, value) {
-                    str += "<option value='" + value.id + "'>" + value.projectName + "</option>";
-                });
-                if (rowType == 'form') {
-                    $("#projectId").empty();
-                    $("#projectId").append(str);
-                } else if (rowType == 'query') {
-                    $("#q_projectId").empty();
-                    $("#q_projectId").append("<option value=''>" + "" + "</option>");
-                    $("#q_projectId").append(str);
-                }
-            },
-            error: function (jqXHR, exception) {
-                ajaxError(jqXHR, exception);
-            },
-        });
-    }
-
-</script>
 <!--引入topbar-->
 <div th:replace="common/bar::top_bar"></div>
 <div class="container-fluid">
@@ -122,396 +45,206 @@
                 </div>
             </div>
             <!-- form **************************************************************-->
-            <div container-fluid>
-                <form id='myForm' class="needs-validation" novalidate>
-                    <div class="form-row">
-                        <div class="col-md-2 mb-1">
-                            <label for="id">編號</label>
-                            <input maxlength="12" type="text" class="form-control" name="id" id="id" readonly>
-                        </div>
-                        <div class="col-md-2 mb-1">
-                            <label for="incomeOrExpend">帳務類別</label>
-                            <select class="form-control" id="incomeOrExpend" name="incomeOrExpend">
-                                <option value="1">收入</option>
-                                <option value="0">支出</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 mb-1">
-                            <label for="projectId">客戶單位</label>
-                            <select class="form-control" name="customerId" id="customerId">
-                                <option th:each="customer:${customers}" th:value="${customer.id}"
-                                        th:text="${customer.custNm}"></option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-1">
-                            <label for="projectId">專案名稱</label>
-                            <select class="form-control selector" name="projectId" id="projectId">
-
-                            </select>
-                        </div>
-                        <div class="col-md-2 mb-1">
-                            <label for="amt">金額</label>
-                            <input name="amt" id="amt" maxlength="14" type="text" class="form-control"
-                                   placeholder="1000" onkeyup="value=value.replace(/[^\d]/g,'') " required>
-                            <div class="invalid-feedback">
-                                請輸入金額.
-                            </div>
-                        </div>
-                        <div class="col-md-2 mb-1">
-                            <label for="invoice">廠商發票</label>
-                            <select class="form-control" name="invoice" id="invoice" onchange="componentCl();">
-                                <option value="1">Y</option>
-                                <option value="0" selected>N</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 mb-1">
-                            <label for="invYM">發票月份</label>
-                            <input type="text" class="form-control datetimepickerYM" id='invYM' name="invYM"
-                                   placeholder="2018-01"
-                                   required>
-                            <div class="invalid-feedback">
-                                請輸入發票月份.
-                            </div>
-                        </div>
-
-                        <div class="col-md-2 mb-1">
-                            <label for="invNo">發票號碼</label>
-                            <div class="input-group">
-                                <input maxlength="10" type="text" class="form-control" name="invNo" id="invNo"
-                                       placeholder="NY12345678" required>
-                                <div class="invalid-feedback">
-                                    請輸入發票號碼.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-5 mb-1">
-                            <label for="description">說明</label>
-                            <input id="description" name="description" type="text" class="form-control" placeholder="說明"
-                                   required>
-                            <div class="invalid-feedback">
-                                請輸入說明.
-                            </div>
-                        </div>
+            <div id="app">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">新增</h3>
                     </div>
-                    <div class="form-row">
-                        <div class="col-md-2 mb-1">
-                            <label for="paid">付款與否</label>
-                            <select class="form-control" name="paid" id="paid" onchange="componentCl();">
-                                <option value="1">Y</option>
-                                <option value="0" selected>N</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 mb-1">
-                            <label for="paidDat">付款日</label>
-                            <input id='paidDat' name="paidDat" type="text" class="form-control datetimepickerDat"
-                                   placeholder="2018-01-01"
-                                   required>
-                            <div class="invalid-feedback">
-                                請輸入付款日.
-                            </div>
-                        </div>
-                        <div class="col-md-2 mb-1">
-                            <label for="createMemberName">建立人員</label>
-                            <input type="text" readonly class="form-control" id="createMemberName"
-                                   name="createMemberName">
-                            <input type="hidden" id="createMemberId" name="createMemberId"
-                                   th:value="${session.loginUser.getId()}">
-                        </div>
-                        <div class="col-md-2 mb-1">
-                            <label for="createDat">建立時間</label>
-                            <input type="text" readonly class="form-control" id="createDat" name="createDat">
-
-                        </div>
-                        <div class="col-md-2 mb-1">
-                            <label for="updateMemberName">異動人員</label>
-                            <input type="text" readonly class="form-control" id="updateMemberName"
-                                   name="updateMemberName">
-                            <input type="hidden" id="updateMemberId" name="updateMemberId">
-                        </div>
-                        <div class="col-md-2 mb-1">
-                            <label for="updateDat">異動時間</label>
-                            <input type="text" readonly class="form-control" id="updateDat" name="updateDat">
-                        </div>
+                    <div class="panel-body form-inline">
+                        <label>
+                            姓名:
+                            <input type="text" class="form-control" v-model="name">
+                        </label>
+                        <label>
+                            密碼:
+                            <input type="password" class="form-control" v-model="password">
+                        </label>
+                        <label>
+                            帳號:
+                            <input type="text" class="form-control" v-model="account" @keyup.enter="add">
+                        </label>
+                        <input type="button" value="++" class="btn-lg btn-primary" @click="add">
                     </div>
-                    <div class="form-row">
-                        <div class="col-md-6 mb-1" style="width: 40%">
-                            <label for="description">備註</label>
-                            <textarea id="remarks" name="remarks" class="form-control" cols="50" rows="3"></textarea>
-                        </div>
-                        <div class="form-inline">
-                            <div class="button-bar">
-                                <!--<button class="btn btn-info" onclick="openAddModal();" type="button" id="query"-->
-                                <!--name="query" data-toggle="modal">查詢-->
-                                <!--</button>-->
-                                <!--<button class="btn btn-success" id="create" name="create"-->
-                                <!--onclick="$('#status').val('create');$('.form-control').attr('disabled', false);"-->
-                                <!--type="button">新增-->
-                                <!--</button>-->
-                                <button class="btn btn-success" id="create" name="create"
-                                        onclick="$('#status').val('create');"
-                                        type="submit">新增
-                                </button>
-                                <button class="btn btn-danger" id="delete" name="delete"
-                                        onclick="$('#status').val('delete');enter();" type="button">
-                                    刪除
-                                </button>
-                                <!--<button class="btn btn-primary" id="update" name="update"-->
-                                <!--onclick="$('#status').val('update');$('.form-control').attr('disabled', false);"-->
-                                <!--type="button">修改-->
-                                <!--</button>-->
-                                <button class="btn btn-primary" id="update" name="update"
-                                        onclick="$('#status').val('update');"
-                                        type="submit">修改
-                                </button>
-                                <button class="btn btn-warning" id="print" name="print"
-                                        onclick="printPDF();" type="button">
-                                    123
-                                </button>
-                                <!--<button class="btn btn-secondary" id="confirm" name="confirm" type="submit">確定-->
-                                <!--</button>-->
-                                </button>
-                                <button class="btn btn-secondary" onclick="reInThisPage();" id="reset" name="reset"
-                                        type="button">清空
-                                </button>
-                                <input type="hidden" id="status" name="status">
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-
-            <!-----------query--------------------------------->
-            <div id="accordion">
-                <div class="card">
-                    <button class="btn btn-outline-info" data-toggle="collapse" data-target="#collapseOne"
-                            aria-expanded="false" aria-controls="collapseOne">
-                        <div class="card-header" id="headingOne">
-                            <h6>
-                                查 詢
-                            </h6>
-                        </div>
-                    </button>
-                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
-                         data-parent="#accordion">
-                        <div class="card-body container-fluid">
-                            <form id="queryForm" name="queryForm" th:action="@{/books/queryByCondition}" method="get">
-                                <div class="form-row">
-                                    <div class="col-md-2 mb-1">
-                                        <label for="q_id">編號</label>
-                                        <input maxlength="12" type="text" class="form-control queryform" name="q_id"
-                                               id="q_id"
-                                               th:value="${bookReq!=null}?${bookReq.getQ_id()}"
-                                               placeholder="大於">
-                                        <input maxlength="12" type="text" class="form-control queryform" name="q_id2"
-                                               id="q_id2"
-                                               th:value="${bookReq!=null}?${bookReq.getQ_id2()}"
-                                               placeholder="小於">
-                                    </div>
-                                    <div class="col-md-2 mb-1">
-                                        <label for="q_amt">金額</label>
-                                        <input name="q_amt" id="q_amt" maxlength="14" type="text"
-                                               class="form-control queryform"
-                                               th:value="${bookReq!=null}?${bookReq.getQ_amt()}"
-                                               onkeyup="value=value.replace(/[^\d]/g,'') " placeholder="大於">
-                                        <input name="q_amt2" id="q_amt2" maxlength="14" type="text"
-                                               th:value="${bookReq!=null}?${bookReq.getQ_amt2()}"
-                                               class="form-control queryform"
-                                               onkeyup="value=value.replace(/[^\d]/g,'') " placeholder="小於">
-                                    </div>
-                                    <div class="col-md-2 mb-1">
-                                        <label for="invYM">發票月份</label>
-                                        <input type="text" class="form-control datetimepickerYM queryform" id='q_invYM'
-                                               th:value="${bookReq!=null}?${bookReq.getQ_invYM()}"
-                                               name="q_invYM">
-                                        <input type="text" class="form-control datetimepickerYM queryform" id='q_invYM2'
-                                               th:value="${bookReq!=null}?${bookReq.getQ_invYM2()}"
-                                               name="q_invYM2">
-                                    </div>
-                                    <div class="col-md-2 mb-1">
-                                        <label for="paidDat">付款日</label>
-                                        <input id='q_paidDat' name="q_paidDat" type="text"
-                                               th:value="${bookReq!=null}?${bookReq.getQ_paidDat()}"
-                                               class="form-control datetimepickerDat queryform">
-                                        <input id='q_paidDat2' name="q_paidDat2" type="text"
-                                               th:value="${bookReq!=null}?${bookReq.getQ_paidDat2()}"
-                                               class="form-control datetimepickerDat queryform">
-                                    </div>
-
-                                    <div class="col-md-2 mb-1">
-                                        <label for="q_incomeOrExpend">帳務類別</label>
-                                        <select class="form-control queryform" id="q_incomeOrExpend"
-                                                name="q_incomeOrExpend">
-                                            <option value="">請選擇</option>
-                                            <option value="1"
-                                                    th:selected="${bookReq!=null && bookReq.getQ_incomeOrExpend()=='1'}?true">
-                                                收入
-                                            </option>
-                                            <option value="0"
-                                                    th:selected="${bookReq!=null && bookReq.getQ_incomeOrExpend()=='0'}?true">
-                                                支出
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2 mb-1">
-                                        <label for="invNo">發票號碼</label>
-                                        <div class="input-group">
-                                            <input maxlength="10" type="text" class="form-control queryform"
-                                                   name="q_invNo"
-                                                   id="q_invNo" th:value="${bookReq!=null}?${bookReq.getQ_invNo()}">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-2 mb-1">
-                                        <label for="q_customerId">客戶單位</label>
-                                        <select class="form-control queryform" name="q_customerId" id="q_customerId">
-                                            <option th:each="q_customer:${q_customers}" th:value="${q_customer.id}"
-                                                    th:text="${q_customer.custNm}"
-                                                    th:selected="${bookReq!=null && bookReq.getQ_customerId()!=null}?${q_customer.id==bookReq.getQ_customerId()}"></option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3 mb-1">
-                                        <label for="q_projectId">專案名稱</label>
-                                        <select class="form-control selector queryform" name="q_projectId"
-                                                id="q_projectId">
-                                            <option th:each="project:${projectDtos}" th:value="${project.getId()}"
-                                                    th:text="${project.getProjectName()}"
-                                                    th:selected="${bookReq!=null && projectDtos!=null}?${project.getId()==bookReq.getQ_projectId()}"></option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2 mb-1">
-                                        <label for="q_invoice">廠商發票</label>
-                                        <select class="form-control queryform" name="q_invoice" id="q_invoice">
-                                            <option value="">請選擇</option>
-                                            <option value="1"
-                                                    th:selected="${bookReq!=null && bookReq.getQ_invoice()==1}?true">Y
-                                            </option>
-                                            <option value="0"
-                                                    th:selected="${bookReq!=null && bookReq.getQ_invoice()==0}?true">N
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2 mb-1">
-                                        <label for="q_paid">付款與否</label>
-                                        <select class="form-control queryform" name="q_paid" id="q_paid">
-                                            <option value="">請選擇</option>
-                                            <option value="1"
-                                                    th:selected="${bookReq!=null && bookReq.getQ_paid()==1}?true">Y
-                                            </option>
-                                            <option value="0"
-                                                    th:selected="${bookReq!=null && bookReq.getQ_paid()==0}?true">N
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3 mb-1">
-                                        <label for="q_description">說明</label>
-                                        <input id="q_description"
-                                               th:value="${bookReq!=null}?${bookReq.getQ_description()}"
-                                               name="q_description" type="text" class="form-control queryform">
-                                    </div>
-                                </div>
-                                <div th:align="right">
-                                    <button type="submit" class="btn btn-default btn-success">執行查詢</button>
-                                    <button class="btn btn-secondary" onclick="reInThisPage();" id="q_reset"
-                                            name="q_reset"
-                                            type="button">清空
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-
-                    </div>
+                    <label>
+                        查詢關鍵字:
+                        <input type="text" class="form-control" v-model="q_name" v-focus v-color="'blue'">
+                    </label>
+                    <input type="button" value="test" class="btn-info" @click="getMemberList">
                 </div>
-            </div>
-
-
-            <!-----------LIST--------------------------------->
-            <div id="list" name="list" class="table-responsive">
-                <table class="table table-bordered table-striped">
+                <table class="table table-bordered table-hover table-striped">
                     <thead>
-                    <!--<tr class="table table-striped table-sm">-->
-                    <tr class="table table-striped table-sm" align="center">
-                        <th>ID</th>
-                        <th>收支</th>
-                        <th>廠商發票</th>
-                        <th>廠商發票月份</th>
-                        <th>發票號碼</th>
-                        <th>付款與否</th>
-                        <th>付款日期</th>
-                        <th>金額</th>
-                        <th>專案名稱</th>
-                        <th>說明</th>
-                        <th>備註</th>
+                    <tr>
+                        <th>姓名</th>
+                        <th>密碼</th>
+                        <th>帳號</th>
+                        <th>刪除</th>
                     </tr>
                     </thead>
-                    <tbody id="list-itens">
-                    <tr id="listTr" th:each="book:${books}"
-                        th:onclick="'javascript:queryOne(\''+${book.id}+'\')'">
-                        <td align="center" th:text="${book.getId()}">1</td>
-                        <td align="center" th:text="*{book.getIncomeOrExpend()=='1'}?'收入':'支出'">1
+                    <tbody>
+                    <tr v-for="member in search(q_name)" :key="member.id">
+                        <td>{{member.account}}</td>
+                        <td>{{member.password}}</td>
+                        <td>{{member.name}}</td>
+                        <td>
+                            <button class="btn-danger" @click="del(member.id)">del</button>
                         </td>
-                        <td align="center" th:text="*{book.getInvoice()}?'Y':'N'">1</td>
-                        <td align="center" width="9%" th:text="${book.getInvYM()}">1</td>
-                        <td align="center" th:text="${book.getInvNo()}">1</td>
-                        <td align="center" th:text="*{book.paid}?'Y':'N'">1</td>
-                        <td align="center" width="11%"
-                            th:text="${#dates.format(book.paidDat, 'yyyy-MM-dd')}">1
-                        </td>
-                        <td align="right"
-                            th:text="${#numbers.formatCurrency(book.amt).replace('.00','')}">1
-                        </td>
-                        <td th:text="${book.projectName}">1</td>
-                        <td th:text="${book.description}">1</td>
-                        <td th:text="${book.remarks}">1</td>
                     </tr>
                     </tbody>
                 </table>
             </div>
             <!--pagination-->
-            <div th:replace="common/pagination::pagination"></div>
-            <!--<div>[[${books}]]</div>-->
-            <!-- 查詢
-            <form>
-                <div id="addPanelHolder">
-                    <div id="addPanel" class="modal fade" role="dialog" th:fragment="addModalContens">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title" id="hdr-form-customer">查詢條件</h4>
-                                    <button type="button" class="close" data-dismiss="modal">×</button>
-                                </div>
-                                <div class="modal-body">
-                                    <form class="form-group">
-                                        <label>流水號</label>
-                                        <input type="text" name="name" id="name" class="form-control">
-                                        <label>專案名稱</label>
-                                        <select class="form-control" name="depId" id="depId">
-                                            <option th:each="dept:${depts}" th:value="${dept.id}"
-                                                    th:text="${dept.depName}"></option>
-                                        </select>
+            <!--<div th:replace="common/pagination::pagination"></div>-->
 
-                                        <div class="clearfix"></div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-link pull-left" data-dismiss="modal">取消
-                                    </button>
-                                    <button type="button" class="btn btn-default btn-success" data-dismiss="modal"
-                                            th:onclick="'javascript:sendAddMember()'">查詢
-                                    </button>
-                                </div>
-                            </div>
 
-                        </div>
-                    </div>
-                </div>
-            </form>
-            -->
         </main>
 
     </div>
 </div>
+<script>
 
+    /**
+     * toast 小提示框
+     * @param tipTxt 提示内容
+     */
+    function popToast(tipTxt) {
+        var $popToast = $(".pop-toast");
+        $popToast.remove();
+        var popToastHtml = '<div class="pop-toast">\n' +
+            '            <p class="toast-tip">' + tipTxt + '</p>\n' +
+            '        </div>';
+        $popToast = $(popToastHtml);
+        $("body").append($popToast);
+        setTimeout(function () {
+            $popToast.fadeOut();
+        }, 1500);
+    }
+
+    // 自定義V指令
+    Vue.directive('focus', {
+        //只调用一次，指令第一次绑定到元素时调用。在这里可以进行一次性的初始化设置。
+        bind: function (el) {
+            // 聚焦元素
+            el.focus()
+        },
+        // 当被绑定的元素插入到 DOM 中时……被绑定元素插入父节点时调用 (仅保证父节点存在，但不一定已被插入文档中)。
+        inserted: function (el) {
+            // 聚焦元素
+            el.focus()
+        }
+    })
+    // 自定義V指令
+    Vue.directive('color', {
+        //只调用一次，指令第一次绑定到元素时调用。在这里可以进行一次性的初始化设置。
+        //style才有效 JS需要inserted時才會生效
+        bind: function (el, binding) {
+            // 聚焦元素
+            el.style.color = binding.value
+
+        },
+    })
+    axios.defaults.baseURL = `http://localhost:8083`
+
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            q_name: '',
+            id: '',
+            name: '',
+            password: '',
+            account: '',
+            memberList: [],
+        },
+        created() {
+            this.getMemberList()
+        },
+        methods: {
+            // Vue 做數據綁定之後只要有被改動值都會被監聽到
+            // add() {
+            //     let maxId = Math.max(...this.memberList.map(m => m.id));
+            //     var member = {
+            //         id: maxId + 1,
+            //         name: this.name,
+            //         phone: this.phone,
+            //         account: this.account,
+            //         createTime: moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
+            //     }
+            //     this.memberList.push(member)
+            //     this.id = this.name = this.account = this.phone = ''
+            // },
+            add() {
+                console.log('addMemberList')
+                const url = `/member/addMember/`
+                axios.post(url, {
+                    name: this.name,
+                    password: this.password,
+                    account: this.account,
+                }).then(
+                    response => {
+                        this.getMemberList()
+                        console.log('成功')
+                    }).catch(e => {
+                    console.log(e)
+                    alert('失敗了!!')
+                })
+            },
+            del(id) {
+                console.log('delMemberList' + id)
+                const url = `/member/delMember/`
+                axios.delete(url + '/' + id).then(
+                    response => {
+                        this.getMemberList()
+                        console.log('成功')
+                    }).catch(e => {
+                    console.log(e)
+                    alert('失敗了!!')
+                })
+            },
+            // del(id) {
+            //     //第一種方式
+            //     this.memberList.some((member, i) => { //some 如果找到返回True 就會停止找尋
+            //             if (member.id === id) {
+            //                 console.log(id);
+            //                 //this.memberList.splice(i,1);
+            //                 return true
+            //             }
+            //         }
+            //     )
+            //     //第二種比較快直接找index
+            //     let index = this.memberList.findIndex(member => member.id === id)
+            //     //console.log('* * '+index)
+            //     this.memberList.splice(index, 1);
+            // },
+            search(q_name) {
+                console.log(q_name)
+                let fMember = this.memberList.filter(member => member.name.indexOf(q_name) != -1)
+                console.log(fMember)
+                return fMember;
+            },
+            getMemberList() {
+                console.log('getMemberList')
+                const url = `/member/getMembers/`
+                axios.get(url).then(
+                    response => {
+                        this.memberList = response.data
+                        console.log('成功')
+                    }).catch(e => {
+                    console.log(e)
+                    alert('失敗了!!')
+                })
+            }
+        }
+        // mounted () {
+        //     const url = `https://127.0.0.1:8771/accommodate/test/`
+        //     axios.get(url).then(
+        //         response => { // --成功
+        //             console.log('成功')
+        //         }).catch(e => {
+        //         console.log(e.message)
+        //         alert('失敗了!!')
+        //     })
+        // }
+    })
+</script>
 
 <script src="/js/popper.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
