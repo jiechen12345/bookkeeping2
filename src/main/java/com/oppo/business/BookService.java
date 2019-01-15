@@ -16,6 +16,8 @@ public interface BookService {
 
     BookPage getAllForm(Integer page, Integer pageSize);
 
+    BookPage getAllForm(Integer page, Integer pageSize,String nowYM);
+
     BookPage queryAll(Integer page, Integer pageSize, BookReq bookReq);
 
     void create(BookReq bookReq);

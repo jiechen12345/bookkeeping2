@@ -1,7 +1,6 @@
 package com.oppo.api;
 
 import com.oppo.Entity.Customer;
-import com.oppo.Entity.Departemt;
 import com.oppo.Entity.Project;
 import com.oppo.business.BookService;
 import com.oppo.dao.CustomerDao;
@@ -14,7 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,11 +22,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by JieChen on 2018/10/2.
+ * Created by JieChen on 2019/1/15.
  */
 @Controller
-public class BookApi {
-    Logger LOGGER = LoggerFactory.getLogger(BookApi.class);
+public class custAndProjApi {
+    Logger LOGGER = LoggerFactory.getLogger(custAndProjApi.class);
     @Autowired
     private ProjectDao projectDao;
     @Autowired
@@ -37,7 +37,7 @@ public class BookApi {
     BookReq bookReq = new BookReq();
 
     //查詢分頁會員列表及修改pageSize
-    @GetMapping("/books")
+    @GetMapping("/custAndProj")
     public String findAll(@RequestParam(required = false, defaultValue = "1") Integer page,
                           @RequestParam(required = false, defaultValue = "5") Integer pageSize,
                           Model model) {
@@ -72,7 +72,7 @@ public class BookApi {
     }
 
     //查詢分頁會員列表及修改pageSize
-    @GetMapping("/booksChangePage")
+    @GetMapping("/custAndProjChangePage")
     public String changePage(@RequestParam(required = false, defaultValue = "1") Integer page,
                              @RequestParam(required = false, defaultValue = "5") Integer pageSize,
                              @RequestParam(required = false) String q_id, @RequestParam(required = false) String q_id2,
@@ -114,7 +114,7 @@ public class BookApi {
     }
 
     //查詢form
-    @GetMapping("/books/queryByCondition")
+    @GetMapping("/custAndProj/queryByCondition")
     public String queryByCondition(
             @RequestParam(required = false, defaultValue = "5") Integer hiddenPageSize,
             @RequestParam(required = false) String q_id, @RequestParam(required = false) String q_id2,
@@ -172,4 +172,5 @@ public class BookApi {
         projectDto.setCustomerId(project.getCustomer().getId());
         return projectDto;
     }
+
 }

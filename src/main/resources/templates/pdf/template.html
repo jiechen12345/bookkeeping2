@@ -7,10 +7,6 @@
     </head>
 
     <body>
-        <div class='header' th:include="header::header"></div>
-
-        <div th:include="letterhead::letterhead"></div>
-
         <h1>YOUR EXAMPLE THYMELEAF PDF</h1>
 
         <p>Dear [[${data.getFirstname()}]] [[${data.getLastname()}]],</p>
@@ -32,8 +28,6 @@
         <p>Thymeleaf Example Project</p>
 
         <p><b>You find more information on the second page.</b></p>
-
-        <div class='footer' th:include="footer::footer"></div>
 
         <div class="next-page">
 
@@ -65,7 +59,7 @@
                 takimata sanctus est Lorem ipsum dolor sit amet.</p>
         </div>
 
-        <div class='footer' th:include="footer::footer"></div>
+
     </body>
 
 </html>

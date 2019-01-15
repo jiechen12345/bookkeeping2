@@ -1,17 +1,12 @@
 package com.oppo.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.oppo.Entity.Book;
 import com.oppo.Entity.Project;
 import com.oppo.business.BookService;
-import com.oppo.dao.BookDao;
-import com.oppo.dao.CustomerDao;
 import com.oppo.dao.ProjectDao;
 import com.oppo.dto.BookDto;
 import com.oppo.dto.ProjectDto;
 import com.oppo.request.BookReq;
-import jdk.nashorn.internal.parser.JSONParser;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +18,9 @@ import org.w3c.tidy.Tidy;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.FileSystems;
 import java.util.List;
@@ -103,11 +101,11 @@ public class BookAjaxApi {
         // of the main HTML file, we also have partials like a footer or
         // a header. We can re-use those partials in different documents.
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setPrefix("/pdf/");
+        templateResolver.setPrefix("/templates/pdf/");
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode(HTML);
         templateResolver.setCharacterEncoding(UTF_8);
-
+        templateResolver.setCacheable(false);
         TemplateEngine templateEngine = new TemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
 
@@ -131,7 +129,7 @@ public class BookAjaxApi {
         String xHtml = convertToXhtml(renderedHtmlContent);
 
         ITextRenderer renderer = new ITextRenderer();
-        renderer.getFontResolver().addFont("Code39.ttf", IDENTITY_H, EMBEDDED);
+        renderer.getFontResolver().addFont("templates/pdf/Code39.ttf", IDENTITY_H, EMBEDDED);
 
         // FlyingSaucer has a working directory. If you run this test, the working directory
         // will be the root folder of your project. However, all files (HTML, CSS, etc.) are
@@ -147,9 +145,12 @@ public class BookAjaxApi {
         renderer.layout();
 
         // And finally, we create the PDF:
-        OutputStream outputStream = new FileOutputStream(OUTPUT_FILE);
-        renderer.createPDF(outputStream);
-        outputStream.close();
+        try(OutputStream outputStream = new FileOutputStream(OUTPUT_FILE)) {
+            renderer.createPDF(outputStream);
+        }
+        //String cnt = "inline; filename=\"" + OUTPUT_FILE + "\"";
+
+        //outputStream.close();
     }
 
     private BookAjaxApi.Data exampleDataForJohnDoe() {
@@ -221,5 +222,16 @@ public class BookAjaxApi {
         return outputStream.toString(UTF_8);
     }
 
+    //------------
+//    @ResponseBody
+//    @RequestMapping(value = "/download",produces="application/octet-stream")
+//    public byte[] downloadFile(HttpServletRequest request, HttpServletResponse response, String contentType2)
+//            throws IOException {
+//        String fileName = new String(OUTPUT_FILE.getBytes(), "ISO8859-1");
+//        String cnt = "inline; filename=\"" + fileName + "\"";
+//        response.setHeader("Content-Disposition", cnt);
+//        response.setContentType("application/pdf");
+//        IOUtils.copy(new FileInputStream(fileDto.getFile()), response.getOutputStream());
+//    }
 
 }

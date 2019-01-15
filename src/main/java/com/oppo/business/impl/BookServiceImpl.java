@@ -12,6 +12,7 @@ import com.oppo.dto.BookDto;
 import com.oppo.dto.BookPage;
 import com.oppo.request.BookReq;
 import com.sun.media.jfxmedia.logging.Logger;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -92,6 +93,53 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public BookPage getAllForm(Integer page, Integer pageSize, String nowYM) {
+        Page<Book> p = bookDao.findAll((root, query, cb) -> {
+            query.orderBy(cb.desc(root.get("id")));
+
+            List<Predicate> predicates = new LinkedList<>();
+
+            Optional.ofNullable(nowYM).filter(it -> !it.isEmpty()).ifPresent(nowYM2 -> {
+                predicates.add(cb.like(root.get("id"), nowYM2 + "%"));
+            });
+            return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+        }, PageRequest.of(page - 1, pageSize));
+
+
+        BookPage result = new BookPage();
+        result.setContents(p.getContent()
+                .stream()
+                .map(it -> new BookDto(
+                                it.getId(),
+                                it.getIncomeOrExpend(),
+                                it.getInvoice(),
+                                it.getInvYM(),
+                                it.getInvNo(),
+                                it.getPaid(),
+                                it.getPaidDat(),
+                                it.getAmt(),
+                                it.getProject().getCustomer().getId(),
+                                it.getProject().getCustomer().getCustNm(),
+                                it.getProject().getId(),
+                                it.getProject().getProjectName(),
+                                it.getCreateDat(),
+                                it.getUpdateDat(),
+                                (it.getCreateMember() != null) ? it.getCreateMember().getId() : 0,
+                                (it.getCreateMember() != null) ? it.getCreateMember().getName() : "",
+                                (it.getUpdateMember() != null) ? it.getUpdateMember().getId() : 0,
+                                (it.getUpdateMember() != null) ? it.getUpdateMember().getName() : "",
+                                it.getDescription(),
+                                it.getRemarks()
+                        )
+                )
+                .collect(toList()));
+        result.setCurrentPage(page);
+        result.setTotalPages(p.getTotalPages() > 0 ? p.getTotalPages() : 1);
+        result.setCount(p.getTotalElements());
+        return result;
+    }
+
+    @Override
     public BookPage queryAll(Integer page, Integer pageSize, BookReq bookReq) {
         Page<Book> p = bookDao.findAll((root, query, cb) -> {
             query.orderBy(cb.desc(root.get("id")));
@@ -129,7 +177,7 @@ public class BookServiceImpl implements BookService {
                 predicates.add(cb.like(root.get("invNo"), "%" + q_invNo + "%"));
             });
 
-            Optional.ofNullable(bookReq.getQ_customerId()).filter(it -> it!=0).ifPresent(q_customerId -> {
+            Optional.ofNullable(bookReq.getQ_customerId()).filter(it -> it != 0).ifPresent(q_customerId -> {
                 predicates.add(cb.equal(root.get("project").get("customer").get("id"), q_customerId));
             });
 
