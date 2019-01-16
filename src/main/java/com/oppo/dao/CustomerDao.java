@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
  * Created by JieChen on 2018/10/5.
  */
 @Repository
-public interface CustomerDao extends JpaRepository<Customer,Integer>{
-
+public interface CustomerDao extends JpaRepository<Customer, Integer> {
+    Integer countCustomerByCustNm(String custNm);
 }
 

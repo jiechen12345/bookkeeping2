@@ -25,79 +25,122 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.6.0/moment.min.js"></script>
 
 
-
 <!--引入topbar-->
 <div th:replace="common/bar::top_bar"></div>
-<div class="container-fluid">
-    <div class="row">
-        <!--引入sidebar-->
-        <div th:replace="common/bar::side_bar(activeUrl='books')"></div>
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-            <div class="chartjs-size-monitor"
-                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
-                <div class="chartjs-size-monitor-expand"
-                     style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-                    <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
-                </div>
-                <div class="chartjs-size-monitor-shrink"
-                     style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-                    <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
-                </div>
+<div id="app">
+    <div class="container-fluid">
+        <div class="row">
+            <!--引入sidebar-->
+            <div th:replace="common/bar::side_bar(activeUrl='custAndProj')"></div>
+            <div class="col-md-2">
             </div>
-            <!-- form **************************************************************-->
-            <div id="app">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">新增</h3>
+            <div class="col-5">
+                <main role="main" class="ml-sm-auto ">
+                    <div class="chartjs-size-monitor"
+                         style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                        <div class="chartjs-size-monitor-expand"
+                             style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                        </div>
+                        <div class="chartjs-size-monitor-shrink"
+                             style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                        </div>
                     </div>
-                    <div class="panel-body form-inline">
+                    <!-- form **************************************************************-->
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">客戶單位</h3>
+                        </div>
+                        <div class="panel-body">
+                            <label>
+                                客戶名稱
+                                <input type="text" class="form-control" v-model="name" @keyup.enter="add">
+                            </label>
+                            <input type="button" value="+" class="btn-primary" @click="add">
+                        </div>
                         <label>
-                            姓名:
-                            <input type="text" class="form-control" v-model="name">
+                            查詢客戶名稱(關鍵字):
+                            <input type="text" class="form-control" v-model="q_name" v-focus v-color="'blue'">
                         </label>
-                        <label>
-                            密碼:
-                            <input type="password" class="form-control" v-model="password">
-                        </label>
-                        <label>
-                            帳號:
-                            <input type="text" class="form-control" v-model="account" @keyup.enter="add">
-                        </label>
-                        <input type="button" value="++" class="btn-lg btn-primary" @click="add">
                     </div>
-                    <label>
-                        查詢關鍵字:
-                        <input type="text" class="form-control" v-model="q_name" v-focus v-color="'blue'">
-                    </label>
-                    <input type="button" value="test" class="btn-info" @click="getMemberList">
-                </div>
-                <table class="table table-bordered table-hover table-striped">
-                    <thead>
-                    <tr>
-                        <th>姓名</th>
-                        <th>密碼</th>
-                        <th>帳號</th>
-                        <th>刪除</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="member in search(q_name)" :key="member.id">
-                        <td>{{member.account}}</td>
-                        <td>{{member.password}}</td>
-                        <td>{{member.name}}</td>
-                        <td>
-                            <button class="btn-danger" @click="del(member.id)">del</button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th th class="col-2" style="text-align: center">客戶名稱</th>
+                            <th th class="col-1" style="text-align: center">刪</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="cust in search(q_name)" :key="cust.id">
+                            <td @click="loadProj(cust.id)">{{cust.custNm}}</td>
+                            <td>
+                                <button class="btn-danger" @click="del(cust.id)">X</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+
+                    <!--pagination-->
+                    <!--<div th:replace="common/pagination::pagination"></div>-->
+
+
+                </main>
             </div>
-            <!--pagination-->
-            <!--<div th:replace="common/pagination::pagination"></div>-->
+            <div class="col-5">
+                <main role="main" class="ml-sm-auto ">
+                    <div class="chartjs-size-monitor"
+                         style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                        <div class="chartjs-size-monitor-expand"
+                             style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                        </div>
+                        <div class="chartjs-size-monitor-shrink"
+                             style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                        </div>
+                    </div>
+                    <!-- form **************************************************************-->
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">專案</h3>
+                        </div>
+                        <div class="panel-body">
+                            <label>
+                                專案名稱
+                                <input type="text" class="form-control" v-model="name" @keyup.enter="add">
+                            </label>
+                            <input type="button" value="+" class="btn-primary" @click="add">
+                        </div>
+                        <label>
+                            查詢專案名稱(關鍵字):
+                            <input type="text" class="form-control" v-model="q_p_name" v-focus v-color="'blue'">
+                        </label>
+                    </div>
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th class="col-2" style="text-align: center">專案名稱</th>
+                            <th class="col-1" style="text-align: center">刪</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="p in searchP(q_p_name)" :key="p.id">
+                            <td>{{p.projectName}}</td>
+                            <td style="text-align: center">
+                                <button class="btn-danger" @click="del(p.id)">X</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!--pagination-->
+                    <!--<div th:replace="common/pagination::pagination"></div>-->
+                </main>
+            </div>
+            <!--***************-->
 
-
-        </main>
-
+        </div>
     </div>
 </div>
 <script>
@@ -119,27 +162,18 @@
         }, 1500);
     }
 
-    // 自定義V指令
+
     Vue.directive('focus', {
-        //只调用一次，指令第一次绑定到元素时调用。在这里可以进行一次性的初始化设置。
         bind: function (el) {
-            // 聚焦元素
             el.focus()
         },
-        // 当被绑定的元素插入到 DOM 中时……被绑定元素插入父节点时调用 (仅保证父节点存在，但不一定已被插入文档中)。
         inserted: function (el) {
-            // 聚焦元素
             el.focus()
         }
     })
-    // 自定義V指令
     Vue.directive('color', {
-        //只调用一次，指令第一次绑定到元素时调用。在这里可以进行一次性的初始化设置。
-        //style才有效 JS需要inserted時才會生效
         bind: function (el, binding) {
-            // 聚焦元素
             el.style.color = binding.value
-
         },
     })
     axios.defaults.baseURL = `http://localhost:8083`
@@ -148,101 +182,99 @@
         el: '#app',
         data: {
             q_name: '',
+            q_p_name: '',
             id: '',
+            p_id: '',
             name: '',
-            password: '',
-            account: '',
-            memberList: [],
+            p_name: '',
+            custList: [],
+            p_List: [
+                {
+                    id: 99999, projectName: '請選擇客戶'
+                }
+            ],
+            members: [
+                {name: 'Jie', age: 30},
+                {name: 'Leo', age: 30},
+                {name: 'Joe', age: 43},
+                {name: 'Jak', age: 45}
+            ],
         },
         created() {
-            this.getMemberList()
+            this.getLists()
         },
         methods: {
-            // Vue 做數據綁定之後只要有被改動值都會被監聽到
-            // add() {
-            //     let maxId = Math.max(...this.memberList.map(m => m.id));
-            //     var member = {
-            //         id: maxId + 1,
-            //         name: this.name,
-            //         phone: this.phone,
-            //         account: this.account,
-            //         createTime: moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
-            //     }
-            //     this.memberList.push(member)
-            //     this.id = this.name = this.account = this.phone = ''
-            // },
             add() {
-                console.log('addMemberList')
-                const url = `/member/addMember/`
-                axios.post(url, {
-                    name: this.name,
-                    password: this.password,
-                    account: this.account,
-                }).then(
-                    response => {
-                        this.getMemberList()
-                        console.log('成功')
-                    }).catch(e => {
-                    console.log(e)
-                    alert('失敗了!!')
-                })
+                //console.log('addcustList')
+                if (this.name != '') {
+                    const url = `/custAjax/addCust/`
+                    axios.post(url, {
+                        name: this.name,
+                    }).then(
+                        response => {
+                            if (response.data) {
+                                this.getLists()
+                                console.log('成功')
+                            } else {
+                                popToast("客戶名稱重複 ！");
+                            }
+                        }).catch(e => {
+                        console.log(e)
+                        alert('失敗了!!')
+                    })
+                } else {
+                    popToast("請填寫客戶名稱 ！");
+                }
             },
             del(id) {
-                console.log('delMemberList' + id)
-                const url = `/member/delMember/`
+                // console.log('delcustList' + id)
+                const url = `/custAjax/delCust`
                 axios.delete(url + '/' + id).then(
                     response => {
-                        this.getMemberList()
+                        this.getLists()
                         console.log('成功')
                     }).catch(e => {
                     console.log(e)
                     alert('失敗了!!')
                 })
             },
-            // del(id) {
-            //     //第一種方式
-            //     this.memberList.some((member, i) => { //some 如果找到返回True 就會停止找尋
-            //             if (member.id === id) {
-            //                 console.log(id);
-            //                 //this.memberList.splice(i,1);
-            //                 return true
-            //             }
-            //         }
-            //     )
-            //     //第二種比較快直接找index
-            //     let index = this.memberList.findIndex(member => member.id === id)
-            //     //console.log('* * '+index)
-            //     this.memberList.splice(index, 1);
-            // },
-            search(q_name) {
-                console.log(q_name)
-                let fMember = this.memberList.filter(member => member.name.indexOf(q_name) != -1)
-                console.log(fMember)
-                return fMember;
+            loadProj(id) {
+                alert(id);
+                console.log('getProjLists')
+                const url = `/custAjax/getProjectList/`
+                axios.get(url + '/' + id).then(
+                    response => {
+                        this.p_List = response.data
+                        console.log(this.p_List)
+                    }).catch(e => {
+                    console.log(e)
+                    alert('失敗了!!')
+                })
             },
-            getMemberList() {
-                console.log('getMemberList')
-                const url = `/member/getMembers/`
+            search(q_name) {
+
+                let fCust = this.custList.filter(cust => cust.custNm.indexOf(q_name) != -1)
+
+                return fCust;
+            },
+            searchP(q_p_name) {
+                console.log('**  ' + this.p_List)
+                let fCust = this.p_List.filter(p => p.projectName.indexOf(q_p_name) != -1)
+                return fCust;
+            },
+            getLists() {
+                console.log('getLists')
+                const url = `/custAjax/getLists/`
                 axios.get(url).then(
                     response => {
-                        this.memberList = response.data
-                        console.log('成功')
+                        this.custList = response.data
+                        console.log(this.custList)
                     }).catch(e => {
                     console.log(e)
                     alert('失敗了!!')
                 })
             }
         }
-        // mounted () {
-        //     const url = `https://127.0.0.1:8771/accommodate/test/`
-        //     axios.get(url).then(
-        //         response => { // --成功
-        //             console.log('成功')
-        //         }).catch(e => {
-        //         console.log(e.message)
-        //         alert('失敗了!!')
-        //     })
-        // }
     })
 </script>
 

@@ -8,11 +8,18 @@ import java.util.List;
  */
 @Entity
 public class Customer {
+    public Customer(String custNm) {
+        this.custNm = custNm;
+    }
+
+    public Customer() {
+    }
+
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String custNm;
-    @OneToMany(cascade=CascadeType.MERGE, mappedBy="customer")
+    @OneToMany(cascade = CascadeType.MERGE, mappedBy = "customer")
     private List<Project> projects;
 
     public Integer getId() {
