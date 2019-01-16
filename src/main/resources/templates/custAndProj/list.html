@@ -81,11 +81,6 @@
                         </tbody>
                     </table>
 
-
-                    <!--pagination-->
-                    <!--<div th:replace="common/pagination::pagination"></div>-->
-
-
                 </main>
             </div>
             <div class="col-5">
@@ -104,12 +99,12 @@
                     <!-- form **************************************************************-->
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <h3 class="panel-title">專案</h3>
+                            <h3 class="panel-title">專案列表</h3>
                         </div>
                         <div class="panel-body">
                             <label>
                                 專案名稱
-                                <input type="text" class="form-control" v-model="name" @keyup.enter="add">
+                                <input type="text" class="form-control" v-model="p_name" @keyup.enter="addP">
                             </label>
                             <input type="button" value="+" class="btn-primary" @click="add">
                         </div>
@@ -139,7 +134,8 @@
                 </main>
             </div>
             <!--***************-->
-
+            <!--pagination-->
+            <!--<div th:replace="common/pagination::pagination"></div>-->
         </div>
     </div>
 </div>
@@ -250,6 +246,31 @@
                     console.log(e)
                     alert('失敗了!!')
                 })
+            },
+            addP() {
+                //console.log('addcustList')
+                console.log(this.p_List[0].id)
+                //
+                // if (this.name != '') {
+                //     const url = `/custAjax/addProj/`
+                //     axios.post(url, {
+                //         name: this.name,
+                //         name: this.c,
+                //     }).then(
+                //         response => {
+                //             if (response.data) {
+                //                 this.getLists()
+                //                 console.log('成功')
+                //             } else {
+                //                 popToast("客戶名稱重複 ！");
+                //             }
+                //         }).catch(e => {
+                //         console.log(e)
+                //         alert('失敗了!!')
+                //     })
+                // } else {
+                //     popToast("請填寫客戶名稱 ！");
+                // }
             },
             search(q_name) {
 
