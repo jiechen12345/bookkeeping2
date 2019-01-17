@@ -5,11 +5,15 @@ import com.oppo.Entity.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created by JieChen on 2018/10/5.
  */
 @Repository
 public interface CustomerDao extends JpaRepository<Customer, Integer> {
     Integer countCustomerByCustNm(String custNm);
+
+    List<Customer> getAllByDeletedIsNot(Boolean delete);
 }
 

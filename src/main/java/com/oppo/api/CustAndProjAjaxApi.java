@@ -10,6 +10,7 @@ import com.oppo.dto.MemberDto;
 import com.oppo.dto.ProjectDto;
 import com.oppo.request.BookReq;
 import com.oppo.request.CustReq;
+import com.oppo.request.ProjectReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class CustAndProjAjaxApi {
 
     @RequestMapping(method = RequestMethod.GET, value = "/getLists")
     public List<CustDto> queryAll() {
-        List<CustDto> list = customerDao.findAll().stream().map(this::getCustomerDto)
+        List<CustDto> list = customerDao.findAll().stream().filter(it -> it.getDeleted() == null || it.getDeleted() != 1).map(this::getCustomerDto)
                 .collect(Collectors.toList());
         return list;
         //bookService.create(bookReq);
@@ -50,11 +51,38 @@ public class CustAndProjAjaxApi {
         return flag;
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/addProj")
+    public Boolean addProject(@RequestBody ProjectReq projectReq) {
+        Boolean flag = false;
+        System.out.println(projectReq.toString());
+        Customer customer = customerDao.findById(projectReq.getCustId()).orElse(null);
+        if (projectDao.countProjectByProjectNameAndCustomer(projectReq.getName(), customer) == 0) {
+            Project project = new Project(projectReq.getName(), customer);
+            projectDao.save(project);
+            flag = true;
+        }
+        return flag;
+    }
+
     @RequestMapping(method = RequestMethod.DELETE, value = "/delCust/{id}")
     public void delCust(@PathVariable Integer id) {
         System.out.println(id);
         Customer customer = customerDao.findById(id).orElseGet(null);
-        customerDao.delete(customer);
+        customer.setDeleted(1);
+        customerDao.save(customer);
+        //不刪掉projects跟 customer前端假裝刪掉就好了 避免關聯出錯
+        //List<Project> projectList = projectDao.findByCustomer_Id(id);
+        //projectDao.deleteAll(projectList);
+        //customerDao.delete(customer);
+//        Customer customer = new Customer(custReq.getName());
+//        customerDao.save(customer);
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, value = "/delProj/{id}")
+    public void delProject(@PathVariable Integer id) {
+        System.out.println(id);
+        Project project = projectDao.findById(id).orElseGet(null);
+        projectDao.delete(project);
 //        Customer customer = new Customer(custReq.getName());
 //        customerDao.save(customer);
     }
@@ -63,6 +91,7 @@ public class CustAndProjAjaxApi {
         CustDto custDto = new CustDto();
         custDto.setId(cust.getId());
         custDto.setCustNm(cust.getCustNm());
+
         return custDto;
     }
 

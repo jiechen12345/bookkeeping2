@@ -13,6 +13,7 @@
     <link href="../../static/css/bootstrap-table.css" rel="stylesheet">
     <link rel="stylesheet" href="../../static/css/bootstrap-datetimepicker.min.css" media="screen"/>
     <link rel="stylesheet" href="../../static/css/bootstrap-datetimepicker.css" media="screen"/>
+    <link rel="stylesheet" href="../../static/css/animate.css">
     <!-- Custom styles for this tmemberlate -->
     <link href="../../static/css/dashboard.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -34,7 +35,7 @@
             <div th:replace="common/bar::side_bar(activeUrl='custAndProj')"></div>
             <div class="col-md-2">
             </div>
-            <div class="col-5">
+            <div class="col-5" style="background-color: rgba(204, 222, 232, 0.36)">
                 <main role="main" class="ml-sm-auto ">
                     <div class="chartjs-size-monitor"
                          style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
@@ -48,6 +49,7 @@
                         </div>
                     </div>
                     <!-- form **************************************************************-->
+
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <h3 class="panel-title">客戶單位</h3>
@@ -61,7 +63,7 @@
                         </div>
                         <label>
                             查詢客戶名稱(關鍵字):
-                            <input type="text" class="form-control" v-model="q_name" v-focus v-color="'blue'">
+                            <input type="text" class="form-control" v-model="q_name" v-focus v-color="'darkblue'">
                         </label>
                     </div>
                     <table class="table table-bordered table-hover table-striped">
@@ -73,7 +75,7 @@
                         </thead>
                         <tbody>
                         <tr v-for="cust in search(q_name)" :key="cust.id">
-                            <td @click="loadProj(cust.id)">{{cust.custNm}}</td>
+                            <td style="font-weight: bold" @click="loadProj(cust.id)">{{cust.custNm}}</td>
                             <td>
                                 <button class="btn-danger" @click="del(cust.id)">X</button>
                             </td>
@@ -83,7 +85,7 @@
 
                 </main>
             </div>
-            <div class="col-5">
+            <div class="col-5" style="background-color: rgba(232, 204, 204, 0.22)">
                 <main role="main" class="ml-sm-auto ">
                     <div class="chartjs-size-monitor"
                          style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
@@ -101,16 +103,17 @@
                         <div class="panel-heading">
                             <h3 class="panel-title">專案列表</h3>
                         </div>
+                        <input type="hidden" v-model="hiddenCustId">
                         <div class="panel-body">
                             <label>
                                 專案名稱
-                                <input type="text" class="form-control" v-model="p_name" @keyup.enter="addP">
+                                <input type="text" class="form-control" v-model="p_name">
                             </label>
-                            <input type="button" value="+" class="btn-primary" @click="add">
+                            <input type="button" value="+" class="btn-primary" @click="addP">
                         </div>
                         <label>
                             查詢專案名稱(關鍵字):
-                            <input type="text" class="form-control" v-model="q_p_name" v-focus v-color="'blue'">
+                            <input type="text" class="form-control" v-model="q_p_name" v-color="'darkblue'">
                         </label>
                     </div>
                     <table class="table table-bordered table-hover table-striped">
@@ -122,9 +125,9 @@
                         </thead>
                         <tbody>
                         <tr v-for="p in searchP(q_p_name)" :key="p.id">
-                            <td>{{p.projectName}}</td>
+                            <td style="font-weight: bold">{{p.projectName}}</td>
                             <td style="text-align: center">
-                                <button class="btn-danger" @click="del(p.id)">X</button>
+                                <button class="btn-danger" @click="delP(p.id)">X</button>
                             </td>
                         </tr>
                         </tbody>
@@ -183,10 +186,11 @@
             p_id: '',
             name: '',
             p_name: '',
+            hiddenCustId: '',
             custList: [],
             p_List: [
                 {
-                    id: 99999, projectName: '請選擇客戶'
+                    projectName: '請選擇客戶'
                 }
             ],
             members: [
@@ -216,7 +220,7 @@
                             }
                         }).catch(e => {
                         console.log(e)
-                        alert('失敗了!!')
+                        console.log('add失敗了!!')
                     })
                 } else {
                     popToast("請填寫客戶名稱 ！");
@@ -224,32 +228,62 @@
             },
             del(id) {
                 // console.log('delcustList' + id)
-                const url = `/custAjax/delCust`
-                axios.delete(url + '/' + id).then(
-                    response => {
-                        this.getLists()
-                        console.log('成功')
-                    }).catch(e => {
-                    console.log(e)
-                    alert('失敗了!!')
-                })
+                if (window.confirm(`確定刪除此客戶名稱?(此客戶之專案都會被刪除!)`)) {
+                    const url = `/custAjax/delCust`
+                    axios.delete(url + '/' + id).then(
+                        response => {
+                            this.getLists()
+                            this.p_List = [
+                                {
+                                    projectName: '請選擇客戶'
+                                }
+                            ]
+                            console.log('成功')
+                        }).catch(e => {
+                        console.log(e)
+                        console.log('del失敗了!!')
+                    })
+                }
             },
             loadProj(id) {
-                alert(id);
-                console.log('getProjLists')
+                //console.log('****' + id)
+                this.hiddenCustId = id
                 const url = `/custAjax/getProjectList/`
                 axios.get(url + '/' + id).then(
                     response => {
                         this.p_List = response.data
-                        console.log(this.p_List)
                     }).catch(e => {
                     console.log(e)
-                    alert('失敗了!!')
+                    console.log('loadProj失敗了!!')
                 })
             },
             addP() {
                 //console.log('addcustList')
-                console.log(this.p_List[0].id)
+                if (this.hiddenCustId != '') {
+                    if (this.p_name != '') {
+                        const url = `/custAjax/addProj/`
+                        axios.post(url, {
+                            name: this.p_name,
+                            custId: this.hiddenCustId
+                        }).then(
+                            response => {
+                                if (response.data) {
+                                    this.getLists()
+                                    this.loadProj(this.hiddenCustId)
+                                    console.log('成功')
+                                } else {
+                                    popToast("專案名稱重複 ！");
+                                }
+                            }).catch(e => {
+                            console.log(e)
+                            console.log('addP失敗了!!')
+                        })
+                    } else {
+                        popToast("請輸入專案名稱 ！");
+                    }
+                } else {
+                    popToast("請先選擇客戶單位 ！");
+                }
                 //
                 // if (this.name != '') {
                 //     const url = `/custAjax/addProj/`
@@ -271,18 +305,35 @@
                 // } else {
                 //     popToast("請填寫客戶名稱 ！");
                 // }
+
+            },
+            delP(pid) {
+                // console.log('delcustList' + id)
+                if (window.confirm(`確定刪除此專案?`)) {
+                    const url = `/custAjax/delProj`
+                    axios.delete(url + '/' + pid).then(
+                        response => {
+                            this.getLists()
+                            this.loadProj(this.hiddenCustId)
+                            console.log('成功')
+                        }).catch(e => {
+                        console.log(e)
+                        console.log('delP失敗了!!')
+                    })
+                }
             },
             search(q_name) {
 
                 let fCust = this.custList.filter(cust => cust.custNm.indexOf(q_name) != -1)
 
                 return fCust;
-            },
+            }
+            ,
             searchP(q_p_name) {
-                console.log('**  ' + this.p_List)
                 let fCust = this.p_List.filter(p => p.projectName.indexOf(q_p_name) != -1)
                 return fCust;
-            },
+            }
+            ,
             getLists() {
                 console.log('getLists')
                 const url = `/custAjax/getLists/`
@@ -292,7 +343,7 @@
                         console.log(this.custList)
                     }).catch(e => {
                     console.log(e)
-                    alert('失敗了!!')
+                    console.log('getLists失敗了!!')
                 })
             }
         }

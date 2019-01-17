@@ -46,13 +46,14 @@ public class BookApi {
         bookReq = new BookReq();
         LOGGER.info("findAll.page= " + page);
         LOGGER.info("findAll.pageSize= " + pageSize);
-        BookPage bookPage = bookService.getAllForm(page, pageSize,nowYM);
+        BookPage bookPage = bookService.getAllForm(page, pageSize, nowYM);
         List<ProjectDto> projectDtos = null; //for查詢用的ProjectDtoList
         //傳回query 參數
         if (bookReq.getQ_customerId() != null && bookReq.getQ_customerId() != 0) {
             projectDtos = this.findProjectByCustomerId(bookReq.getQ_customerId());
         }
-        List<Customer> customers = customerDao.findAll();
+        List<Customer> customers = customerDao.findAll().stream().filter(it -> it.getDeleted() == null || it.getDeleted() != 1).collect(Collectors.toList());
+        ;
         //q_cust 有空查詢的可能
         Customer customer = new Customer();
         customer.setId(0);
@@ -93,7 +94,8 @@ public class BookApi {
         if (bookReq.getQ_customerId() != null && bookReq.getQ_customerId() != 0) {
             projectDtos = this.findProjectByCustomerId(bookReq.getQ_customerId());
         }
-        List<Customer> customers = customerDao.findAll();
+        List<Customer> customers = customerDao.findAll().stream().filter(it -> it.getDeleted() == null || it.getDeleted() != 1).collect(Collectors.toList());
+
         //q_cust 有空查詢的可能
         Customer customer = new Customer();
         customer.setId(0);
@@ -135,7 +137,7 @@ public class BookApi {
         if (bookReq.getQ_customerId() != null && bookReq.getQ_customerId() != 0) {
             projectDtos = this.findProjectByCustomerId(bookReq.getQ_customerId());
         }
-        List<Customer> customers = customerDao.findAll();
+        List<Customer> customers = customerDao.findAll().stream().filter(it -> it.getDeleted() == null || it.getDeleted() != 1).collect(Collectors.toList());
         //q_cust 有空查詢的可能
         Customer customer = new Customer();
         customer.setId(0);

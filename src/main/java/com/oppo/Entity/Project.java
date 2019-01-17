@@ -9,13 +9,21 @@ import java.util.List;
  */
 @Entity
 public class Project {
+    public Project() {
+    }
+
+    public Project(String projectName, Customer customer) {
+        this.projectName = projectName;
+        this.customer = customer;
+    }
+
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    private String ProjectName;
-    @ManyToOne(cascade=CascadeType.MERGE)
-    @JoinColumn(name="CUSTOMER_ID_FK")
+    private String projectName;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "CUSTOMER_ID_FK")
     private Customer customer;
 
     public Integer getId() {
@@ -28,11 +36,11 @@ public class Project {
 
 
     public String getProjectName() {
-        return ProjectName;
+        return projectName;
     }
 
     public void setProjectName(String projectName) {
-        ProjectName = projectName;
+        projectName = projectName;
     }
 
     public Customer getCustomer() {
@@ -47,7 +55,7 @@ public class Project {
     public String toString() {
         return "Project{" +
                 "id=" + id +
-                ", ProjectName='" + ProjectName + '\'' +
+                ", ProjectName='" + projectName + '\'' +
                 ", customer=" + customer +
                 '}';
     }

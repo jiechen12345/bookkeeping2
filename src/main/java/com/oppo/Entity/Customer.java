@@ -21,6 +21,7 @@ public class Customer {
     private String custNm;
     @OneToMany(cascade = CascadeType.MERGE, mappedBy = "customer")
     private List<Project> projects;
+    private Integer deleted;
 
     public Integer getId() {
         return id;
@@ -46,12 +47,21 @@ public class Customer {
         this.projects = projects;
     }
 
+    public Integer getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Integer deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public String toString() {
         return "Customer{" +
                 "id=" + id +
                 ", custNm='" + custNm + '\'' +
                 ", projects=" + projects +
+                ", deleted=" + deleted +
                 '}';
     }
 }
