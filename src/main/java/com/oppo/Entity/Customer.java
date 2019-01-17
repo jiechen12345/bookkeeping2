@@ -21,7 +21,7 @@ public class Customer {
     private String custNm;
     @OneToMany(cascade = CascadeType.MERGE, mappedBy = "customer")
     private List<Project> projects;
-    private Integer deleted;
+    private Integer deleted = 0;
 
     public Integer getId() {
         return id;

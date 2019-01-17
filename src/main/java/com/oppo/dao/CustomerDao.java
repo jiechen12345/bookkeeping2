@@ -12,7 +12,13 @@ import java.util.List;
  */
 @Repository
 public interface CustomerDao extends JpaRepository<Customer, Integer> {
-    Integer countCustomerByCustNm(String custNm);
+    Integer countCustomerByCustNmAndDeleted(String custNm, Integer delete);
+
+    Integer countByDeletedNotAndCustNm(Integer delete, String custNm);
+
+    Integer countByDeleted(Integer delete);
+
+    Integer countByDeletedNot(Integer delete);
 
     List<Customer> getAllByDeletedIsNot(Boolean delete);
 }

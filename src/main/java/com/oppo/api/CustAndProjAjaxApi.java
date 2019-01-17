@@ -43,7 +43,7 @@ public class CustAndProjAjaxApi {
     @RequestMapping(method = RequestMethod.POST, value = "/addCust")
     public Boolean addCust(@RequestBody CustReq custReq) {
         Boolean flag = false;
-        if (customerDao.countCustomerByCustNm(custReq.getName()) == 0) {
+        if (customerDao.countByDeletedNotAndCustNm(1, custReq.getName()) == 0) {
             Customer customer = new Customer(custReq.getName());
             customerDao.save(customer);
             flag = true;
