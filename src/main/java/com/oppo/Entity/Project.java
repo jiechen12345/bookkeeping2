@@ -25,7 +25,7 @@ public class Project {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "CUSTOMER_ID_FK")
     private Customer customer;
-
+    private Integer deleted = 0;
     public Integer getId() {
         return id;
     }
@@ -51,12 +51,21 @@ public class Project {
         this.customer = customer;
     }
 
+    public Integer getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Integer deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public String toString() {
         return "Project{" +
                 "id=" + id +
-                ", ProjectName='" + projectName + '\'' +
+                ", projectName='" + projectName + '\'' +
                 ", customer=" + customer +
+                ", deleted=" + deleted +
                 '}';
     }
 }

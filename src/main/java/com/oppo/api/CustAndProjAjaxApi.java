@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by JieChen on 2019/1/15.
@@ -70,6 +71,9 @@ public class CustAndProjAjaxApi {
         Customer customer = customerDao.findById(id).orElseGet(null);
         customer.setDeleted(1);
         customerDao.save(customer);
+        projectDao.saveAll(
+                projectDao.findByCustomer_Id(id).stream().peek(it -> it.setDeleted(1)).collect(Collectors.toList())
+        );
         //不刪掉projects跟 customer前端假裝刪掉就好了 避免關聯出錯
         //List<Project> projectList = projectDao.findByCustomer_Id(id);
         //projectDao.deleteAll(projectList);
@@ -82,7 +86,8 @@ public class CustAndProjAjaxApi {
     public void delProject(@PathVariable Integer id) {
         System.out.println(id);
         Project project = projectDao.findById(id).orElseGet(null);
-        projectDao.delete(project);
+        project.setDeleted(1);
+        projectDao.save(project);
 //        Customer customer = new Customer(custReq.getName());
 //        customerDao.save(customer);
     }
@@ -97,7 +102,7 @@ public class CustAndProjAjaxApi {
 
     @RequestMapping(method = RequestMethod.GET, value = "/getProjectList/{custId}")
     public List<ProjectDto> queryProjectList(@PathVariable Integer custId) {
-        List<ProjectDto> list = projectDao.findByCustomer_Id(custId).stream().map(this::getProjectDto)
+        List<ProjectDto> list = projectDao.findByCustomer_Id(custId).stream().filter(it -> it.getDeleted() == null || it.getDeleted() != 1).map(this::getProjectDto)
                 .collect(Collectors.toList());
         return list;
         //bookService.create(bookReq);
