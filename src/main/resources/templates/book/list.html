@@ -77,6 +77,10 @@
     });
 
     function findProjectByCustomerIdAjax(customerId, rowType) {
+        console.log('** ' + customerId);
+        if (customerId == null) {
+            return
+        }
         $.ajax({
             contentType: 'application/json; charset=UTF-8',
             type: "post",
@@ -241,7 +245,7 @@
                         <div class="form-inline">
                             <div class="button-bar">
                                 <!--<button class="btn btn-info" onclick="openAddModal();" type="button" id="query"-->
-                                        <!--name="query" data-toggle="modal">查詢-->
+                                <!--name="query" data-toggle="modal">查詢-->
                                 <!--</button>-->
                                 <!--<button class="btn btn-success" id="create" name="create"-->
                                 <!--onclick="$('#status').val('create');$('.form-control').attr('disabled', false);"-->
@@ -589,7 +593,7 @@
                 $("#updateMemberId").val(sessionId);
                 // var Today = new Date();
                 // $("#updateDat").val((Today.getFullYear()) + "-" + (Today.getMonth() + 1) + '-' + ((Today.getDate().toString().length == 1) ? '0' + Today.getDate() : Today.getDate()));
-                 var $form = $("#myForm");
+                var $form = $("#myForm");
                 var formData = getFormData($form);
                 alert((formData));
                 alert(JSON.stringify(formData));
@@ -677,7 +681,7 @@
                 dataType: 'json',
                 url: "/books/queryOne",
                 success: function (data) {
-                    //alert(JSON.stringify(data));
+                    console.log(JSON.stringify(data));
                     $('#customerId').val(data.customerId);
                     findProjectByCustomerIdAjax($('#customerId').val(), 'form');//重讀二階下拉
                     $('#id').val(data.id);
@@ -700,7 +704,7 @@
 
                     componentCl();//把該關閉的元件關掉
                     //要停滯時間給兩階段下拉讀取完再setProjectId
-                    console.log(data.projectId);
+                    console.log('P ' + data.projectId);
                     setTimeout("changeProject(" + data.projectId + ")", 100);
                     //$('#updateMemberName').val(data.projectId);
                 },
@@ -830,9 +834,9 @@
         } else {
             msg = 'Uncaught Error.\n' + jqXHR.responseText;
         }
-        alert('seession= ')
-        alert("\''+[[${session.loginUser.getName()}]]+'\'");
-        alert(msg);
+
+        console.log("\''+[[${session.loginUser.getName()}]]+'\'");
+        console.log(msg);
     }
 
 
