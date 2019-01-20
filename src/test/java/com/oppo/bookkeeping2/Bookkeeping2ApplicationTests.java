@@ -1,5 +1,7 @@
 package com.oppo.bookkeeping2;
 
+import com.oppo.Entity.Member;
+import com.oppo.dto.MemberDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +14,8 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.*;
 import java.nio.file.FileSystems;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.itextpdf.text.pdf.BaseFont.EMBEDDED;
 import static com.itextpdf.text.pdf.BaseFont.IDENTITY_H;
@@ -22,6 +26,7 @@ import static org.thymeleaf.templatemode.TemplateMode.HTML;
 public class Bookkeeping2ApplicationTests {
     private static final String OUTPUT_FILE = "test.pdf";
     private static final String UTF_8 = "UTF-8";
+
     @Test
     public void contextLoads() {
     }
@@ -85,11 +90,17 @@ public class Bookkeeping2ApplicationTests {
 
     private Bookkeeping2ApplicationTests.Data exampleDataForJohnDoe() {
         Bookkeeping2ApplicationTests.Data data = new Bookkeeping2ApplicationTests.Data();
-        data.setFirstname("John");
-        data.setLastname("Doe");
+        data.setFirstname("John3");
+        data.setLastname("Doe4");
         data.setStreet("Example Street 1");
         data.setZipCode("12345");
         data.setCity("Example City");
+        List<MemberDto> members = new ArrayList<MemberDto>();
+        MemberDto memberDto = new MemberDto(1, "acc", "pass", "name", "dep");
+        MemberDto memberDto2 = new MemberDto(2, "acc2", "pass2", "name2", "dep2");
+        members.add(memberDto);
+        members.add(memberDto2);
+        data.setMemberDtos(members);
         return data;
     }
 
@@ -99,6 +110,15 @@ public class Bookkeeping2ApplicationTests {
         private String street;
         private String zipCode;
         private String city;
+        private List<MemberDto> memberDtos;
+
+        public List<MemberDto> getMemberDtos() {
+            return memberDtos;
+        }
+
+        public void setMemberDtos(List<MemberDto> memberDtos) {
+            this.memberDtos = memberDtos;
+        }
 
         public String getFirstname() {
             return firstname;
