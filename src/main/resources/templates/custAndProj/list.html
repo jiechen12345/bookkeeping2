@@ -19,7 +19,6 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
 </head>
 <body th:inline="text">
 <script src="/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
@@ -142,8 +141,8 @@
         </div>
     </div>
 </div>
-<script>
 
+<script>
     /**
      * toast 小提示框
      * @param tipTxt 提示内容
@@ -161,7 +160,6 @@
         }, 1500);
     }
 
-
     Vue.directive('focus', {
         bind: function (el) {
             el.focus()
@@ -175,7 +173,11 @@
             el.style.color = binding.value
         },
     })
-    axios.defaults.baseURL = `http://localhost:8083`
+
+
+    var url = location.href;
+    var ary = url.split("/");
+    axios.defaults.baseURL = `https://` + ary[2];
 
     var vm = new Vue({
         el: '#app',
@@ -362,122 +364,7 @@
 </script>
 
 <script>
-    //不讓myForm真的送出
-    $('#myForm').submit(function () {
-        return false;
-    });
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
-    (function () {
-        'use strict';
-        window.addEventListener('load', function () {
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-            var forms = document.getElementsByClassName('needs-validation');
-            // Loop over them and prevent submission
-            var validation = Array.prototype.filter.call(forms, function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (form.checkValidity() === false) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    } else {
-                        enter();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-        }, false);
-    })();
 
-    function enter() {
-        var session = "\''+[[${session.loginUser.getName()}]]+'\'";
-        if (session == null || session == '') {
-            alert('session 失效');
-            window.location.replace(location);
-        }
-        var status = $('#status').val();
-        switch (status) {
-            case 'create':
-                var $form = $("#myForm");
-                var formData = getFormData($form);
-                //var formData2 = $('#myForm').serialize(); //for get submit
-                $.ajax({
-                    contentType: 'application/json; charset=UTF-8',
-                    type: "post",
-                    //data: JSON.stringify({'id': id,'amt': amt,'incomeOrExpend':incomeOrExpend}) ,
-                    data: JSON.stringify(formData),
-                    async: false,
-                    url: "/books",
-                    success: function (data) {
-                        //alert('OK');
-                        //todo 未來要改成回到當頁
-
-                        popToast("新 增 完 成 ！");
-                        setTimeout("location.reload()", 900);
-                    },
-                    error: function (jqXHR, exception) {
-                        ajaxError(jqXHR, exception);
-                    },
-                });
-                break;
-
-            case 'update':
-                var sessionId = "\'[[${session.loginUser.getId()}]]\'".replaceAll("'", "");
-                $("#updateDat").val(moment().format('YYYY-MM-DD'));
-                //$("#createMemberName").val($("#loginUserName").val());
-                $("#updateMemberId").val(sessionId);
-                // var Today = new Date();
-                // $("#updateDat").val((Today.getFullYear()) + "-" + (Today.getMonth() + 1) + '-' + ((Today.getDate().toString().length == 1) ? '0' + Today.getDate() : Today.getDate()));
-                var $form = $("#myForm");
-                var formData = getFormData($form);
-                alert((formData));
-                alert(JSON.stringify(formData));
-                $.ajax({
-                    contentType: 'application/json; charset=UTF-8',
-                    type: "PUT",
-                    data: JSON.stringify(formData),
-                    async: false,
-                    url: "/books",
-                    success: function (data) {
-                        //queryOne(formData.id);
-                        popToast("修 改 完 成 ！");
-                        //todo 未來要刷新回到當頁並且帶入queryone
-                        setTimeout("location.reload()", 700);
-                        //location.reload();
-
-                    },
-                    error: function (jqXHR, exception) {
-                        ajaxError(jqXHR, exception);
-                    }
-                });
-                break;
-            case 'delete' :
-                if ($("#id").val() != '') {
-                    var del = confirm("確定刪除嗎？");
-                    if (!del) {
-                        return false;
-                    } else {
-                        var id = $('#id').val();
-                        $.ajax({
-                            contentType: 'application/json; charset=UTF-8',
-                            type: "DELETE",
-                            data: id,
-                            async: false,
-                            url: "/books",
-                            success: function (data) {
-                                popToast("刪 除 完 成 ！");
-                                setTimeout("location.reload()", 700);
-                            },
-                            error: function (jqXHR, exception) {
-                                ajaxError(jqXHR, exception);
-                            }
-                        });
-                    }
-                } else {
-                    alert('請先選擇您要刪除的資料！');
-                }
-                break;
-        }
-        //alert(status);
-    }
 
     function printPDF() {
         alert(11);
@@ -498,117 +385,6 @@
         });
     }
 
-    function queryOne(id) {
-        var session = "\''+[[${session.loginUser.getName()}]]+'\'";
-        if (session == null || session == '') {
-            alert('session 失效');
-            window.location.replace(location);
-        }
-        //alert("id 是 " + id);
-        //window.location.href = "/toModifyMember2/"+ id
-        $.ajax({
-                contentType: 'application/json; charset=UTF-8',
-                type: 'POST',
-                data: (id),
-                async: false,
-                dataType: 'json',
-                url: "/books/queryOne",
-                success: function (data) {
-                    //alert(JSON.stringify(data));
-                    $('#customerId').val(data.customerId);
-                    findProjectByCustomerIdAjax($('#customerId').val(), 'form');//重讀二階下拉
-                    $('#id').val(data.id);
-                    $('#incomeOrExpend').val(data.incomeOrExpend);
-                    $('#invoice').val((data.invoice) ? '1' : '0');
-                    $('#invYM').val(data.invYM);
-                    $('#invNo').val(data.invNo);
-                    $('#paid').val((data.paid) ? '1' : '0');
-                    $('#paidDat').val((data.paidDat != null) ? data.paidDat.substring(0, 10) : '');
-                    $('#amt').val(data.amt);
-                    //$('#projectId').val(data.projectId);
-                    $('#createDat').val((data.createDat != null) ? data.createDat.substring(0, 10) : '');
-                    $('#updateDat').val((data.updateDat != null) ? data.updateDat.substring(0, 10) : '');
-                    $('#description').val(data.description);
-                    $('#remarks').val(data.remarks);
-                    $('#createMemberId').val(data.createMemberId);
-                    $('#createMemberName').val(data.createMemberName);
-                    $('#updateMemberId').val(data.updateMemberId);
-                    $('#updateMemberName').val(data.updateMemberName);
-
-                    componentCl();//把該關閉的元件關掉
-                    //要停滯時間給兩階段下拉讀取完再setProjectId
-                    console.log(data.projectId);
-                    setTimeout("changeProject(" + data.projectId + ")", 100);
-                    //$('#updateMemberName').val(data.projectId);
-                },
-                error: function (jqXHR, exception) {
-                    ajaxError(jqXHR, exception);
-                }
-            }
-        )
-    }
-
-    function changeProject(projectId) {
-        $('#projectId').val(projectId);
-    }
-
-    //-查詢視窗
-    function openAddModal() {
-        $('#addPanelHolder').html();
-        $('#addPanel').modal('show');
-        /*
-        $.ajax({
-                type: 'GET',
-                url: "/toAddMember",
-                success: function (data) {
-                    $('#addPanelHolder').html(data);
-                    $('#addPanel').modal('show');
-                },
-            }
-        )
-        */
-    }
-
-    //取的form所有值
-    function getFormData($form) {
-        var unindexed_array = $form.serializeArray();
-        var indexed_array = {};
-
-        $.map(unindexed_array, function (n, i) {
-            indexed_array[n['name']] = n['value'];
-        });
-
-        return indexed_array;
-    }
-
-    String.prototype.replaceAll = function (s1, s2) {
-        return this.replace(new RegExp(s1, "gm"), s2);
-    }
-
-    //元件控制
-    function componentCl() {
-        var invStatus = $('#invoice').val();
-        if (invStatus == 1) {
-            $('#invNo').attr('disabled', false);
-            $('#invYM').attr('disabled', false);
-            $('#invYM').attr('placeholder', '2018-01');
-            $('#invNo').attr('placeholder', 'NY12345678');
-        } else if (invStatus == 0) {
-            $('#invNo').attr('disabled', true);
-            $('#invYM').attr('disabled', true);
-            $('#invYM').attr('placeholder', '');
-            $('#invNo').attr('placeholder', '');
-
-        }
-        var paid = $('#paid').val();
-        if (paid == 1) {
-            $('#paidDat').attr('disabled', false);
-            $('#paidDat').attr('placeholder', '2018-01-01');
-        } else if (paid == 0) {
-            $('#paidDat').attr('disabled', true);
-            $('#paidDat').attr('placeholder', '');
-        }
-    }
 
     function changePageSize() {
         var page = '1' // 修改每頁幾筆自動回第一頁

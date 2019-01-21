@@ -72,6 +72,7 @@ dependencies {
     compile group: 'org.xhtmlrenderer', name: 'flying-saucer-pdf-itext5', version: '9.1.6'
     compile group: 'net.sf.jtidy', name: 'jtidy', version: 'r938'
     compile group: 'joda-time', name: 'joda-time', version: '2.9.4'
+    compile group: 'org.xhtmlrenderer', name: 'flying-saucer-pdf', version: '9.0.9'
     testCompile('junit:junit:4.12')
     runtime('mysql:mysql-connector-java')
 }
