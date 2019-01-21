@@ -73,5 +73,8 @@ dependencies {
     compile group: 'net.sf.jtidy', name: 'jtidy', version: 'r938'
     compile group: 'joda-time', name: 'joda-time', version: '2.9.4'
     testCompile('junit:junit:4.12')
+    compile group: 'com.itextpdf', name: 'itextpdf', version: '5.5.12'
+    compile group: 'com.itextpdf.tool', name: 'xmlworker', version: '5.5.12'
+    
     runtime('mysql:mysql-connector-java')
 }

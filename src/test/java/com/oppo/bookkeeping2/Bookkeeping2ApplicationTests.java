@@ -10,6 +10,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.w3c.tidy.Tidy;
+import org.xhtmlrenderer.pdf.ITextFontResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.*;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import static com.itextpdf.text.pdf.BaseFont.EMBEDDED;
 import static com.itextpdf.text.pdf.BaseFont.IDENTITY_H;
+import static com.itextpdf.text.pdf.BaseFont.NOT_EMBEDDED;
 import static org.thymeleaf.templatemode.TemplateMode.HTML;
 
 @RunWith(SpringRunner.class)
@@ -64,10 +66,14 @@ public class Bookkeeping2ApplicationTests {
         // XHTML. Note that this might no work for very complicated HTML. But
         // it's good enough for a simple letter.
         String renderedHtmlContent = templateEngine.process("template", context);
+        //todo:--
+        System.out.println(renderedHtmlContent);
         String xHtml = convertToXhtml(renderedHtmlContent);
 
         ITextRenderer renderer = new ITextRenderer();
-        renderer.getFontResolver().addFont("Code39.ttf", IDENTITY_H, EMBEDDED);
+        //renderer.getFontResolver().addFont("Code39.ttf", IDENTITY_H, EMBEDDED);
+        renderer.getFontResolver().addFont("mingliu.ttc", IDENTITY_H, EMBEDDED);
+        //renderer.getFontResolver().addFont("simsun.ttc", IDENTITY_H, EMBEDDED);
 
         // FlyingSaucer has a working directory. If you run this test, the working directory
         // will be the root folder of your project. However, all files (HTML, CSS, etc.) are
@@ -81,7 +87,7 @@ public class Bookkeeping2ApplicationTests {
                 .toString();
         renderer.setDocumentFromString(xHtml, baseUrl);
         renderer.layout();
-
+        ITextFontResolver fontResolver = renderer.getFontResolver();
         // And finally, we create the PDF:
         OutputStream outputStream = new FileOutputStream(OUTPUT_FILE);
         renderer.createPDF(outputStream);
@@ -90,13 +96,13 @@ public class Bookkeeping2ApplicationTests {
 
     private Bookkeeping2ApplicationTests.Data exampleDataForJohnDoe() {
         Bookkeeping2ApplicationTests.Data data = new Bookkeeping2ApplicationTests.Data();
-        data.setFirstname("John3");
+        data.setFirstname("一二三");
         data.setLastname("Doe4");
         data.setStreet("Example Street 1");
         data.setZipCode("12345");
         data.setCity("Example City");
         List<MemberDto> members = new ArrayList<MemberDto>();
-        MemberDto memberDto = new MemberDto(1, "acc", "pass", "name", "dep");
+        MemberDto memberDto = new MemberDto(1, "一二三一二三", "pass", "name", "dep");
         MemberDto memberDto2 = new MemberDto(2, "acc2", "pass2", "name2", "dep2");
         members.add(memberDto);
         members.add(memberDto2);
