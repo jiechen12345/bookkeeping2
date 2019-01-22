@@ -53,7 +53,7 @@ public class BookApi {
     Integer[] pageSizeOption = {5, 10, 15, 20};
     BookReq bookReq = new BookReq();
     //------------PDF
-    private static final String OUTPUT_FILE = "test.pdf";
+    private static final String OUTPUT_FILE = "123123.pdf";
     private static final String UTF_8 = "UTF-8";
 
     //查詢分頁會員列表及修改pageSize
@@ -187,10 +187,10 @@ public class BookApi {
 //        return jsArr;
     }
 
-    @GetMapping(value = "/books/print")
+    @GetMapping(value = "/books/記帳")
     public void printPDF(Integer id, HttpServletResponse response) throws Exception {
         System.out.println(id);
-        generatePdf("template", getBookDto(), response);
+        generatePdf("bookPdf", getBookDto(), response);
     }
 
     private ProjectDto getProjectDto(Project project) {
@@ -210,17 +210,16 @@ public class BookApi {
         TemplateEngine templateEngine = new TemplateEngine();
         templateEngine.setTemplateResolver(templateResolver);
         Context context = new Context();
-        context.setVariable("memberDtos", DtoList);
+        context.setVariable("Dtos", DtoList);
         String renderedHtmlContent = templateEngine.process("pdf/" + template, context);
-        System.out.println(renderedHtmlContent);
+        // System.out.println(renderedHtmlContent);
 
-//todo:break
         String xHtml = PdfUtils.convertToXhtml(renderedHtmlContent);
         ITextRenderer renderer = new ITextRenderer();
         renderer.getFontResolver().addFont("pdf/simsun.ttc", IDENTITY_H, EMBEDDED);
         String baseUrl = FileSystems
                 .getDefault()
-                .getPath("src", "resources")
+                .getPath("src")
                 .toUri()
                 .toURL()
                 .toString();
@@ -235,7 +234,7 @@ public class BookApi {
         response.setHeader("Cache-Control", "No-cache");
         response.setDateHeader("Expires", 0);
         response.flushBuffer();
-        IOUtils.copy(new FileInputStream(OUTPUT_FILE), response.getOutputStream());
+        //IOUtils.copy(new FileInputStream(OUTPUT_FILE), response.getOutputStream());
         //ExcelUtil.downloadFile(request, response, fileName, filePath);
     }
 
