@@ -86,8 +86,8 @@ public class BookAjaxApi {
     }
 
     @RequestMapping(value = "/print", method = RequestMethod.POST)
-    public void printPDF() throws Exception {
-        generatePdf("template", getBookDto());
+    public void printPDF(HttpServletResponse response) throws Exception {
+        generatePdf("template", getBookDto(), response);
     }
 
     private ProjectDto getProjectDto(Project project) {
@@ -108,7 +108,7 @@ public class BookAjaxApi {
     }
 //------------PDF-------------------------
 
-    public void generatePdf(String template, List DtoList) throws Exception {
+    public void generatePdf(String template, List DtoList, HttpServletResponse response) throws Exception {
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("/");
         templateResolver.setSuffix(".html");
@@ -136,6 +136,14 @@ public class BookAjaxApi {
         OutputStream outputStream = new FileOutputStream(OUTPUT_FILE);
         renderer.createPDF(outputStream);
         outputStream.close();
+        response.setHeader("Content-Disposition", OUTPUT_FILE);
+        response.setContentType("application/pdf");
+        response.setHeader("Pragma", "No-cache");
+        response.setHeader("Cache-Control", "No-cache");
+        response.setDateHeader("Expires", 0);
+        response.flushBuffer();
+        IOUtils.copy(new FileInputStream(OUTPUT_FILE), response.getOutputStream());
+        //ExcelUtil.downloadFile(request, response, fileName, filePath);
     }
 
 

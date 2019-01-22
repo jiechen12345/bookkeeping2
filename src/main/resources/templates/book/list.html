@@ -271,7 +271,7 @@
                                 </button>
                                 <button class="btn btn-warning" id="print" name="print"
                                         onclick="printPDF();" type="button">
-                                    123
+                                    列印
                                 </button>
                                 <!--<button class="btn btn-secondary" id="confirm" name="confirm" type="submit">確定-->
                                 <!--</button>-->
@@ -656,23 +656,26 @@
         //alert(status);
     }
 
+    // function printPDF() {
+    //     console.log(printPDF)
+    //     $.ajax({
+    //
+    //         type: "POST",
+    //         async: false,
+    //         url: "books/print",
+    //         success: function (data) {
+    //             popToast("OK ！");
+    //             console.log(data)
+    //             //setTimeout("location.reload()", 700);
+    //
+    //         },
+    //         error: function (jqXHR, exception) {
+    //             ajaxError(jqXHR, exception);
+    //         }
+    //     });
+    // }
     function printPDF() {
-        console.log(printPDF)
-        $.ajax({
-            contentType: 'application/json; charset=UTF-8',
-            type: "POST",
-            async: false,
-            url: "books/print",
-            success: function (data) {
-                popToast("OK ！");
-                alert(data.toString());
-                setTimeout("location.reload()", 700);
-
-            },
-            error: function (jqXHR, exception) {
-                ajaxError(jqXHR, exception);
-            }
-        });
+        window.location.href = "books/print?id=1"
     }
 
     function queryOne(id) {

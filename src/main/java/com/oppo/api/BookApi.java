@@ -4,22 +4,39 @@ import com.oppo.Entity.Customer;
 import com.oppo.Entity.Departemt;
 import com.oppo.Entity.Project;
 import com.oppo.business.BookService;
+import com.oppo.common.PdfUtils;
 import com.oppo.dao.CustomerDao;
 import com.oppo.dao.ProjectDao;
 import com.oppo.dto.BookPage;
+import com.oppo.dto.MemberDto;
 import com.oppo.dto.ProjectDto;
 import com.oppo.request.BookReq;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.file.FileSystems;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.itextpdf.text.pdf.BaseFont.EMBEDDED;
+import static com.itextpdf.text.pdf.BaseFont.IDENTITY_H;
+import static org.thymeleaf.templatemode.TemplateMode.HTML;
 
 /**
  * Created by JieChen on 2018/10/2.
@@ -35,6 +52,9 @@ public class BookApi {
     private BookService bookService;
     Integer[] pageSizeOption = {5, 10, 15, 20};
     BookReq bookReq = new BookReq();
+    //------------PDF
+    private static final String OUTPUT_FILE = "test.pdf";
+    private static final String UTF_8 = "UTF-8";
 
     //查詢分頁會員列表及修改pageSize
     @GetMapping("/books")
@@ -167,11 +187,64 @@ public class BookApi {
 //        return jsArr;
     }
 
+    @GetMapping(value = "/books/print")
+    public void printPDF(Integer id, HttpServletResponse response) throws Exception {
+        System.out.println(id);
+        generatePdf("template", getBookDto(), response);
+    }
+
     private ProjectDto getProjectDto(Project project) {
         ProjectDto projectDto = new ProjectDto();
         projectDto.setId(project.getId());
         projectDto.setProjectName(project.getProjectName());
         projectDto.setCustomerId(project.getCustomer().getId());
         return projectDto;
+    }
+
+    public void generatePdf(String template, List DtoList, HttpServletResponse response) throws Exception {
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setPrefix("/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode(HTML);
+        templateResolver.setCharacterEncoding(UTF_8);
+        TemplateEngine templateEngine = new TemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver);
+        Context context = new Context();
+        context.setVariable("memberDtos", DtoList);
+        String renderedHtmlContent = templateEngine.process("pdf/" + template, context);
+        System.out.println(renderedHtmlContent);
+
+//todo:break
+        String xHtml = PdfUtils.convertToXhtml(renderedHtmlContent);
+        ITextRenderer renderer = new ITextRenderer();
+        renderer.getFontResolver().addFont("pdf/simsun.ttc", IDENTITY_H, EMBEDDED);
+        String baseUrl = FileSystems
+                .getDefault()
+                .getPath("src", "resources")
+                .toUri()
+                .toURL()
+                .toString();
+        renderer.setDocumentFromString(xHtml, baseUrl);
+        renderer.layout();
+        OutputStream outputStream = new FileOutputStream(OUTPUT_FILE);
+        renderer.createPDF(outputStream);
+        outputStream.close();
+        response.setHeader("Content-Disposition", OUTPUT_FILE);
+        response.setContentType("application/pdf");
+        response.setHeader("Pragma", "No-cache");
+        response.setHeader("Cache-Control", "No-cache");
+        response.setDateHeader("Expires", 0);
+        response.flushBuffer();
+        IOUtils.copy(new FileInputStream(OUTPUT_FILE), response.getOutputStream());
+        //ExcelUtil.downloadFile(request, response, fileName, filePath);
+    }
+
+    private List<MemberDto> getBookDto() {
+        List<MemberDto> memberDtos = new ArrayList<MemberDto>();
+        MemberDto memberDto = new MemberDto(1, "一二三一二三", "pass", "name", "dep");
+        MemberDto memberDto2 = new MemberDto(2, "acc2", "pass2", "name2", "dep2");
+        memberDtos.add(memberDto);
+        memberDtos.add(memberDto2);
+        return memberDtos;
     }
 }
