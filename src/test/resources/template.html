@@ -1,24 +1,26 @@
-<!DOCTYPE html>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="zh_TW"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"></meta>
     <link rel="stylesheet" type="text/css" media="all" href="style.css"/>
+    <style type="text/css" mce_bogus="0">body {
+        font-family: SimSun;
+    }</style>
 </head>
 
-<body style="'font-family: mingliu'">
-<div class='header' th:include="header::header"></div>
+<body style="font-family: SimSun;">
 
-<div th:include="letterhead::letterhead"></div>
-
-<h1>YOUR EXAMPLE THYMELEAF PDF</h1>
+<h1>如為定期定額/定期不定額開戶（異動）者，請於生效（扣款）日期的前一個金融機構營業日之營業時間內存入足夠的扣款金額
+</h1>
 
 <table border="1">
     <thead>
     <!--<tr class="table table-striped table-sm">-->
-    如為定期定額/定期不定額開戶（異動）者，請於生效（扣款）日期的前一個金融機構營業日之營業時間內存入足夠的扣款金額
     <tr>
         <th>姓名</th>
         <th>帳號</th>
@@ -27,66 +29,15 @@
     </thead>
     <tbody>
 
-    <tr th:each="member:${data.memberDtos}">
+    <tr th:each="member:${data}">
         <!--/*@thymesVar id="member" type="com.oppo.dto.MemberDto"*/-->
         <td th:text="${member.getName()}">1</td>
         <td th:text="${member.account}">1</td>
         <td th:text="${member.depName}">1</td>
-
     </tr>
     </tbody>
 </table>
 
-<p>Dear [[${data.getFirstname()}]] [[${data.getLastname()}]],</p>
-
-<p>Quisque mauris magna, vulputate eget feugiat ut, molestie posuere urna. Etiam volutpat hendrerit efficitur.
-    Vestibulum condimentum volutpat arcu porttitor condimentum. Aliquam vestibulum pulvinar enim sit amet fermentum.
-    Vivamus vulputate, enim id rutrum dictum, enim nibh fermentum mi, vel varius tortor risus at enim. Aliquam
-    scelerisque mi metus, non imperdiet risus interdum eu. Nullam pretium nulla ante, vitae tincidunt neque suscipit in.
-    Nam dapibus iaculis nisl, eget dictum lectus dictum vitae. Ut malesuada justo ligula, sed rhoncus nisl gravida eu.
-    Fusce nulla mi, suscipit at elit ullamcorper, aliquet vehicula odio. Ut molestie ac purus vitae porttitor. Curabitur
-    eget euismod enim, venenatis posuere eros. Ut vel erat in odio varius eleifend. Quisque aliquam odio turpis, sed
-    posuere purus ullamcorper eu.</p>
-
-<p><b>Best regards,</b></p>
-
-<p>Thymeleaf Example Project</p>
-
-<p><b>You find more information on the second page.</b></p>
-
-<div class='footer' th:include="footer::footer"></div>
-
-<div class="next-page">
-
-    <h2>More Information</h2>
-
-    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-        dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
-        clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,
-        consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-        diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
-        takimata sanctus est Lorem ipsum dolor sit amet.</p>
-    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-        dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
-        clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,
-        consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-        diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
-        takimata sanctus est Lorem ipsum dolor sit amet.</p>
-    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-        dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
-        clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,
-        consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-        diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
-        takimata sanctus est Lorem ipsum dolor sit amet.</p>
-    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-        dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
-        clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,
-        consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-        diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
-        takimata sanctus est Lorem ipsum dolor sit amet.</p>
-</div>
-
-<div class='footer' th:include="footer::footer"></div>
 </body>
 
 </html>

@@ -155,7 +155,7 @@
                         </div>
                         <div class="col-md-2 mb-1">
                             <label for="amt">金額</label>
-                            <input name="amt" id="amt" maxlength="14" type="text" class="form-control"
+                            <input name="amt" id="amt" maxlength="9" type="text" class="form-control"
                                    placeholder="1000" onkeyup="value=value.replace(/[^\d]/g,'') " required>
                             <div class="invalid-feedback">
                                 請輸入金額.
@@ -314,11 +314,11 @@
                                     </div>
                                     <div class="col-md-2 mb-1">
                                         <label for="q_amt">金額</label>
-                                        <input name="q_amt" id="q_amt" maxlength="14" type="text"
+                                        <input name="q_amt" id="q_amt" maxlength="9" type="text"
                                                class="form-control queryform"
                                                th:value="${bookReq!=null}?${bookReq.getQ_amt()}"
                                                onkeyup="value=value.replace(/[^\d]/g,'') " placeholder="大於">
-                                        <input name="q_amt2" id="q_amt2" maxlength="14" type="text"
+                                        <input name="q_amt2" id="q_amt2" maxlength="9" type="text"
                                                th:value="${bookReq!=null}?${bookReq.getQ_amt2()}"
                                                class="form-control queryform"
                                                onkeyup="value=value.replace(/[^\d]/g,'') " placeholder="小於">
@@ -647,7 +647,7 @@
     }
 
     function printPDF() {
-        alert(11);
+        console.log(printPDF)
         $.ajax({
             contentType: 'application/json; charset=UTF-8',
             type: "POST",
