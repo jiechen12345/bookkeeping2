@@ -568,6 +568,11 @@
                 var $form = $("#myForm");
                 var formData = getFormData($form);
                 //var formData2 = $('#myForm').serialize(); //for get submit
+                var customerId = document.getElementById('customerId').value;
+                if (customerId == '0' || customerId == null) {
+                    popToast("請選擇客戶單位");
+                    return;
+                }
                 $.ajax({
                     contentType: 'application/json; charset=UTF-8',
                     type: "post",
@@ -597,8 +602,11 @@
                 // $("#updateDat").val((Today.getFullYear()) + "-" + (Today.getMonth() + 1) + '-' + ((Today.getDate().toString().length == 1) ? '0' + Today.getDate() : Today.getDate()));
                 var $form = $("#myForm");
                 var formData = getFormData($form);
-                alert((formData));
-                alert(JSON.stringify(formData));
+                var customerId = document.getElementById('customerId').value;
+                if (customerId == '0' || customerId == null) {
+                    popToast("請選擇客戶單位");
+                    return;
+                }
                 $.ajax({
                     contentType: 'application/json; charset=UTF-8',
                     type: "PUT",
