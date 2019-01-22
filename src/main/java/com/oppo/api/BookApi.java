@@ -212,7 +212,7 @@ public class BookApi {
         Context context = new Context();
         context.setVariable("Dtos", DtoList);
         String renderedHtmlContent = templateEngine.process("pdf/" + template, context);
-        // System.out.println(renderedHtmlContent);
+        System.out.println(renderedHtmlContent);
 
         String xHtml = PdfUtils.convertToXhtml(renderedHtmlContent);
         ITextRenderer renderer = new ITextRenderer();
@@ -235,7 +235,7 @@ public class BookApi {
         response.setDateHeader("Expires", 0);
         response.flushBuffer();
         //IOUtils.copy(new FileInputStream(OUTPUT_FILE), response.getOutputStream());
-        //ExcelUtil.downloadFile(request, response, fileName, filePath);
+
     }
 
     private List<MemberDto> getBookDto() {

@@ -20,6 +20,8 @@ public interface BookService {
 
     BookPage queryAll(Integer page, Integer pageSize, BookReq bookReq);
 
+    List<BookDto> queryPdf(BookReq bookReq);
+
     void create(BookReq bookReq);
 
     void update(BookReq bookReq);
