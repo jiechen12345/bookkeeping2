@@ -10,6 +10,7 @@ import com.oppo.dao.MemberDao;
 import com.oppo.dao.ProjectDao;
 import com.oppo.dto.BookDto;
 import com.oppo.dto.BookPage;
+import com.oppo.dto.pdf.BookPdfDto;
 import com.oppo.request.BookReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,11 +19,9 @@ import org.springframework.stereotype.Service;
 import org.joda.time.DateTime;
 
 import javax.persistence.criteria.Predicate;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -235,7 +234,7 @@ public class BookServiceImpl implements BookService {
 
 
     @Override
-    public List<BookDto> queryPdf(BookReq bookReq) {
+    public List<BookPdfDto> queryPdf(BookReq bookReq) {
         List<Book> books = bookDao.findAll((root, query, cb) -> {
             query.orderBy(cb.desc(root.get("id")));
 
@@ -298,33 +297,9 @@ public class BookServiceImpl implements BookService {
             return cb.and(predicates.toArray(new Predicate[predicates.size()]));
         });
 
-        List<BookDto> bookDtos = new ArrayList<BookDto>();
-        bookDtos = books.stream().map(it -> new BookDto(
-                        it.getId(),
-                        it.getIncomeOrExpend(),
-                        it.getInvoice(),
-                        it.getInvYM(),
-                        it.getInvNo(),
-                        it.getPaid(),
-                        it.getPaidDat(),
-                        it.getAmt(),
-                        it.getProject().getCustomer().getId(),
-                        it.getProject().getCustomer().getCustNm(),
-                        it.getProject().getId(),
-                        it.getProject().getProjectName(),
-                        it.getCreateDat(),
-                        it.getUpdateDat(),
-                        (it.getCreateMember() != null) ? it.getCreateMember().getId() : 0,
-                        (it.getCreateMember() != null) ? it.getCreateMember().getName() : "",
-                        (it.getUpdateMember() != null) ? it.getUpdateMember().getId() : 0,
-                        (it.getUpdateMember() != null) ? it.getUpdateMember().getName() : "",
-                        it.getDescription(),
-                        it.getRemarks()
-                )
-        )
-                .collect(toList());
-
-        return bookDtos;
+        List<BookPdfDto> BookPdfDtos = books.stream().map(this::getBookPdfDto).collect(Collectors.toList());
+//todo: 在外層統計須加總的數字，手動家空白框(BookPdfDto)
+        return BookPdfDtos;
     }
 
     @Override
@@ -387,6 +362,29 @@ public class BookServiceImpl implements BookService {
             bookDto.setProjectName("");
         }
         return bookDto;
+    }
+
+    private BookPdfDto getBookPdfDto(Book book) {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        BookPdfDto bookPdfDto = new BookPdfDto();
+        bookPdfDto.setId(book.getId());
+        bookPdfDto.setIncomeOrExpend(book.getIncomeOrExpend());
+        bookPdfDto.setInvoice((book.getInvoice()) ? "Y" : "N");
+        bookPdfDto.setInvYM(book.getInvYM().replace("-", ""));
+        bookPdfDto.setInvNo(book.getInvNo());
+        bookPdfDto.setPaid((book.getPaid()) ? "Y" : "N");
+        bookPdfDto.setPaidDat((book.getPaidDat() != null) ? dateFormatter.format(book.getPaidDat()) : "");
+        bookPdfDto.setAmt(book.getAmt().toString());
+        bookPdfDto.setDescription(book.getDescription());
+        bookPdfDto.setRemarks(book.getRemarks());
+
+        if (book.getProject() != null) {
+            bookPdfDto.setProjectName(book.getProject().getProjectName());
+            bookPdfDto.setCustomerNm(book.getProject().getCustomer().getCustNm());
+        } else {
+            bookPdfDto.setProjectName("");
+        }
+        return bookPdfDto;
     }
 
     private Book getSetupBook(Book book, BookReq bookReq) {

@@ -2,6 +2,7 @@ package com.oppo.business;
 
 import com.oppo.dto.BookDto;
 import com.oppo.dto.BookPage;
+import com.oppo.dto.pdf.BookPdfDto;
 import com.oppo.request.BookReq;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface BookService {
 
     BookPage queryAll(Integer page, Integer pageSize, BookReq bookReq);
 
-    List<BookDto> queryPdf(BookReq bookReq);
+    List<BookPdfDto> queryPdf(BookReq bookReq);
 
     void create(BookReq bookReq);
 

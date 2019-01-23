@@ -105,7 +105,7 @@ public class BookApi {
                              @RequestParam(required = false) Integer q_invoice, @RequestParam(required = false) Integer q_paid,
                              @RequestParam(required = false) String q_description, Model model) {
         //BookReq bookReq = new BookReq(q_id, q_id2, q_amt, q_amt2, q_invYM, q_invYM2, q_paidDat, q_paidDat2, q_incomeOrExpend, q_invNo, q_customerId, q_projectId, q_invoice, q_paid, q_description);
-        LOGGER.info("changePage.query_bookReq= " + bookReq.queryAll());
+        LOGGER.info("changePage.query_bookReq= " + bookReq.toStringForQuery());
         LOGGER.info("changePage.page= " + page);
         LOGGER.info("changePage.pageSize= " + pageSize);
         BookPage bookPage = bookService.queryAll(page, pageSize, bookReq);
@@ -148,7 +148,7 @@ public class BookApi {
             @RequestParam(required = false) Integer q_invoice, @RequestParam(required = false) Integer q_paid,
             @RequestParam(required = false) String q_description, Model model) {
         bookReq = new BookReq(q_id, q_id2, q_amt, q_amt2, q_invYM, q_invYM2, q_paidDat, q_paidDat2, q_incomeOrExpend, q_invNo, q_customerId, q_projectId, q_invoice, q_paid, q_description);
-        LOGGER.info("query.bookReq= " + bookReq.queryAll());
+        LOGGER.info("query.bookReq= " + bookReq.toStringForQuery());
         LOGGER.info("query.pageSize= " + hiddenPageSize);
         List<ProjectDto> projectDtos = null; //for查詢用的ProjectDtoList
 
@@ -187,7 +187,7 @@ public class BookApi {
 //        return jsArr;
     }
 
-    @GetMapping(value = "/books/記帳", produces = "application/octet-stream")
+    @GetMapping(value = "/books/bookkeepingPDF", produces = "application/octet-stream")
     public void printPDF(@RequestParam(required = false) String q_id, @RequestParam(required = false) String q_id2,
                          @RequestParam(required = false) Integer q_amt, @RequestParam(required = false) Integer q_amt2,
                          @RequestParam(required = false) String q_invYM, @RequestParam(required = false) String q_invYM2,
@@ -197,7 +197,7 @@ public class BookApi {
                          @RequestParam(required = false) Integer q_invoice, @RequestParam(required = false) Integer q_paid,
                          @RequestParam(required = false) String q_description, HttpServletResponse response) throws Exception {
         bookReq = new BookReq(q_id, q_id2, q_amt, q_amt2, q_invYM, q_invYM2, q_paidDat, q_paidDat2, q_incomeOrExpend, q_invNo, q_customerId, q_projectId, q_invoice, q_paid, q_description);
-        System.out.println(bookReq.toString());
+        System.out.println(bookReq.toStringForQuery());
         generatePdf("bookPdf", bookService.queryPdf(bookReq), response);
     }
 
@@ -220,8 +220,7 @@ public class BookApi {
         Context context = new Context();
         context.setVariable("Dtos", DtoList);
         String renderedHtmlContent = templateEngine.process("pdf/" + template, context);
-        System.out.println(renderedHtmlContent);
-
+        //System.out.println(renderedHtmlContent);
         String xHtml = PdfUtils.convertToXhtml(renderedHtmlContent);
         ITextRenderer renderer = new ITextRenderer();
         renderer.getFontResolver().addFont("pdf/simsun.ttc", IDENTITY_H, EMBEDDED);

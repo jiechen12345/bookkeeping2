@@ -174,11 +174,10 @@
         },
     })
 
-
     var url = location.href;
     var ary = url.split("/");
     axios.defaults.baseURL = `https://` + ary[2];
-
+    console.log(axios.defaults.baseURL);
     var vm = new Vue({
         el: '#app',
         data: {

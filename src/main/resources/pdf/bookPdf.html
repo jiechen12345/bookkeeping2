@@ -41,8 +41,7 @@
         <th style="text-align:center">廠商發票月份</th>
         <th style="text-align:center">發票號碼</th>
         <th style="text-align:center">付款與否</th>
-        <th style="text-align:center">付款月份</th>
-        <th style="text-align:center">日期</th>
+        <th style="text-align:center">付款日期</th>
         <th style="text-align:center">存款存入</th>
         <th style="text-align:center">存款匯出</th>
         <th style="text-align:center">金額小計</th>
@@ -52,15 +51,15 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="member:${Dtos}">
-        <!--/*@thymesVar id="member" type="com.oppo.dto.MemberDto"*/-->
-        <td th:text="${member.getName()}">1</td>
-        <td th:text="${member.account}">1</td>
-        <td th:text="${member.depName}">1</td>
-        <td th:text="${member.depName}">1</td>
-        <td th:text="${member.depName}">1</td>
-        <td th:text="${member.depName}">1</td>
-        <td th:text="${member.depName}">1</td>
+    <tr th:each="book:${Dtos}">
+        <!--/*@thymesVar id="member" type="com.oppo.dto.BookDto"*/-->
+        <td th:text="${Dtos!=null}?${book.invoice}">1</td>
+        <td th:text="${Dtos!=null}?${book.invYM}">1</td>
+        <td th:text="${Dtos!=null}?${book.invNo}">1</td>
+        <td th:text="${Dtos!=null}?${book.paid}">1</td>
+        <td th:text="${Dtos!=null}?${book.paidDat}">1</td>
+
+
     </tr>
     </tbody>
 </table>

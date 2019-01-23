@@ -392,7 +392,7 @@ public class BookReq {
                 '}';
     }
 
-    public String queryAll() {
+    public String toStringForQuery() {
         return "BookReq{" +
                 "q_id='" + q_id + '\'' +
                 ", q_id2='" + q_id2 + '\'' +

@@ -91,6 +91,7 @@ public class BookAjaxApi {
         projectDto.setId(project.getId());
         projectDto.setProjectName(project.getProjectName());
         projectDto.setCustomerId(project.getCustomer().getId());
+        projectDto.setDeleted(project.getDeleted());
         return projectDto;
     }
     //------------

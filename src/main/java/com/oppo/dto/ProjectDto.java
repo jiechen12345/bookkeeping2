@@ -24,7 +24,7 @@ public class ProjectDto {
     private Integer id;
 
     private String ProjectName;
-
+    private Integer deleted ;
     public Integer getId() {
         return id;
     }
@@ -55,5 +55,13 @@ public class ProjectDto {
 
     public void setCustomerId(Integer customerId) {
         this.customerId = customerId;
+    }
+
+    public Integer getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Integer deleted) {
+        this.deleted = deleted;
     }
 }

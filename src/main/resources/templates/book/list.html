@@ -77,7 +77,6 @@
     });
 
     function findProjectByCustomerIdAjax(customerId, rowType) {
-        console.log('** ' + customerId);
         if (customerId == null) {
             return
         }
@@ -88,13 +87,18 @@
             url: "/books/findProjectByCustomerId",
             success: function (data) {
                 var str = "";
-                $.each(data, function (index, value) {
-                    str += "<option value='" + value.id + "'>" + value.projectName + "</option>";
-                });
                 if (rowType == 'form') {
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].deleted != 1) {
+                            str += "<option value='" + data[i].id + "'>" + data[i].projectName + "</option>";
+                        }
+                    }
                     $("#projectId").empty();
                     $("#projectId").append(str);
                 } else if (rowType == 'query') {
+                    $.each(data, function (index, value) {
+                        str += "<option value='" + value.id + "'>" + value.projectName + "</option>";
+                    });
                     $("#q_projectId").empty();
                     $("#q_projectId").append("<option value=''>" + "" + "</option>");
                     $("#q_projectId").append(str);
@@ -301,7 +305,7 @@
                     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                          data-parent="#accordion">
                         <div class="card-body container-fluid">
-                            <form id="queryForm" name="queryForm" th:action="@{/books/queryByCondition}" method="get">
+                            <form id="queryForm" name="queryForm" method="get">
                                 <div class="form-row">
                                     <div class="col-md-2 mb-1">
                                         <label for="q_id">編號</label>
@@ -417,7 +421,9 @@
                                     </div>
                                 </div>
                                 <div th:align="right">
-                                    <button type="submit" class="btn btn-default btn-success">執行查詢</button>
+                                    <button type="submit" class="btn btn-default btn-success" onclick="queryAll();">
+                                        執行查詢
+                                    </button>
                                     <button class="btn btn-secondary" onclick="reInThisPage();" id="q_reset"
                                             name="q_reset"
                                             type="button">清空
@@ -576,16 +582,13 @@
                 $.ajax({
                     contentType: 'application/json; charset=UTF-8',
                     type: "post",
-                    //data: JSON.stringify({'id': id,'amt': amt,'incomeOrExpend':incomeOrExpend}) ,
                     data: JSON.stringify(formData),
                     async: false,
                     url: "/books",
                     success: function (data) {
-                        //alert('OK');
                         //todo 未來要改成回到當頁
-
                         popToast("新 增 完 成 ！");
-                        setTimeout("location.reload()", 900);
+                        // setTimeout("location.reload()", 900);
                     },
                     error: function (jqXHR, exception) {
                         ajaxError(jqXHR, exception);
@@ -675,7 +678,13 @@
     //     });
     // }
     function printPDF() {
-        window.location.href = "books/記帳?id=1"
+        document.queryForm.action = "books/bookkeepingPDF";
+        document.queryForm.submit();
+    }
+
+    function queryAll() {
+        document.queryForm.action = "books/queryByCondition";
+        document.queryForm.submit();
     }
 
     function queryOne(id) {
@@ -694,7 +703,7 @@
                 dataType: 'json',
                 url: "/books/queryOne",
                 success: function (data) {
-                    console.log(JSON.stringify(data));
+                    //console.log(JSON.stringify(data));
                     $('#customerId').val(data.customerId);
                     findProjectByCustomerIdAjax($('#customerId').val(), 'form');//重讀二階下拉
                     $('#id').val(data.id);
@@ -717,7 +726,7 @@
 
                     componentCl();//把該關閉的元件關掉
                     //要停滯時間給兩階段下拉讀取完再setProjectId
-                    console.log('P ' + data.projectId);
+                    //console.log('P ' + data.projectId);
                     setTimeout("changeProject(" + data.projectId + ")", 100);
                     //$('#updateMemberName').val(data.projectId);
                 },
@@ -757,7 +766,7 @@
         $.map(unindexed_array, function (n, i) {
             indexed_array[n['name']] = n['value'];
         });
-
+        //console.log(indexed_array);
         return indexed_array;
     }
 
@@ -793,15 +802,13 @@
     function changePageSize() {
         var page = '1' // 修改每頁幾筆自動回第一頁
         var pageSize = $('#pageSize').val();
-        var queryForm = $("#queryForm");
-
         window.location.href = "/booksChangePage?pageSize=" + pageSize + "&page=" + page;
     }
 
     function changePage(page) {
         var pageSize = $('#pageSize').val();
-        alert(pageSize);
-        alert(page);
+        //alert(pageSize);
+        //alert(page);
 
         window.location.href = "/booksChangePage?pageSize=" + pageSize + "&page=" + page;
     }
