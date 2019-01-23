@@ -85,10 +85,6 @@ public class BookAjaxApi {
         return bookDto;
     }
 
-    @RequestMapping(value = "/print", method = RequestMethod.POST)
-    public void printPDF(HttpServletResponse response) throws Exception {
-        generatePdf("template", getBookDto(), response);
-    }
 
     private ProjectDto getProjectDto(Project project) {
         ProjectDto projectDto = new ProjectDto();
@@ -97,56 +93,6 @@ public class BookAjaxApi {
         projectDto.setCustomerId(project.getCustomer().getId());
         return projectDto;
     }
-
-    private List<MemberDto> getBookDto() {
-        List<MemberDto> memberDtos = new ArrayList<MemberDto>();
-        MemberDto memberDto = new MemberDto(1, "一二三一二三", "pass", "name", "dep");
-        MemberDto memberDto2 = new MemberDto(2, "acc2", "pass2", "name2", "dep2");
-        memberDtos.add(memberDto);
-        memberDtos.add(memberDto2);
-        return memberDtos;
-    }
-//------------PDF-------------------------
-
-    public void generatePdf(String template, List DtoList, HttpServletResponse response) throws Exception {
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setPrefix("/");
-        templateResolver.setSuffix(".html");
-        templateResolver.setTemplateMode(HTML);
-        templateResolver.setCharacterEncoding(UTF_8);
-        TemplateEngine templateEngine = new TemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver);
-        Context context = new Context();
-        context.setVariable("memberDtos", DtoList);
-        String renderedHtmlContent = templateEngine.process("pdf/" + template, context);
-        System.out.println(renderedHtmlContent);
-
-//todo:break
-        String xHtml = PdfUtils.convertToXhtml(renderedHtmlContent);
-        ITextRenderer renderer = new ITextRenderer();
-        renderer.getFontResolver().addFont("pdf/simsun.ttc", IDENTITY_H, EMBEDDED);
-        String baseUrl = FileSystems
-                .getDefault()
-                .getPath("src", "resources")
-                .toUri()
-                .toURL()
-                .toString();
-        renderer.setDocumentFromString(xHtml, baseUrl);
-        renderer.layout();
-        OutputStream outputStream = new FileOutputStream(OUTPUT_FILE);
-        renderer.createPDF(outputStream);
-        outputStream.close();
-        response.setHeader("Content-Disposition", OUTPUT_FILE);
-        response.setContentType("application/pdf");
-        response.setHeader("Pragma", "No-cache");
-        response.setHeader("Cache-Control", "No-cache");
-        response.setDateHeader("Expires", 0);
-        response.flushBuffer();
-        IOUtils.copy(new FileInputStream(OUTPUT_FILE), response.getOutputStream());
-        //ExcelUtil.downloadFile(request, response, fileName, filePath);
-    }
-
-
     //------------
 //    @ResponseBody
 //    @RequestMapping(value = "/download",produces="application/octet-stream")

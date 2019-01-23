@@ -7,18 +7,48 @@
 <title>流水帳</title>
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"></meta>
-    <link rel="stylesheet" type="text/css" media="all" href="style.css"/>
-    <style type="text/css">body {
-        font-family: SimSun;
-    }</style>
+    <style type="text/css">
+        body {
+            font-family: SimSun;
+        }
+
+        table {
+            font-size: 11px;
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        thead {
+            font-size: 10px;
+            display: table-header-group;
+        }
+
+        tr {
+            page-break-inside: avoid;
+        }
+
+        table {
+            border-collapse: collapse !important;
+        }
+    </style>
 </head>
 <body>
 <table border="1">
     <thead>
     <tr>
-        <th>姓名</th>
-        <th>帳號</th>
-        <th>部門</th>
+        <th style="text-align:center">廠商發票</th>
+        <th style="text-align:center">廠商發票月份</th>
+        <th style="text-align:center">發票號碼</th>
+        <th style="text-align:center">付款與否</th>
+        <th style="text-align:center">付款月份</th>
+        <th style="text-align:center">日期</th>
+        <th style="text-align:center">存款存入</th>
+        <th style="text-align:center">存款匯出</th>
+        <th style="text-align:center">金額小計</th>
+        <th style="text-align:center">專案名稱</th>
+        <th style="text-align:center">說明</th>
+        <th style="text-align:center">備註</th>
     </tr>
     </thead>
     <tbody>
@@ -26,6 +56,10 @@
         <!--/*@thymesVar id="member" type="com.oppo.dto.MemberDto"*/-->
         <td th:text="${member.getName()}">1</td>
         <td th:text="${member.account}">1</td>
+        <td th:text="${member.depName}">1</td>
+        <td th:text="${member.depName}">1</td>
+        <td th:text="${member.depName}">1</td>
+        <td th:text="${member.depName}">1</td>
         <td th:text="${member.depName}">1</td>
     </tr>
     </tbody>

@@ -187,10 +187,18 @@ public class BookApi {
 //        return jsArr;
     }
 
-    @GetMapping(value = "/books/記帳")
-    public void printPDF(Integer id, HttpServletResponse response) throws Exception {
-        System.out.println(id);
-        generatePdf("bookPdf", getBookDto(), response);
+    @GetMapping(value = "/books/記帳", produces = "application/octet-stream")
+    public void printPDF(@RequestParam(required = false) String q_id, @RequestParam(required = false) String q_id2,
+                         @RequestParam(required = false) Integer q_amt, @RequestParam(required = false) Integer q_amt2,
+                         @RequestParam(required = false) String q_invYM, @RequestParam(required = false) String q_invYM2,
+                         @RequestParam(required = false) String q_paidDat, @RequestParam(required = false) String q_paidDat2,
+                         @RequestParam(required = false) String q_incomeOrExpend, @RequestParam(required = false) String q_invNo,
+                         @RequestParam(required = false) Integer q_customerId, @RequestParam(required = false) Integer q_projectId,
+                         @RequestParam(required = false) Integer q_invoice, @RequestParam(required = false) Integer q_paid,
+                         @RequestParam(required = false) String q_description, HttpServletResponse response) throws Exception {
+        bookReq = new BookReq(q_id, q_id2, q_amt, q_amt2, q_invYM, q_invYM2, q_paidDat, q_paidDat2, q_incomeOrExpend, q_invNo, q_customerId, q_projectId, q_invoice, q_paid, q_description);
+        System.out.println(bookReq.toString());
+        generatePdf("bookPdf", bookService.queryPdf(bookReq), response);
     }
 
     private ProjectDto getProjectDto(Project project) {
@@ -233,7 +241,8 @@ public class BookApi {
         response.setHeader("Pragma", "No-cache");
         response.setHeader("Cache-Control", "No-cache");
         response.setDateHeader("Expires", 0);
-        response.flushBuffer();
+        IOUtils.copy(new FileInputStream(OUTPUT_FILE), response.getOutputStream());
+        //response.flushBuffer();
         //IOUtils.copy(new FileInputStream(OUTPUT_FILE), response.getOutputStream());
 
     }
