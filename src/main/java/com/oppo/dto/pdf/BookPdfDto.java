@@ -8,6 +8,31 @@ public class BookPdfDto {
     public BookPdfDto() {
     }
 
+    public BookPdfDto(String id, String incomeOrExpend, String invoice, String invYM, String invNo, String paid, String paidDat, String inAmt, String exAmt, String sum, String customerId, String customerNm, String projectId, String projectName, String createDat, String updateDat, String createMemberId, String createMemberName, String updateMemberId, String updateMemberName, String description, String remarks) {
+        this.id = id;
+        this.incomeOrExpend = incomeOrExpend;
+        this.invoice = invoice;
+        this.invYM = invYM;
+        this.invNo = invNo;
+        this.paid = paid;
+        this.paidDat = paidDat;
+        this.inAmt = inAmt;
+        this.exAmt = exAmt;
+        this.sum = sum;
+        this.customerId = customerId;
+        this.customerNm = customerNm;
+        this.projectId = projectId;
+        this.projectName = projectName;
+        this.createDat = createDat;
+        this.updateDat = updateDat;
+        this.createMemberId = createMemberId;
+        this.createMemberName = createMemberName;
+        this.updateMemberId = updateMemberId;
+        this.updateMemberName = updateMemberName;
+        this.description = description;
+        this.remarks = remarks;
+    }
+
     private String id;
     //收支 收1支0
     private String incomeOrExpend;
@@ -22,7 +47,10 @@ public class BookPdfDto {
     //付款日期
     private String paidDat;
     //金額
-    private String amt;
+    private String inAmt;
+    private String exAmt;
+    //小記
+    private String sum;
     //客戶ID
     private String customerId;
     //客戶名稱
@@ -104,12 +132,28 @@ public class BookPdfDto {
         this.paidDat = paidDat;
     }
 
-    public String getAmt() {
-        return amt;
+    public String getInAmt() {
+        return inAmt;
     }
 
-    public void setAmt(String amt) {
-        this.amt = amt;
+    public void setInAmt(String inAmt) {
+        this.inAmt = inAmt;
+    }
+
+    public String getExAmt() {
+        return exAmt;
+    }
+
+    public void setExAmt(String exAmt) {
+        this.exAmt = exAmt;
+    }
+
+    public String getSum() {
+        return sum;
+    }
+
+    public void setSum(String sum) {
+        this.sum = sum;
     }
 
     public String getCustomerId() {
@@ -218,7 +262,9 @@ public class BookPdfDto {
                 ", invNo='" + invNo + '\'' +
                 ", paid='" + paid + '\'' +
                 ", paidDat='" + paidDat + '\'' +
-                ", amt='" + amt + '\'' +
+                ", inAmt='" + inAmt + '\'' +
+                ", exAmt='" + exAmt + '\'' +
+                ", sum='" + sum + '\'' +
                 ", customerId='" + customerId + '\'' +
                 ", customerNm='" + customerNm + '\'' +
                 ", projectId='" + projectId + '\'' +

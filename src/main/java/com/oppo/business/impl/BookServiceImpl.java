@@ -39,6 +39,9 @@ public class BookServiceImpl implements BookService {
     private CustomerDao customerDao;
     @Autowired
     private MemberDao memberDao;
+    static Integer sum = 0;
+    static Integer inSum = 0;
+    static Integer exSum = 0;
 
     @Override
     public List<BookDto> findAll() {
@@ -235,6 +238,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookPdfDto> queryPdf(BookReq bookReq) {
+
         List<Book> books = bookDao.findAll((root, query, cb) -> {
             query.orderBy(cb.desc(root.get("id")));
 
@@ -298,7 +302,8 @@ public class BookServiceImpl implements BookService {
         });
 
         List<BookPdfDto> BookPdfDtos = books.stream().map(this::getBookPdfDto).collect(Collectors.toList());
-//todo: 在外層統計須加總的數字，手動家空白框(BookPdfDto)
+        BookPdfDto bookPdfDto = new BookPdfDto(" ", " ", " ", " ", " ", " ", "小計", Common.formatAmt(inSum), Common.formatAmt(exSum), Common.formatAmt(sum), " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ");
+        BookPdfDtos.add(bookPdfDto);
         return BookPdfDtos;
     }
 
@@ -367,23 +372,33 @@ public class BookServiceImpl implements BookService {
     private BookPdfDto getBookPdfDto(Book book) {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
         BookPdfDto bookPdfDto = new BookPdfDto();
-        bookPdfDto.setId(book.getId());
-        bookPdfDto.setIncomeOrExpend(book.getIncomeOrExpend());
         bookPdfDto.setInvoice((book.getInvoice()) ? "Y" : "N");
         bookPdfDto.setInvYM(book.getInvYM().replace("-", ""));
         bookPdfDto.setInvNo(book.getInvNo());
         bookPdfDto.setPaid((book.getPaid()) ? "Y" : "N");
         bookPdfDto.setPaidDat((book.getPaidDat() != null) ? dateFormatter.format(book.getPaidDat()) : "");
-        bookPdfDto.setAmt(book.getAmt().toString());
-        bookPdfDto.setDescription(book.getDescription());
-        bookPdfDto.setRemarks(book.getRemarks());
+
+        if ("0".equals(book.getIncomeOrExpend())) {
+            bookPdfDto.setExAmt(Common.formatAmt(book.getAmt()));
+            this.exSum += book.getAmt();
+            this.sum -= book.getAmt();
+            bookPdfDto.setSum(Common.formatAmt(sum));
+        } else if ("1".equals(book.getIncomeOrExpend())) {
+            bookPdfDto.setInAmt(Common.formatAmt(book.getAmt()));
+            this.inSum += book.getAmt();
+            this.sum += book.getAmt();
+            bookPdfDto.setSum(Common.formatAmt(sum));
+        }
 
         if (book.getProject() != null) {
             bookPdfDto.setProjectName(book.getProject().getProjectName());
-            bookPdfDto.setCustomerNm(book.getProject().getCustomer().getCustNm());
+            //bookPdfDto.setCustomerNm(book.getProject().getCustomer().getCustNm());
         } else {
             bookPdfDto.setProjectName("");
         }
+        bookPdfDto.setDescription(book.getDescription());
+        bookPdfDto.setRemarks(book.getRemarks());
+
         return bookPdfDto;
     }
 

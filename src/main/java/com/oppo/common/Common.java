@@ -1,5 +1,7 @@
 package com.oppo.common;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by JieChen on 2018/10/6.
  */
@@ -32,6 +34,7 @@ public class Common {
         else
             return 0d;
     }
+
     static public Integer get(Integer d) {
         if (d != null)
             return d;
@@ -45,5 +48,10 @@ public class Common {
         } else {
             return s.trim();
         }
+    }
+
+    public static String formatAmt(Integer data) {
+        DecimalFormat df = new DecimalFormat("#,###");
+        return df.format(data);
     }
 }

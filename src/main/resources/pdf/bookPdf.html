@@ -7,6 +7,11 @@
 <title>流水帳</title>
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"></meta>
+    <style>
+        @page {
+            size: A4 landscape;
+        }
+    </style>
     <style type="text/css">
         body {
             font-family: SimSun;
@@ -37,29 +42,33 @@
 <table border="1">
     <thead>
     <tr>
-        <th style="text-align:center">廠商發票</th>
-        <th style="text-align:center">廠商發票月份</th>
-        <th style="text-align:center">發票號碼</th>
-        <th style="text-align:center">付款與否</th>
-        <th style="text-align:center">付款日期</th>
-        <th style="text-align:center">存款存入</th>
-        <th style="text-align:center">存款匯出</th>
-        <th style="text-align:center">金額小計</th>
-        <th style="text-align:center">專案名稱</th>
-        <th style="text-align:center">說明</th>
-        <th style="text-align:center">備註</th>
+        <th style="text-align:center;width: 5%">廠商發票</th>
+        <th style="text-align:center;width: 6%">廠商發票月份</th>
+        <th style="text-align:center;width: 6%">發票號碼</th>
+        <th style="text-align:center;width: 5%">付款與否</th>
+        <th style="text-align:center;width: 6%">付款日期</th>
+        <th style="text-align:center;width: 8%">存款存入</th>
+        <th style="text-align:center;width: 8%">存款匯出</th>
+        <th style="text-align:center;width: 9%">金額小計</th>
+        <th style="text-align:center;width: 10%">專案名稱</th>
+        <th style="text-align:center;width: 13%">說明</th>
+        <th style="text-align:center;width: 13%">備註</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="book:${Dtos}">
-        <!--/*@thymesVar id="member" type="com.oppo.dto.BookDto"*/-->
-        <td th:text="${Dtos!=null}?${book.invoice}">1</td>
-        <td th:text="${Dtos!=null}?${book.invYM}">1</td>
-        <td th:text="${Dtos!=null}?${book.invNo}">1</td>
-        <td th:text="${Dtos!=null}?${book.paid}">1</td>
-        <td th:text="${Dtos!=null}?${book.paidDat}">1</td>
-
-
+        <!--/*@thymesVar id="member" type="com.oppo.dto.BookPdgDto"*/-->
+        <td style="text-align: center" th:text="${Dtos!=null}?${book.invoice}"></td>
+        <td style="text-align: center" th:text="${Dtos!=null}?${book.invYM}"></td>
+        <td th:text="${Dtos!=null}?${book.invNo}"></td>
+        <td style="text-align: center" th:text="${Dtos!=null}?${book.paid}"></td>
+        <td style="text-align: center" th:text="${Dtos!=null}?${book.paidDat}"></td>
+        <td style="text-align: right" th:text="${Dtos!=null}?${book.inAmt}"></td>
+        <td style="text-align: right" th:text="${Dtos!=null}?${book.exAmt}"></td>
+        <td style="text-align: right" th:text="${Dtos!=null}?${book.sum}"></td>
+        <td th:text="${Dtos!=null}?${book.projectName}"></td>
+        <td th:text="${Dtos!=null}?${book.description}"></td>
+        <td th:text="${Dtos!=null}?${book.remarks}"></td>
     </tr>
     </tbody>
 </table>

@@ -136,7 +136,7 @@ public class BookApi {
     }
 
     //查詢form
-    @GetMapping("/books/queryByCondition")
+    @GetMapping("/queryByCondition")
     public String queryByCondition(
             @RequestParam(required = false, defaultValue = "5") Integer hiddenPageSize,
             @RequestParam(required = false) String q_id, @RequestParam(required = false) String q_id2,
@@ -244,14 +244,5 @@ public class BookApi {
         //response.flushBuffer();
         //IOUtils.copy(new FileInputStream(OUTPUT_FILE), response.getOutputStream());
 
-    }
-
-    private List<MemberDto> getBookDto() {
-        List<MemberDto> memberDtos = new ArrayList<MemberDto>();
-        MemberDto memberDto = new MemberDto(1, "一二三一二三", "pass", "name", "dep");
-        MemberDto memberDto2 = new MemberDto(2, "acc2", "pass2", "name2", "dep2");
-        memberDtos.add(memberDto);
-        memberDtos.add(memberDto2);
-        return memberDtos;
     }
 }
