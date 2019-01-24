@@ -39,9 +39,12 @@ public class BookServiceImpl implements BookService {
     private CustomerDao customerDao;
     @Autowired
     private MemberDao memberDao;
-    static Integer sum = 0;
-    static Integer inSum = 0;
-    static Integer exSum = 0;
+    private static Integer sum = 0;
+    private static Integer inSum = 0;
+    private static Integer exSum = 0;
+    private static final String inTotal = "inTotal";
+    private static final String exTotal = "exTotal";
+    private static final String total = "total";
 
     @Override
     public List<BookDto> findAll() {
@@ -305,6 +308,48 @@ public class BookServiceImpl implements BookService {
         BookPdfDto bookPdfDto = new BookPdfDto(" ", " ", " ", " ", " ", " ", "小計", Common.formatAmt(inSum), Common.formatAmt(exSum), Common.formatAmt(sum), " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ");
         BookPdfDtos.add(bookPdfDto);
         return BookPdfDtos;
+    }
+
+    @Override
+    public Map<String, List<String>> queryAmtByYear(Date q_date, Integer month) {
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        Calendar calendar = Calendar.getInstance();
+        for (int i = 0; i < month; i++) {
+            calendar.setTime(q_date);
+            calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - i);
+            Date q_paidDat = calendar.getTime();
+
+            int MaxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), MaxDay, 23, 59, 59);
+            Date q_paidEndDat = calendar.getTime();
+            List<Book> books = bookDao.findAll((root, query, cb) -> {
+                query.orderBy(cb.desc(root.get("id")));
+
+                List<Predicate> predicates = new LinkedList<>();
+                Optional.ofNullable(q_paidDat).ifPresent(q_paidDat1 -> {
+                    predicates.add(cb.greaterThanOrEqualTo(root.get("paidDat"), new DateTime(q_paidDat1).withTimeAtStartOfDay().toDate()));
+                });
+                Optional.ofNullable(q_paidDat).ifPresent(q_paidDat2 -> {
+                    predicates.add(cb.lessThanOrEqualTo(root.get("paidDat"), new DateTime(q_paidDat2).withTimeAtStartOfDay().plusDays(1).minusMillis(1).toDate()));
+                });
+                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+            });
+
+            Double inTotalAmt = 0.0;
+            Double exTotalAmt = 0.0;
+            Double totalAmt = 0.0;
+            for (Book book : books) {
+                if ("1".equals(book.getIncomeOrExpend())) {
+                    inTotalAmt += book.getAmt();
+                } else if ("0".equals(book.getIncomeOrExpend())) {
+                    exTotalAmt += book.getAmt();
+                }
+                totalAmt += book.getAmt();
+            }
+        }
+
+
+        return null;
     }
 
     @Override

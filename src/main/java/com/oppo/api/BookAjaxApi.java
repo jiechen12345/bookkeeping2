@@ -26,8 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.FileSystems;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.itextpdf.text.pdf.BaseFont.EMBEDDED;
@@ -48,6 +47,7 @@ public class BookAjaxApi {
     //------------PDF
     private static final String OUTPUT_FILE = "test.pdf";
     private static final String UTF_8 = "UTF-8";
+
 
     @RequestMapping(method = RequestMethod.POST)
     public void creat(@RequestBody BookReq bookReq) {
@@ -85,6 +85,12 @@ public class BookAjaxApi {
         return bookDto;
     }
 
+    @RequestMapping(value = "/lineChart", method = RequestMethod.GET)
+    public Map<String, List<String>> lineChart() {
+        Map<String, List<String>> map = bookService.queryAmtByYear(new Date(), 2);
+        String total = "total";
+        return map;
+    }
 
     private ProjectDto getProjectDto(Project project) {
         ProjectDto projectDto = new ProjectDto();

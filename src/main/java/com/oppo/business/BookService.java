@@ -5,7 +5,9 @@ import com.oppo.dto.BookPage;
 import com.oppo.dto.pdf.BookPdfDto;
 import com.oppo.request.BookReq;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by JieChen on 2018/10/3.
@@ -17,11 +19,13 @@ public interface BookService {
 
     BookPage getAllForm(Integer page, Integer pageSize);
 
-    BookPage getAllForm(Integer page, Integer pageSize,String nowYM);
+    BookPage getAllForm(Integer page, Integer pageSize, String nowYM);
 
     BookPage queryAll(Integer page, Integer pageSize, BookReq bookReq);
 
     List<BookPdfDto> queryPdf(BookReq bookReq);
+
+    Map<String, List<String>> queryAmtByYear(Date q_date,Integer month);
 
     void create(BookReq bookReq);
 
