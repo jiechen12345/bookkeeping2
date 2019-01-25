@@ -322,6 +322,9 @@ public class BookServiceImpl implements BookService {
             int MaxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
             calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), MaxDay, 23, 59, 59);
             Date q_paidEndDat = calendar.getTime();
+            System.out.println(new DateTime(q_paidDat).withTimeAtStartOfDay().toDate());
+            System.out.println(new DateTime(q_paidDat).withTimeAtStartOfDay().plusDays(1).minusMillis(1).toDate());
+            System.out.println(q_paidEndDat);
             List<Book> books = bookDao.findAll((root, query, cb) -> {
                 query.orderBy(cb.desc(root.get("id")));
 
@@ -335,17 +338,17 @@ public class BookServiceImpl implements BookService {
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             });
 
-            Double inTotalAmt = 0.0;
-            Double exTotalAmt = 0.0;
-            Double totalAmt = 0.0;
-            for (Book book : books) {
-                if ("1".equals(book.getIncomeOrExpend())) {
-                    inTotalAmt += book.getAmt();
-                } else if ("0".equals(book.getIncomeOrExpend())) {
-                    exTotalAmt += book.getAmt();
-                }
-                totalAmt += book.getAmt();
-            }
+//            Double inTotalAmt = 0.0;
+//            Double exTotalAmt = 0.0;
+//            Double totalAmt = 0.0;
+//            for (Book book : books) {
+//                if ("1".equals(book.getIncomeOrExpend())) {
+//                    inTotalAmt += book.getAmt();
+//                } else if ("0".equals(book.getIncomeOrExpend())) {
+//                    exTotalAmt += book.getAmt();
+//                }
+//                totalAmt += book.getAmt();
+//            }
         }
 
 

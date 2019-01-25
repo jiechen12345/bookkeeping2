@@ -76,6 +76,7 @@ dependencies {
     testCompile('junit:junit:4.12')
     compile group: 'com.itextpdf', name: 'itextpdf', version: '5.5.12'
     compile group: 'com.itextpdf.tool', name: 'xmlworker', version: '5.5.12'
-    
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.51'
+
     runtime('mysql:mysql-connector-java')
 }
