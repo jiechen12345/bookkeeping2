@@ -85,9 +85,10 @@ public class BookAjaxApi {
         return bookDto;
     }
 
-    @RequestMapping(value = "/lineChart", method = RequestMethod.GET)
-    public Map<String, List<String>> lineChart() {
-        Map<String, List<String>> map = bookService.queryAmtByYear(new Date(), 2);
+    @RequestMapping(value = "/lineChart", method = RequestMethod.POST)
+    public Map<String, List<Double>> lineChart() {
+        Map<String, List<Double>> map = bookService.queryAmtByYear(new Date(), 2);
+
         String total = "total";
         return map;
     }

@@ -13,404 +13,241 @@
     <!-- Custom styles for this tmemberlate -->
     <link href="/css/dashboard.css" rel="stylesheet"/>
     <link href="/css/bootstrap-table.css" rel="stylesheet">
+    <script src="/js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
 
+    <!-- Icons -->
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
 </head>
 
 <body>
-<!--引入topbar-->
-<div th:replace="common/bar::top_bar"></div>
-
-<div class="container-fluid">
-    <div class="row">
-        <!--引入sidebar-->
-        <div th:replace="common/bar::side_bar(activeUrl='main')"></div>
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-            <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-            <table>
-                <!--
-                <tr>
-                    <td><h3>收入</h3>
-                        <div id="main" style="width: 450px;height:400px;"></div>
-                    </td>
-                    <td><h3>支出</h3>
-                        <div id="main2" style="width: 450px;height:400px;"></div>
-                    </td>
-                </tr>
-                -->
-                <tr style="width: 100%">>
-                    <td style="width: 60%">
-                        <div id="pieChart" style="min-width: 500px; width:50%"></div>
-                    </td>
-                    <td style="width: 50%">
-                        <div id="pieChart2" style="min-width: 500px; width:50%"></div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <div id="lineChart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-                </tr>
-            </table>
-
-
-        </main>
-    </div>
-</div>
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-<script src="/js/popper.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-
-<!-- Icons -->
-<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-<script>
-    feather.replace()
-</script>
 <script type="text/javascript">
-    $(document).ready(function () {
-        // $.ajax({
-        //     contentType: 'application/json; charset=UTF-8',
-        //     type: "post",
-        //     data: JSON.stringify(customerId),
-        //     url: "/books/findProjectByCustomerId",
-        //     success: function (data) {
-        //         var str = "";
-        //     },
-        //     error: function (jqXHR, exception) {
-        //         ajaxError(jqXHR, exception);
-        //     },
-        // });
+    // var colors = Highcharts.getOptions().colors,
+    //     categories = [
+    //         "中國信託",
+    //         "台灣人壽",
+    //         "百威旅遊",
+    //         "土銀",
+    //     ],
+    //     data = [
+    //         {
+    //             "y": 90,
+    //             "color": colors[2],
+    //             "drilldown": {
+    //                 "name": "中國信託",
+    //                 "categories": [
+    //                     "行動理專",
+    //                     "多媒體派版",
+    //                     "文薈館",
+    //                 ],
+    //                 "data": [
+    //                     40,
+    //                     20,
+    //                     30,
+    //                 ]
+    //             }
+    //         },
+    //         {
+    //             "y": 70,
+    //             "color": colors[1],
+    //             "drilldown": {
+    //                 "name": "台灣人壽",
+    //                 "categories": [
+    //                     "獎學金",
+    //                     "福委會"
+    //                 ],
+    //                 "data": [
+    //                     50,
+    //                     20,
+    //                 ]
+    //             }
+    //         },
+    //         {
+    //             "y": 50,
+    //             "color": colors[0],
+    //             "drilldown": {
+    //                 "name": "百威旅遊",
+    //                 "categories": [
+    //                     "改版"
+    //                 ],
+    //                 "data": [
+    //                     50
+    //                 ]
+    //             }
+    //         },
+    //         {
+    //             "y": 60,
+    //             "color": colors[3],
+    //             "drilldown": {
+    //                 "name": "土銀",
+    //                 "categories": [
+    //                     "改版",
+    //                 ],
+    //                 "data": [
+    //                     60
+    //                 ]
+    //             }
+    //         },
+    //     ],
+    //     browserData = [],
+    //     versionsData = [],
+    //     i,
+    //     j,
+    //     dataLen = data.length,
+    //     drillDataLen,
+    //     brightness;
+    //
+    //
+    // // Build the data arrays
+    // for (i = 0; i < dataLen; i += 1) {
+    //
+    //     // add browser data
+    //     browserData.push({
+    //         name: categories[i],
+    //         y: data[i].y,
+    //         color: data[i].color
+    //     });
+    //
+    //     // add version data
+    //     drillDataLen = data[i].drilldown.data.length;
+    //     for (j = 0; j < drillDataLen; j += 1) {
+    //         brightness = 0.2 - (j / drillDataLen) / 5;
+    //         versionsData.push({
+    //             name: data[i].drilldown.categories[j],
+    //             y: data[i].drilldown.data[j],
+    //             color: Highcharts.Color(data[i].color).brighten(brightness).get()
+    //         });
+    //     }
+    // }
+    //
+    // // Create the chart
+    // Highcharts.chart('pieChart', {
+    //     chart: {
+    //         type: 'pie'
+    //     },
+    //     title: {
+    //         text: '收入圓餅圖'
+    //     },
+    //
+    //     plotOptions: {
+    //         pie: {
+    //             shadow: false,
+    //             center: ['50%', '50%']
+    //         }
+    //     },
+    //     tooltip: {
+    //         valueSuffix: ' 萬'//千
+    //     },
+    //     series: [{
+    //         name: '客戶單位',
+    //         data: browserData,
+    //         size: '60%',
+    //         dataLabels: {
+    //             formatter: function () {
+    //                 return this.y > 5 ? this.point.name : null;
+    //             },
+    //             color: 'dark gray',
+    //             distance: -50
+    //         }
+    //     }, {
+    //         name: '專案名稱',
+    //         data: versionsData,
+    //         size: '80%',
+    //         innerSize: '60%',
+    //         dataLabels: {
+    //             formatter: function () {
+    //                 // display only if larger than 1
+    //                 return this.y > 1 ? '<b>' + this.point.name + ':</b> ' +
+    //                     this.y + ' 萬' : null;
+    //             }
+    //         },
+    //         id: 'projectName'
+    //     }],
+    //     responsive: {
+    //         rules: [{
+    //             condition: {
+    //                 maxWidth: 400
+    //             },
+    //             chartOptions: {
+    //                 series: [{
+    //                     id: 'projectName',
+    //                     dataLabels: {
+    //                         enabled: true
+    //                     }
+    //                 }]
+    //             }
+    //         }]
+    //     }
+    // });
+    //
+    // Highcharts.chart('pieChart2', {
+    //     chart: {
+    //         type: 'pie'
+    //     },
+    //     title: {
+    //         text: '支出圓餅圖'
+    //     },
+    //
+    //     plotOptions: {
+    //         pie: {
+    //             shadow: false,
+    //             center: ['50%', '50%']
+    //         }
+    //     },
+    //     tooltip: {
+    //         valueSuffix: ' 萬'//千
+    //     },
+    //     series: [{
+    //         name: '客戶單位',
+    //         data: browserData,
+    //         size: '60%',
+    //         dataLabels: {
+    //             formatter: function () {
+    //                 return this.y > 5 ? this.point.name : null;
+    //             },
+    //             color: 'dark gray',
+    //             distance: -50
+    //         }
+    //     }, {
+    //         name: '專案名稱',
+    //         data: versionsData,
+    //         size: '80%',
+    //         innerSize: '60%',
+    //         dataLabels: {
+    //             formatter: function () {
+    //                 // display only if larger than 1
+    //                 return this.y > 1 ? '<b>' + this.point.name + ':</b> ' +
+    //                     this.y + ' 萬' : null;
+    //             }
+    //         },
+    //         id: 'projectName'
+    //     }],
+    //     responsive: {
+    //         rules: [{
+    //             condition: {
+    //                 maxWidth: 400
+    //             },
+    //             chartOptions: {
+    //                 series: [{
+    //                     id: 'projectName',
+    //                     dataLabels: {
+    //                         enabled: true
+    //                     }
+    //                 }]
+    //             }
+    //         }]
+    //     }
+    // });
 
-    });
-</script>
-
-<script type="text/javascript">
-
-    // 基于准备好的dom，初始化echarts实例
-    /*
-    var PieChart = echarts.init(document.getElementById('main'));
-    var PieChart2 = echarts.init(document.getElementById('main2'));
-
-    income = {
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b}: {c}萬 ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            x: 'left',
-            data: ['文薈館', '土銀', '台灣人壽', '中信金控', '百威']
-        },
-        series: [
-            {
-                name: '收入',
-                type: 'pie',
-                radius: ['40%', '80%'],
-                avoidLabelOverlap: false,
-                label: {
-                    normal: {
-                        show: false,
-                        position: 'center'
-                    },
-                    emphasis: {
-                        show: true,
-                        textStyle: {
-                            fontSize: '30',
-                            fontWeight: 'bold'
-                        }
-                    }
-                },
-                labelLine: {
-                    normal: {
-                        show: false
-                    }
-                },
-                data: [
-                    {value: 335, name: '文薈館'},
-                    {value: 410, name: '土銀'},
-                    {value: 734, name: '台灣人壽'},
-                    {value: 1035, name: '中信金控'},
-                    {value: 248, name: '百威'}
-                ]
-            }
-        ]
-    };
-
-    expend = {
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b}: {c}萬 ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            x: 'left',
-            data: ['文薈館', '土銀', '台灣人壽', '中信金控', '百威']
-        },
-        series: [
-            {
-                name: '支出',
-                type: 'pie',
-                radius: ['40%', '80%'],
-                avoidLabelOverlap: false,
-                label: {
-                    normal: {
-                        show: false,
-                        position: 'center'
-                    },
-                    emphasis: {
-                        show: true,
-                        textStyle: {
-                            fontSize: '30',
-                            fontWeight: 'bold'
-                        }
-                    }
-                },
-                labelLine: {
-                    normal: {
-                        show: false
-                    }
-                },
-                data: [
-                    {value: 335, name: '文薈館'},
-                    {value: 210, name: '土銀'},
-                    {value: 134, name: '台灣人壽'},
-                    {value: 503, name: '中信金控'},
-                    {value: 34, name: '百威'}
-                ]
-            }
-        ]
-    };
-    // 使用刚指定的配置项和数据显示图表。
-    PieChart.setOption(income);
-    PieChart2.setOption(expend);
-*/
-    var colors = Highcharts.getOptions().colors,
-        categories = [
-            "中國信託",
-            "台灣人壽",
-            "百威旅遊",
-            "土銀",
-        ],
-        data = [
-            {
-                "y": 90,
-                "color": colors[2],
-                "drilldown": {
-                    "name": "中國信託",
-                    "categories": [
-                        "行動理專",
-                        "多媒體派版",
-                        "文薈館",
-                    ],
-                    "data": [
-                        40,
-                        20,
-                        30,
-                    ]
-                }
-            },
-            {
-                "y": 70,
-                "color": colors[1],
-                "drilldown": {
-                    "name": "台灣人壽",
-                    "categories": [
-                        "獎學金",
-                        "福委會"
-                    ],
-                    "data": [
-                        50,
-                        20,
-                    ]
-                }
-            },
-            {
-                "y": 50,
-                "color": colors[0],
-                "drilldown": {
-                    "name": "百威旅遊",
-                    "categories": [
-                        "改版"
-                    ],
-                    "data": [
-                        50
-                    ]
-                }
-            },
-            {
-                "y": 60,
-                "color": colors[3],
-                "drilldown": {
-                    "name": "土銀",
-                    "categories": [
-                        "改版",
-                    ],
-                    "data": [
-                        60
-                    ]
-                }
-            },
-        ],
-        browserData = [],
-        versionsData = [],
-        i,
-        j,
-        dataLen = data.length,
-        drillDataLen,
-        brightness;
-
-
-    // Build the data arrays
-    for (i = 0; i < dataLen; i += 1) {
-
-        // add browser data
-        browserData.push({
-            name: categories[i],
-            y: data[i].y,
-            color: data[i].color
-        });
-
-        // add version data
-        drillDataLen = data[i].drilldown.data.length;
-        for (j = 0; j < drillDataLen; j += 1) {
-            brightness = 0.2 - (j / drillDataLen) / 5;
-            versionsData.push({
-                name: data[i].drilldown.categories[j],
-                y: data[i].drilldown.data[j],
-                color: Highcharts.Color(data[i].color).brighten(brightness).get()
-            });
-        }
-    }
-
-    // Create the chart
-    Highcharts.chart('pieChart', {
+    var lineChart = null;
+    var lineOptions = {
         chart: {
-            type: 'pie'
-        },
-        title: {
-            text: '收入圓餅圖'
-        },
-
-        plotOptions: {
-            pie: {
-                shadow: false,
-                center: ['50%', '50%']
-            }
-        },
-        tooltip: {
-            valueSuffix: ' 萬'//千
-        },
-        series: [{
-            name: '客戶單位',
-            data: browserData,
-            size: '60%',
-            dataLabels: {
-                formatter: function () {
-                    return this.y > 5 ? this.point.name : null;
-                },
-                color: 'dark gray',
-                distance: -50
-            }
-        }, {
-            name: '專案名稱',
-            data: versionsData,
-            size: '80%',
-            innerSize: '60%',
-            dataLabels: {
-                formatter: function () {
-                    // display only if larger than 1
-                    return this.y > 1 ? '<b>' + this.point.name + ':</b> ' +
-                        this.y + ' 萬' : null;
-                }
-            },
-            id: 'projectName'
-        }],
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 400
-                },
-                chartOptions: {
-                    series: [{
-                        id: 'projectName',
-                        dataLabels: {
-                            enabled: true
-                        }
-                    }]
-                }
-            }]
-        }
-    });
-
-    Highcharts.chart('pieChart2', {
-        chart: {
-            type: 'pie'
-        },
-        title: {
-            text: '支出圓餅圖'
-        },
-
-        plotOptions: {
-            pie: {
-                shadow: false,
-                center: ['50%', '50%']
-            }
-        },
-        tooltip: {
-            valueSuffix: ' 萬'//千
-        },
-        series: [{
-            name: '客戶單位',
-            data: browserData,
-            size: '60%',
-            dataLabels: {
-                formatter: function () {
-                    return this.y > 5 ? this.point.name : null;
-                },
-                color: 'dark gray',
-                distance: -50
-            }
-        }, {
-            name: '專案名稱',
-            data: versionsData,
-            size: '80%',
-            innerSize: '60%',
-            dataLabels: {
-                formatter: function () {
-                    // display only if larger than 1
-                    return this.y > 1 ? '<b>' + this.point.name + ':</b> ' +
-                        this.y + ' 萬' : null;
-                }
-            },
-            id: 'projectName'
-        }],
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 400
-                },
-                chartOptions: {
-                    series: [{
-                        id: 'projectName',
-                        dataLabels: {
-                            enabled: true
-                        }
-                    }]
-                }
-            }]
-        }
-    });
-
-    Highcharts.chart('lineChart', {
-        chart: {
+            renderTo: 'lineContainer',
             type: 'line'
         },
         title: {
@@ -434,7 +271,7 @@
         },
         series: [{
             name: '收入',
-            data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2]
+            data: []
         }, {
             name: '支出',
             data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
@@ -443,7 +280,61 @@
                 name: '利潤',
                 data: [1.9, 1.2, 2.7, -2.5, 2.9, 1.2, 2.0, 1.6, 10.2, 3.3, 2.6, 4.8]
             }]
+    };
+
+    $(document).ready(function () {
+        lineChart = new Highcharts.Chart(lineOptions);
+        LoadSerie_Ajax();
     });
+
+    function LoadSerie_Ajax() {
+        lineChart.LOADING;
+        $.ajax({
+            contentType: 'application/json; charset=UTF-8',
+            url: "/books/lineChart",
+            type: 'POST',
+            async: false,
+            success: function (result) {
+                console.log(result);
+                console.log(lineChart);
+                console.log(lineChart.series);
+                lineChart.series[0].setData(result.data);
+            },
+            error: function (jqXHR, exception) {
+                ajaxError(jqXHR, exception);
+            }
+        });
+        lineChart.hideLoading();
+    }
 </script>
+<!--引入topbar-->
+<div th:replace="common/bar::top_bar"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!--引入sidebar-->
+        <div th:replace="common/bar::side_bar(activeUrl='main')"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+            <table>
+                <tr style="width: 100%">
+                    <td style="width: 60%">
+                        <div id="pieChart" style="min-width: 500px; width:50%"></div>
+                    </td>
+                    <td style="width: 50%">
+                        <div id="pieChart2" style="min-width: 500px; width:50%"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <div id="lineContainer" class="highcharts-container"
+                         style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+                </tr>
+            </table>
+        </main>
+    </div>
+</div>
+<script>
+    feather.replace()
+</script>
+
 </body>
 </html>

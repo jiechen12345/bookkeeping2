@@ -25,7 +25,7 @@ public interface BookService {
 
     List<BookPdfDto> queryPdf(BookReq bookReq);
 
-    Map<String, List<String>> queryAmtByYear(Date q_date,Integer month);
+    Map<String, List<Double>> queryAmtByYear(Date q_date, Integer month);
 
     void create(BookReq bookReq);
 

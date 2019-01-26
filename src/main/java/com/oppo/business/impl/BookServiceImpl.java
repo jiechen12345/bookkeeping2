@@ -311,32 +311,43 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Map<String, List<String>> queryAmtByYear(Date q_date, Integer month) {
-        Map<String, List<String>> map = new HashMap<String, List<String>>();
+    public Map<String, List<Double>> queryAmtByYear(Date q_date, Integer month) {
+        Map<String, List<Double>> map = new HashMap<String, List<Double>>();
+        List<Double> doubleList = new ArrayList<Double>();
+        doubleList.add(20.0);
+        doubleList.add(30.0);
+        doubleList.add(40.0);
+        map.put("data", doubleList);
+
         Calendar calendar = Calendar.getInstance();
         for (int i = 0; i < month; i++) {
             calendar.setTime(q_date);
             calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - i);
             Date q_paidDat = calendar.getTime();
 
+            int MinDay = calendar.getActualMinimum(Calendar.DAY_OF_MONTH);
             int MaxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), MinDay, 00, 00, 00);
+            Date q_paidStartDat = calendar.getTime();
             calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), MaxDay, 23, 59, 59);
             Date q_paidEndDat = calendar.getTime();
-            System.out.println(new DateTime(q_paidDat).withTimeAtStartOfDay().toDate());
-            System.out.println(new DateTime(q_paidDat).withTimeAtStartOfDay().plusDays(1).minusMillis(1).toDate());
+            System.out.println(q_paidStartDat);
             System.out.println(q_paidEndDat);
-            List<Book> books = bookDao.findAll((root, query, cb) -> {
-                query.orderBy(cb.desc(root.get("id")));
 
-                List<Predicate> predicates = new LinkedList<>();
-                Optional.ofNullable(q_paidDat).ifPresent(q_paidDat1 -> {
-                    predicates.add(cb.greaterThanOrEqualTo(root.get("paidDat"), new DateTime(q_paidDat1).withTimeAtStartOfDay().toDate()));
-                });
-                Optional.ofNullable(q_paidDat).ifPresent(q_paidDat2 -> {
-                    predicates.add(cb.lessThanOrEqualTo(root.get("paidDat"), new DateTime(q_paidDat2).withTimeAtStartOfDay().plusDays(1).minusMillis(1).toDate()));
-                });
-                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
-            });
+
+            //            System.out.println(q_paidEndDat);
+//            List<Book> books = bookDao.findAll((root, query, cb) -> {
+//                query.orderBy(cb.desc(root.get("id")));
+//
+//                List<Predicate> predicates = new LinkedList<>();
+//                Optional.ofNullable(q_paidDat).ifPresent(q_paidDat1 -> {
+//                    predicates.add(cb.greaterThanOrEqualTo(root.get("paidDat"), new DateTime(q_paidDat1).withTimeAtStartOfDay().toDate()));
+//                });
+//                Optional.ofNullable(q_paidDat).ifPresent(q_paidDat2 -> {
+//                    predicates.add(cb.lessThanOrEqualTo(root.get("paidDat"), new DateTime(q_paidDat2).withTimeAtStartOfDay().plusDays(1).minusMillis(1).toDate()));
+//                });
+//                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+//            });
 
 //            Double inTotalAmt = 0.0;
 //            Double exTotalAmt = 0.0;
@@ -351,8 +362,8 @@ public class BookServiceImpl implements BookService {
 //            }
         }
 
-
-        return null;
+        return map;
+        //return null;
     }
 
     @Override

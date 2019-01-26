@@ -26,15 +26,17 @@ public class LoginApi {
     Logger LOGGER = LoggerFactory.getLogger(LoginApi.class);
     @Autowired
     private MemberDao memberDao;
+
     @PostMapping(value = "/login")
     public String login(@RequestParam("account") String account, @RequestParam("password") String password
-            , Map<String, Object> map, HttpSession session,HttpServletRequest request) throws IOException {
+            , Map<String, Object> map, HttpSession session, HttpServletRequest request) throws IOException {
         if (!StringUtils.isEmpty(account) && "123".equals(password)) {
             //String ip=getIpAddress(request);
 
             Member member = memberDao.findByAccount(account);
             session.setAttribute("loginUser", member);
             return "redirect:/main.html";
+            //return "testChart";
         } else {
             map.put("msg", "帳號或密碼錯誤");
             return "index";
