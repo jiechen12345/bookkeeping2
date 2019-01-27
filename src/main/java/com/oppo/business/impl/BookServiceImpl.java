@@ -10,6 +10,7 @@ import com.oppo.dao.MemberDao;
 import com.oppo.dao.ProjectDao;
 import com.oppo.dto.BookDto;
 import com.oppo.dto.BookPage;
+import com.oppo.dto.chart.ChartDto;
 import com.oppo.dto.pdf.BookPdfDto;
 import com.oppo.request.BookReq;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -311,20 +312,21 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Map<String, List<Double>> queryAmtByYear(Date q_date, Integer month) {
-        Map<String, List<Double>> map = new HashMap<String, List<Double>>();
-        List<Double> doubleList = new ArrayList<Double>();
-        doubleList.add(20.0);
-        doubleList.add(30.0);
-        doubleList.add(40.0);
-        map.put("data", doubleList);
+    public ChartDto queryAmtByYear(Date q_date, Integer month) {
+        List<Double> incomeList = new ArrayList<Double>();
+        List<Double> expendList = new ArrayList<Double>();
+        List<Double> profitList = new ArrayList<Double>();
+        List<String> monthList = new ArrayList<String>();
 
         Calendar calendar = Calendar.getInstance();
         for (int i = 0; i < month; i++) {
             calendar.setTime(q_date);
             calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - i);
             Date q_paidDat = calendar.getTime();
-
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("MMM");
+            String mon = dateFormatter.format(q_paidDat);
+            System.out.println(mon);
+            monthList.add(mon);
             int MinDay = calendar.getActualMinimum(Calendar.DAY_OF_MONTH);
             int MaxDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
             calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), MinDay, 00, 00, 00);
@@ -335,34 +337,42 @@ public class BookServiceImpl implements BookService {
             System.out.println(q_paidEndDat);
 
 
-            //            System.out.println(q_paidEndDat);
-//            List<Book> books = bookDao.findAll((root, query, cb) -> {
-//                query.orderBy(cb.desc(root.get("id")));
-//
-//                List<Predicate> predicates = new LinkedList<>();
-//                Optional.ofNullable(q_paidDat).ifPresent(q_paidDat1 -> {
-//                    predicates.add(cb.greaterThanOrEqualTo(root.get("paidDat"), new DateTime(q_paidDat1).withTimeAtStartOfDay().toDate()));
-//                });
-//                Optional.ofNullable(q_paidDat).ifPresent(q_paidDat2 -> {
-//                    predicates.add(cb.lessThanOrEqualTo(root.get("paidDat"), new DateTime(q_paidDat2).withTimeAtStartOfDay().plusDays(1).minusMillis(1).toDate()));
-//                });
-//                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
-//            });
+            List<Book> books = bookDao.findAll((root, query, cb) -> {
+                query.orderBy(cb.desc(root.get("id")));
 
-//            Double inTotalAmt = 0.0;
-//            Double exTotalAmt = 0.0;
-//            Double totalAmt = 0.0;
-//            for (Book book : books) {
-//                if ("1".equals(book.getIncomeOrExpend())) {
-//                    inTotalAmt += book.getAmt();
-//                } else if ("0".equals(book.getIncomeOrExpend())) {
-//                    exTotalAmt += book.getAmt();
-//                }
-//                totalAmt += book.getAmt();
-//            }
+                List<Predicate> predicates = new LinkedList<>();
+                Optional.ofNullable(q_paidStartDat).ifPresent(q_paidDat1 -> {
+                    predicates.add(cb.greaterThanOrEqualTo(root.get("paidDat"), q_paidDat1));
+                });
+                Optional.ofNullable(q_paidEndDat).ifPresent(q_paidDat2 -> {
+                    predicates.add(cb.lessThanOrEqualTo(root.get("paidDat"), q_paidDat2));
+                });
+                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+            });
+
+            Double inTotalAmt = 0.0;
+            Double exTotalAmt = 0.0;
+            Double totalAmt = 0.0;
+            for (Book book : books) {
+                if ("1".equals(book.getIncomeOrExpend())) {
+                    inTotalAmt += book.getAmt();
+                } else if ("0".equals(book.getIncomeOrExpend())) {
+                    exTotalAmt += book.getAmt();
+                }
+            }
+            totalAmt += inTotalAmt - exTotalAmt;
+//            incomeList.add(inTotalAmt != 0 ? inTotalAmt / 1000 : 0.0);
+//            expendList.add(exTotalAmt != 0 ? exTotalAmt / 1000 : 0.0);
+//            profitList.add(totalAmt != 0 ? totalAmt / 1000 : 0.0);
+            incomeList.add(inTotalAmt);
+            expendList.add(exTotalAmt);
+            profitList.add(totalAmt);
         }
-
-        return map;
+        Collections.reverse(monthList);
+        Collections.reverse(incomeList);
+        Collections.reverse(expendList);
+        Collections.reverse(profitList);
+        return new ChartDto(incomeList, expendList, profitList, monthList);
         //return null;
     }
 

@@ -258,7 +258,7 @@
         },
         yAxis: {
             title: {
-                text: '金額 (千)'
+                text: '金額'
             }
         },
         plotOptions: {
@@ -295,10 +295,12 @@
             type: 'POST',
             async: false,
             success: function (result) {
-                console.log(result);
+                //console.log(result.incomeSum);
                 console.log(lineChart);
-                console.log(lineChart.series);
-                lineChart.series[0].setData(result.data);
+                lineChart.series[0].setData(result.incomeSum);
+                lineChart.series[1].setData(result.expendSum);
+                lineChart.series[2].setData(result.profitSum);
+                lineChart.xAxis[0].setCategories(result.monthList);
             },
             error: function (jqXHR, exception) {
                 ajaxError(jqXHR, exception);
